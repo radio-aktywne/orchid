@@ -1,0 +1,16 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 0.4.0
+_src_path: gh:radio-aktywne/template-app-next
+accountname: radio-aktywne
+appname: orchid
+description: Users identity app 👤
+docs: true
+docsurl: https://radio-aktywne.github.io/orchid
+envprefix: ORCHID
+imagename: apps/orchid
+keyprefix: orchid
+port: 20120
+registry: true
+releases: true
+reponame: orchid
+repourl: https://github.com/radio-aktywne/orchid
