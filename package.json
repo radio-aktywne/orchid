@@ -1,0 +1,53 @@
+{
+  "name": "orchid",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "clean": "rm --recursive --force build/",
+    "dev": "next dev --hostname \"${ORCHID__SERVER__HOST:-0.0.0.0}\" --port \"${ORCHID__SERVER__PORT:-20120}\"",
+    "generate-api": "npm run -- generate-api-falcon",
+    "generate-api-falcon": "openapi-typescript openapi/falcon.yaml -o src/services/falcon/types.d.ts",
+    "locales": "lingui extract --clean --overwrite",
+    "run": "next start --hostname \"${ORCHID__SERVER__HOST:-0.0.0.0}\" --port \"${ORCHID__SERVER__PORT:-20120}\"",
+    "update": "ncu --peer --upgrade && npm i --no-audit --no-fund"
+  },
+  "dependencies": {
+    "@lingui/macro": "^4.14.0",
+    "@lingui/react": "^4.14.0",
+    "@mantine/core": "^7.13.5",
+    "@mantine/hooks": "^7.13.5",
+    "@mantine/notifications": "^7.13.5",
+    "@tabler/icons-react": "~3.17.0",
+    "client-only": "^0.0.1",
+    "immer": "^10.1.1",
+    "jose": "^5.9.6",
+    "next": "14.2.17",
+    "openapi-fetch": "^0.13.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "server-only": "^0.0.1",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@lingui/cli": "^4.14.0",
+    "@lingui/format-po": "^4.14.0",
+    "@lingui/loader": "^4.14.0",
+    "@lingui/swc-plugin": "4.0.8",
+    "@types/node": "20.11.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
+    "eslint-config-next": "14.2.17",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-lingui": "^0.7.0",
+    "eslint-plugin-perfectionist": "^3.9.1",
+    "npm-check-updates": "^17.1.10",
+    "openapi-typescript": "^7.4.3",
+    "postcss": "^8.4.47",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5.6.3"
+  }
+}
