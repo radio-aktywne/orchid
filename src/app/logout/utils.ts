@@ -13,7 +13,7 @@ export async function safeGetLogoutFlow(
     if (error instanceof NoSessionError) {
       const returnTo = args[0].returnTo;
       const url = process.env.ORCHID__URLS__PUBLIC || "http://localhost:20120";
-      redirect(returnTo && returnTo.startsWith(url) ? returnTo : "/default");
+      redirect(returnTo?.startsWith(url) ? returnTo : "/default");
     }
 
     const { path } = createErrorPath({ id: "stub:500" });

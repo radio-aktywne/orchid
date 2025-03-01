@@ -17,8 +17,8 @@ msgstr ""
 msgid "Continue"
 msgstr "Continue"
 
-#: src/components/views/registration/registration-page-view/components/complete-registration-form/main.tsx:35
 #: src/components/views/settings/settings-page-view/components/settings-form/main.tsx:32
+#: src/components/views/registration/registration-page-view/components/complete-registration-form/main.tsx:35
 msgid "Display Name"
 msgstr "Display Name"
 
@@ -26,9 +26,9 @@ msgstr "Display Name"
 msgid "Error"
 msgstr "Error"
 
-#: src/app/error/page.tsx:21
-#: src/components/metadata/error/error-page-metadata/main.tsx:14
 #: src/components/metadata/root/root-error-metadata/main.tsx:14
+#: src/components/metadata/error/error-page-metadata/main.tsx:14
+#: src/app/error/page.tsx:21
 msgid "Error • orchid"
 msgstr "Error • orchid"
 
@@ -40,8 +40,8 @@ msgstr "Error in identity flow"
 msgid "Info"
 msgstr "Info"
 
-#: src/app/login/page.tsx:23
 #: src/components/metadata/login/login-page-metadata/main.tsx:14
+#: src/app/login/page.tsx:23
 msgid "Login • orchid"
 msgstr "Login • orchid"
 
@@ -49,18 +49,18 @@ msgstr "Login • orchid"
 msgid "Not Found • orchid"
 msgstr "Not Found • orchid"
 
-#: src/app/error/page.tsx:20
+#: src/components/metadata/settings/settings-page-metadata/main.tsx:13
+#: src/components/metadata/root/root-not-found-metadata/main.tsx:13
+#: src/components/metadata/root/root-error-metadata/main.tsx:13
+#: src/components/metadata/registration/registration-page-metadata/main.tsx:13
+#: src/components/metadata/login/login-page-metadata/main.tsx:13
+#: src/components/metadata/error/error-page-metadata/main.tsx:13
 #: src/app/layout.tsx:19
 #: src/app/layout.tsx:20
-#: src/app/login/page.tsx:22
-#: src/app/registration/page.tsx:22
 #: src/app/settings/page.tsx:22
-#: src/components/metadata/error/error-page-metadata/main.tsx:13
-#: src/components/metadata/login/login-page-metadata/main.tsx:13
-#: src/components/metadata/registration/registration-page-metadata/main.tsx:13
-#: src/components/metadata/root/root-error-metadata/main.tsx:13
-#: src/components/metadata/root/root-not-found-metadata/main.tsx:13
-#: src/components/metadata/settings/settings-page-metadata/main.tsx:13
+#: src/app/registration/page.tsx:22
+#: src/app/login/page.tsx:22
+#: src/app/error/page.tsx:20
 msgid "orchid"
 msgstr "orchid"
 
@@ -68,18 +68,18 @@ msgstr "orchid"
 msgid "Page not found"
 msgstr "Page not found"
 
-#: src/components/views/registration/registration-page-view/components/complete-registration-form/main.tsx:50
 #: src/components/views/settings/settings-page-view/components/settings-form/main.tsx:47
+#: src/components/views/registration/registration-page-view/components/complete-registration-form/main.tsx:50
 msgid "Preferred Locale"
 msgstr "Preferred Locale"
 
-#: src/components/views/registration/registration-page-view/components/complete-registration-form/main.tsx:43
 #: src/components/views/settings/settings-page-view/components/settings-form/main.tsx:40
+#: src/components/views/registration/registration-page-view/components/complete-registration-form/main.tsx:43
 msgid "Profile Picture URL"
 msgstr "Profile Picture URL"
 
-#: src/app/registration/page.tsx:23
 #: src/components/metadata/registration/registration-page-metadata/main.tsx:14
+#: src/app/registration/page.tsx:23
 msgid "Registration • orchid"
 msgstr "Registration • orchid"
 
@@ -91,8 +91,8 @@ msgstr "Retry"
 msgid "Save"
 msgstr "Save"
 
-#: src/app/settings/page.tsx:23
 #: src/components/metadata/settings/settings-page-metadata/main.tsx:14
+#: src/app/settings/page.tsx:23
 msgid "Settings • orchid"
 msgstr "Settings • orchid"
 
