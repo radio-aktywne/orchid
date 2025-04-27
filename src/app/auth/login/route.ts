@@ -42,6 +42,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const { data: responseToken } = await encryptAuthLoginAcceptResponse({
     challenge: challenge,
     subject: session.identity!.id,
+    traits: session.identity!.traits,
   });
 
   const { url } = createCrocusLoginAcceptURL({ token: responseToken });
