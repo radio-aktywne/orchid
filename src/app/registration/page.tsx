@@ -1,5 +1,6 @@
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
+import { MainLayout } from "@radio-aktywne/ui";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -40,9 +41,9 @@ export default function RegistrationPage({
   const { flow } = params;
 
   return (
-    <>
+    <MainLayout>
       <RegistrationPageMetadata />
       <RegistrationPageView flow={flow} />
-    </>
+    </MainLayout>
   );
 }

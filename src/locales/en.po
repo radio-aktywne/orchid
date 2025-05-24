@@ -28,7 +28,7 @@ msgstr "Error"
 
 #: src/components/metadata/root/root-error-metadata/main.tsx:14
 #: src/components/metadata/error/error-page-metadata/main.tsx:14
-#: src/app/error/page.tsx:21
+#: src/app/error/page.tsx:22
 msgid "Error • orchid"
 msgstr "Error • orchid"
 
@@ -41,7 +41,7 @@ msgid "Info"
 msgstr "Info"
 
 #: src/components/metadata/login/login-page-metadata/main.tsx:14
-#: src/app/login/page.tsx:23
+#: src/app/login/page.tsx:24
 msgid "Login • orchid"
 msgstr "Login • orchid"
 
@@ -57,10 +57,10 @@ msgstr "Not Found • orchid"
 #: src/components/metadata/error/error-page-metadata/main.tsx:13
 #: src/app/layout.tsx:19
 #: src/app/layout.tsx:20
-#: src/app/settings/page.tsx:22
-#: src/app/registration/page.tsx:22
-#: src/app/login/page.tsx:22
-#: src/app/error/page.tsx:20
+#: src/app/settings/page.tsx:23
+#: src/app/registration/page.tsx:23
+#: src/app/login/page.tsx:23
+#: src/app/error/page.tsx:21
 msgid "orchid"
 msgstr "orchid"
 
@@ -79,7 +79,7 @@ msgid "Profile Picture URL"
 msgstr "Profile Picture URL"
 
 #: src/components/metadata/registration/registration-page-metadata/main.tsx:14
-#: src/app/registration/page.tsx:23
+#: src/app/registration/page.tsx:24
 msgid "Registration • orchid"
 msgstr "Registration • orchid"
 
@@ -92,7 +92,7 @@ msgid "Save"
 msgstr "Save"
 
 #: src/components/metadata/settings/settings-page-metadata/main.tsx:14
-#: src/app/settings/page.tsx:23
+#: src/app/settings/page.tsx:24
 msgid "Settings • orchid"
 msgstr "Settings • orchid"
 
