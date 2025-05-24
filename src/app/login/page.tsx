@@ -1,5 +1,6 @@
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
+import { MainLayout } from "@radio-aktywne/ui";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -38,9 +39,9 @@ export default function LoginPage({ searchParams }: LoginPageInput) {
   const { flow } = params;
 
   return (
-    <>
+    <MainLayout>
       <LoginPageMetadata />
       <LoginPageView flow={flow} />
-    </>
+    </MainLayout>
   );
 }
