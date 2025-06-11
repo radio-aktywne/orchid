@@ -11,6 +11,7 @@ export async function getLoginFlow({
   const { data, error, response } = await falcon.GET(
     "/self-service/login/flows",
     {
+      cache: "no-store",
       headers: {
         Accept: "application/json",
         Cookie: cookies()

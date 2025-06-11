@@ -11,6 +11,7 @@ export async function getSettingsFlow({
   const { data, error, response } = await falcon.GET(
     "/self-service/settings/flows",
     {
+      cache: "no-store",
       headers: {
         Accept: "application/json",
         Cookie: cookies()
