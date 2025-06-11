@@ -11,6 +11,7 @@ export async function getRegistrationFlow({
   const { data, error, response } = await falcon.GET(
     "/self-service/registration/flows",
     {
+      cache: "no-store",
       headers: {
         Accept: "application/json",
         Cookie: cookies()

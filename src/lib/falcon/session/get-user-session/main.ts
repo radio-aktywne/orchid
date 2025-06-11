@@ -7,6 +7,7 @@ import { GetUserSessionInput, GetUserSessionOutput } from "./types";
 
 export async function getUserSession({}: GetUserSessionInput = {}): Promise<GetUserSessionOutput> {
   const { data, error, response } = await falcon.GET("/sessions/whoami", {
+    cache: "no-store",
     headers: {
       Accept: "application/json",
       Cookie: cookies()

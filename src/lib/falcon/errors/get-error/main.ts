@@ -7,6 +7,7 @@ import { GetErrorInput, GetErrorOutput } from "./types";
 
 export async function getError({ id }: GetErrorInput): Promise<GetErrorOutput> {
   const { data, error, response } = await falcon.GET("/self-service/errors", {
+    cache: "no-store",
     headers: {
       Accept: "application/json",
       Cookie: cookies()
