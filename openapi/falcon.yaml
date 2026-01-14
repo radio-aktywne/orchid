@@ -1,6 +1,7 @@
+openapi: "3.0.3"
 info:
   title: falcon
-openapi: 3.0.3
+  version: "0.6.0"
 paths:
   /.well-known/ory/webauthn.js:
     get:
