@@ -9,5 +9,5 @@ Users identity app 👤
 
 ## 💡 About
 
-`orchid` is a web app that implements identity flows
-for [`Ory Kratos`](https://www.ory.sh/kratos).
+`orchid` is a [`Next.js`](https://nextjs.org) app
+that implements identity flows for [`Ory Kratos`](https://www.ory.sh/kratos).
