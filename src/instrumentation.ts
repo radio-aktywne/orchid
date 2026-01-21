@@ -17,7 +17,7 @@ export async function register() {
           path: config.apis.falcon.path,
           port: config.apis.falcon.port,
           scheme: config.apis.falcon.scheme,
-        }),
+        }).url,
       }),
     }),
 
@@ -28,7 +28,7 @@ export async function register() {
           path: config.apis.icanhazdadjoke.path,
           port: config.apis.icanhazdadjoke.port,
           scheme: config.apis.icanhazdadjoke.scheme,
-        }),
+        }).url,
       }),
     }),
   };

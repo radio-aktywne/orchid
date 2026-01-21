@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import type { PageViewInput } from "../../../types";
 import type { Schemas } from "./schemas";
 
+import { createErrorUrl } from "../../../../common/core/lib/flow/create-error-url";
 import { SettingsWidget } from "../../../../isomorphic/core/components/flow/settings-widget";
-import { createErrorUrl } from "../../../../server/core/lib/flow/create-error-url";
 import { state } from "../../../../server/state/vars/state";
 
 export async function SettingsPageView({
@@ -13,7 +13,7 @@ export async function SettingsPageView({
 }: PageViewInput<typeof Schemas.Path, typeof Schemas.Query>) {
   const { flow: id } = queryParameters;
 
-  if (!id) redirect(createErrorUrl());
+  if (!id) redirect(createErrorUrl().url);
 
   const { flow } = await (async () => {
     const { data, error } = await state.current.apis.falcon.getSettingsFlow({
@@ -26,7 +26,7 @@ export async function SettingsPageView({
       },
     });
 
-    if (error) redirect(createErrorUrl());
+    if (error) redirect(createErrorUrl().url);
 
     return { flow: data };
   })();

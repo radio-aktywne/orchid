@@ -70,15 +70,3 @@ You can configure the app at runtime using various environment variables:
 - `ORCHID__URLS__FALCON__SCHEME` -
   scheme of the public URL of the falcon service
   (default: `http`)
-- `ORCHID__URLS__ORCHID__HOST` -
-  host of the public URL of the orchid app
-  (default: `localhost`)
-- `ORCHID__URLS__ORCHID__PATH` -
-  path of the public URL of the orchid app
-  (default: ``)
-- `ORCHID__URLS__ORCHID__PORT` -
-  port of the public URL of the orchid app
-  (default: `20120`)
-- `ORCHID__URLS__ORCHID__SCHEME` -
-  scheme of the public URL of the orchid app
-  (default: `http`)

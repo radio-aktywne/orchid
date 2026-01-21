@@ -6,10 +6,10 @@ import { connection } from "next/server";
 import type { RouteInput } from "../../../../types";
 import type { Keys } from "./types";
 
+import { createErrorUrl } from "../../../../../common/core/lib/flow/create-error-url";
 import { AuthError } from "../../../../../server/auth/errors";
 import { decryptLogoutRequest } from "../../../../../server/auth/lib/decrypt-logout-request";
 import { encryptLogoutAcceptResponse } from "../../../../../server/auth/lib/encrypt-logout-accept-response";
-import { createErrorUrl } from "../../../../../server/core/lib/flow/create-error-url";
 import { state } from "../../../../../server/state/vars/state";
 import { Schemas } from "./schemas";
 import { createLogoutAcceptUrl, createLogoutInitUrl } from "./utils";
@@ -23,13 +23,13 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
 
   const { token: requestToken } = queryParameters;
 
-  if (!requestToken) redirect(createErrorUrl());
+  if (!requestToken) redirect(createErrorUrl().url);
 
   const { challenge } = await (async () => {
     try {
       return await decryptLogoutRequest({ data: requestToken });
     } catch (error) {
-      if (error instanceof AuthError) redirect(createErrorUrl());
+      if (error instanceof AuthError) redirect(createErrorUrl().url);
       throw error;
     }
   })();
@@ -40,14 +40,14 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
     });
 
     if (response.status === 401) return;
-    if (error) redirect(createErrorUrl());
+    if (error) redirect(createErrorUrl().url);
 
-    redirect(createLogoutInitUrl(requestToken));
+    redirect((await createLogoutInitUrl(requestToken)).url);
   })();
 
   const { data: responseToken } = await encryptLogoutAcceptResponse({
     challenge: challenge,
   });
 
-  redirect(createLogoutAcceptUrl(responseToken));
+  redirect(createLogoutAcceptUrl(responseToken).url);
 }

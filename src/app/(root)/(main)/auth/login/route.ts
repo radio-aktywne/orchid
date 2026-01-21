@@ -6,10 +6,10 @@ import { connection } from "next/server";
 import type { RouteInput } from "../../../../types";
 import type { Keys } from "./types";
 
+import { createErrorUrl } from "../../../../../common/core/lib/flow/create-error-url";
 import { AuthError } from "../../../../../server/auth/errors";
 import { decryptLoginRequest } from "../../../../../server/auth/lib/decrypt-login-request";
 import { encryptLoginAcceptResponse } from "../../../../../server/auth/lib/encrypt-login-accept-response";
-import { createErrorUrl } from "../../../../../server/core/lib/flow/create-error-url";
 import { state } from "../../../../../server/state/vars/state";
 import { Schemas } from "./schemas";
 import { createLoginAcceptUrl, createLoginInitUrl } from "./utils";
@@ -23,13 +23,13 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
 
   const { token: requestToken } = queryParameters;
 
-  if (!requestToken) redirect(createErrorUrl());
+  if (!requestToken) redirect(createErrorUrl().url);
 
   const { challenge } = await (async () => {
     try {
       return await decryptLoginRequest({ data: requestToken });
     } catch (error) {
-      if (error instanceof AuthError) redirect(createErrorUrl());
+      if (error instanceof AuthError) redirect(createErrorUrl().url);
       throw error;
     }
   })();
@@ -41,8 +41,9 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
       },
     );
 
-    if (response.status === 401) redirect(createLoginInitUrl(requestToken));
-    if (error) redirect(createErrorUrl());
+    if (response.status === 401)
+      redirect((await createLoginInitUrl(requestToken)).url);
+    if (error) redirect(createErrorUrl().url);
 
     return { session: data };
   })();
@@ -53,5 +54,5 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
     traits: session.identity!.traits,
   });
 
-  redirect(createLoginAcceptUrl(responseToken));
+  redirect(createLoginAcceptUrl(responseToken).url);
 }

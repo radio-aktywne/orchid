@@ -20,6 +20,6 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
       port: state.current.config.urls.falcon.port,
       query: Object.fromEntries(request.nextUrl.searchParams),
       scheme: state.current.config.urls.falcon.scheme,
-    }),
+    }).url,
   );
 }

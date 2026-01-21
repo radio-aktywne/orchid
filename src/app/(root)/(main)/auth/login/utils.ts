@@ -1,19 +1,22 @@
 import { trimEnd } from "es-toolkit/string";
 
 import { createUrl } from "../../../../../common/generic/lib/create-url";
+import { getOriginalBaseUrl } from "../../../../../server/generic/lib/get-original-base-url";
 import { state } from "../../../../../server/state/vars/state";
 
-export function createLoginInitUrl(token: string) {
+export async function createLoginInitUrl(token: string) {
+  const baseUrl = new URL((await getOriginalBaseUrl()).originalBaseUrl);
+
   return createUrl({
-    path: `${trimEnd(state.current.config.urls.orchid.path ?? "", "/")}/login/init`,
+    path: "/login/init",
     query: {
       return_to: createUrl({
-        host: state.current.config.urls.orchid.host,
-        path: `${trimEnd(state.current.config.urls.orchid.path ?? "", "/")}/auth/login`,
-        port: state.current.config.urls.orchid.port,
+        host: baseUrl.hostname,
+        path: `${trimEnd(baseUrl.pathname, "/")}/auth/login`,
+        port: baseUrl.port ? Number(baseUrl.port) : undefined,
         query: { token: token },
-        scheme: state.current.config.urls.orchid.scheme,
-      }),
+        scheme: baseUrl.protocol.replace(":", ""),
+      }).url,
     },
   });
 }
