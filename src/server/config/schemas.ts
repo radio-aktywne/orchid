@@ -81,19 +81,6 @@ export const ConfigSchemas = {
               scheme: z.string().default("http"),
             })
             .prefault({}),
-          orchid: z
-            .object({
-              host: z.string().default("localhost"),
-              path: z.string().nullish(),
-              port: z.coerce
-                .number()
-                .min(0)
-                .max(65535)
-                .nullish()
-                .default(20120),
-              scheme: z.string().default("http"),
-            })
-            .prefault({}),
         })
         .prefault({}),
     })
