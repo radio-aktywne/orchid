@@ -14,11 +14,12 @@ export const IdSchema = z.coerce
   });
 
 export const UiTextSchema = z.object({
-  context: z.optional(
-    z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+  context: z
+    .record(z.string(), z.unknown())
+    .register(z.globalRegistry, {
       description: "The message's context. Useful when customizing messages.",
-    }),
-  ),
+    })
+    .optional(),
   id: IdSchema,
   text: z.string().register(z.globalRegistry, {
     description: "The message text. Written in american english.",
@@ -36,7 +37,7 @@ export const UiTextSchema = z.object({
  */
 export const UiNodeMetaSchema = z
   .object({
-    label: z.optional(UiTextSchema),
+    label: UiTextSchema.optional(),
   })
   .register(z.globalRegistry, {
     description:
@@ -160,38 +161,36 @@ export const UiNodeTextAttributesSchema = z.object({
  */
 export const UiNodeInputAttributesSchema = z
   .object({
-    autocomplete: z.optional(
-      z
-        .enum([
-          "email",
-          "tel",
-          "url",
-          "current-password",
-          "new-password",
-          "one-time-code",
-        ])
-        .register(z.globalRegistry, {
-          description:
-            "The autocomplete attribute for the input.\nemail InputAttributeAutocompleteEmail\ntel InputAttributeAutocompleteTel\nurl InputAttributeAutocompleteUrl\ncurrent-password InputAttributeAutocompleteCurrentPassword\nnew-password InputAttributeAutocompleteNewPassword\none-time-code InputAttributeAutocompleteOneTimeCode",
-        }),
-    ),
+    autocomplete: z
+      .enum([
+        "email",
+        "tel",
+        "url",
+        "current-password",
+        "new-password",
+        "one-time-code",
+      ])
+      .register(z.globalRegistry, {
+        description:
+          "The autocomplete attribute for the input.\nemail InputAttributeAutocompleteEmail\ntel InputAttributeAutocompleteTel\nurl InputAttributeAutocompleteUrl\ncurrent-password InputAttributeAutocompleteCurrentPassword\nnew-password InputAttributeAutocompleteNewPassword\none-time-code InputAttributeAutocompleteOneTimeCode",
+      })
+      .optional(),
     disabled: z.boolean().register(z.globalRegistry, {
       description: "Sets the input's disabled field to true or false.",
     }),
-    label: z.optional(UiTextSchema),
-    maxlength: z.optional(
-      z.coerce
-        .bigint()
-        .min(BigInt("-9223372036854775808"), {
-          error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-        })
-        .max(BigInt("9223372036854775807"), {
-          error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-        })
-        .register(z.globalRegistry, {
-          description: "MaxLength may contain the input's maximum length.",
-        }),
-    ),
+    label: UiTextSchema.optional(),
+    maxlength: z.coerce
+      .bigint()
+      .min(BigInt("-9223372036854775808"), {
+        error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+      })
+      .max(BigInt("9223372036854775807"), {
+        error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+      })
+      .register(z.globalRegistry, {
+        description: "MaxLength may contain the input's maximum length.",
+      })
+      .optional(),
     name: z.string().register(z.globalRegistry, {
       description: "The input's element name.",
     }),
@@ -201,58 +200,60 @@ export const UiNodeInputAttributesSchema = z
         description:
           'NodeType represents this node\'s types. It is a mirror of `node.type` and\nis primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "input".\ntext Text\ninput Input\nimg Image\na Anchor\nscript Script',
       }),
-    onclick: z.optional(
-      z.string().register(z.globalRegistry, {
+    onclick: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "OnClick may contain javascript which should be executed on click. This is primarily\nused for WebAuthn.\n\nDeprecated: Using OnClick requires the use of eval() which is a security risk. Use OnClickTrigger instead.",
-      }),
-    ),
-    onclickTrigger: z.optional(
-      z
-        .enum([
-          "oryWebAuthnRegistration",
-          "oryWebAuthnLogin",
-          "oryPasskeyLogin",
-          "oryPasskeyLoginAutocompleteInit",
-          "oryPasskeyRegistration",
-          "oryPasskeySettingsRegistration",
-        ])
-        .register(z.globalRegistry, {
-          description:
-            "OnClickTrigger may contain a WebAuthn trigger which should be executed on click.\n\nThe trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.\noryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration\noryWebAuthnLogin WebAuthnTriggersWebAuthnLogin\noryPasskeyLogin WebAuthnTriggersPasskeyLogin\noryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit\noryPasskeyRegistration WebAuthnTriggersPasskeyRegistration\noryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration",
-        }),
-    ),
-    onload: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    onclickTrigger: z
+      .enum([
+        "oryWebAuthnRegistration",
+        "oryWebAuthnLogin",
+        "oryPasskeyLogin",
+        "oryPasskeyLoginAutocompleteInit",
+        "oryPasskeyRegistration",
+        "oryPasskeySettingsRegistration",
+      ])
+      .register(z.globalRegistry, {
+        description:
+          "OnClickTrigger may contain a WebAuthn trigger which should be executed on click.\n\nThe trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.\noryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration\noryWebAuthnLogin WebAuthnTriggersWebAuthnLogin\noryPasskeyLogin WebAuthnTriggersPasskeyLogin\noryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit\noryPasskeyRegistration WebAuthnTriggersPasskeyRegistration\noryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration",
+      })
+      .optional(),
+    onload: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "OnLoad may contain javascript which should be executed on load. This is primarily\nused for WebAuthn.\n\nDeprecated: Using OnLoad requires the use of eval() which is a security risk. Use OnLoadTrigger instead.",
-      }),
-    ),
-    onloadTrigger: z.optional(
-      z
-        .enum([
-          "oryWebAuthnRegistration",
-          "oryWebAuthnLogin",
-          "oryPasskeyLogin",
-          "oryPasskeyLoginAutocompleteInit",
-          "oryPasskeyRegistration",
-          "oryPasskeySettingsRegistration",
-        ])
-        .register(z.globalRegistry, {
-          description:
-            "OnLoadTrigger may contain a WebAuthn trigger which should be executed on load.\n\nThe trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.\noryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration\noryWebAuthnLogin WebAuthnTriggersWebAuthnLogin\noryPasskeyLogin WebAuthnTriggersPasskeyLogin\noryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit\noryPasskeyRegistration WebAuthnTriggersPasskeyRegistration\noryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration",
-        }),
-    ),
-    pattern: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    onloadTrigger: z
+      .enum([
+        "oryWebAuthnRegistration",
+        "oryWebAuthnLogin",
+        "oryPasskeyLogin",
+        "oryPasskeyLoginAutocompleteInit",
+        "oryPasskeyRegistration",
+        "oryPasskeySettingsRegistration",
+      ])
+      .register(z.globalRegistry, {
+        description:
+          "OnLoadTrigger may contain a WebAuthn trigger which should be executed on load.\n\nThe trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.\noryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration\noryWebAuthnLogin WebAuthnTriggersWebAuthnLogin\noryPasskeyLogin WebAuthnTriggersPasskeyLogin\noryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit\noryPasskeyRegistration WebAuthnTriggersPasskeyRegistration\noryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration",
+      })
+      .optional(),
+    pattern: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The input's pattern.",
-      }),
-    ),
-    required: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    required: z
+      .boolean()
+      .register(z.globalRegistry, {
         description: "Mark this input field as required.",
-      }),
-    ),
+      })
+      .optional(),
     type: z
       .enum([
         "text",
@@ -272,11 +273,12 @@ export const UiNodeInputAttributesSchema = z
         description:
           "The input's element type.\ntext InputAttributeTypeText\npassword InputAttributeTypePassword\nnumber InputAttributeTypeNumber\ncheckbox InputAttributeTypeCheckbox\nhidden InputAttributeTypeHidden\nemail InputAttributeTypeEmail\ntel InputAttributeTypeTel\nsubmit InputAttributeTypeSubmit\nbutton InputAttributeTypeButton\ndatetime-local InputAttributeTypeDateTimeLocal\ndate InputAttributeTypeDate\nurl InputAttributeTypeURI",
       }),
-    value: z.optional(
-      z.unknown().register(z.globalRegistry, {
+    value: z
+      .unknown()
+      .register(z.globalRegistry, {
         description: "The input's value.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "InputAttributes represents the attributes of an input node",
@@ -367,7 +369,7 @@ export const UiContainerSchema = z
       description:
         'Action should be used as the form action URL `<form action="{{ .Action }}" method="post">`.',
     }),
-    messages: z.optional(UiTextsSchema),
+    messages: UiTextsSchema.optional(),
     method: z.string().register(z.globalRegistry, {
       description: "Method is the form method (e.g. POST)",
     }),
@@ -397,48 +399,54 @@ export const SelfServiceFlowTypeSchema = z.string().register(z.globalRegistry, {
  */
 export const VerificationFlowSchema = z
   .object({
-    active: z.optional(
-      z.string().register(z.globalRegistry, {
+    active: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Active, if set, contains the registration method that is being used. It is initially\nnot set.",
-      }),
-    ),
-    expires_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+      })
+      .optional(),
+    expires_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description:
           "ExpiresAt is the time (UTC) when the request expires. If the user still wishes to verify the address,\na new request has to be initiated.",
-      }),
-    ),
+      })
+      .optional(),
     id: z.uuid().register(z.globalRegistry, {
       description:
         "ID represents the request's unique ID. When performing the verification flow, this\nrepresents the id in the verify ui's query parameter: http://<selfservice.flows.verification.ui_url>?request=<id>\n\ntype: string\nformat: uuid",
     }),
-    issued_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    issued_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "IssuedAt is the time (UTC) when the request occurred.",
-      }),
-    ),
-    request_url: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    request_url: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "RequestURL is the initial URL that was requested from Ory Kratos. It can be used\nto forward information contained in the URL's path or query for example.",
-      }),
-    ),
-    return_to: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    return_to: z
+      .string()
+      .register(z.globalRegistry, {
         description: "ReturnTo contains the requested return_to URL.",
-      }),
-    ),
+      })
+      .optional(),
     state: z.unknown().register(z.globalRegistry, {
       description:
         "State represents the state of this request:\n\nchoose_method: ask the user to choose a method (e.g. verify your email)\nsent_email: the email has been sent to the user\npassed_challenge: the request was successful and the verification challenge was passed.",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "TransientPayload is used to pass data from the verification flow to hooks and email templates",
-      }),
-    ),
+      })
+      .optional(),
     type: SelfServiceFlowTypeSchema,
     ui: UiContainerSchema,
   })
@@ -467,29 +475,32 @@ export const IdentityVerifiableAddressStatusSchema = z
  */
 export const VerifiableIdentityAddressSchema = z
   .object({
-    created_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    created_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "When this entry was created",
-      }),
-    ),
-    id: z.optional(
-      z.uuid().register(z.globalRegistry, {
+      })
+      .optional(),
+    id: z
+      .uuid()
+      .register(z.globalRegistry, {
         description: "The ID",
-      }),
-    ),
+      })
+      .optional(),
     status: IdentityVerifiableAddressStatusSchema,
-    updated_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    updated_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "When this entry was last updated",
-      }),
-    ),
+      })
+      .optional(),
     value: z.string().register(z.globalRegistry, {
       description: "The address value\n\nexample foo@user.com",
     }),
     verified: z.boolean().register(z.globalRegistry, {
       description: "Indicates if the address has already been verified",
     }),
-    verified_at: z.optional(NullTimeSchema),
+    verified_at: NullTimeSchema.optional(),
     via: z.enum(["email", "sms"]).register(z.globalRegistry, {
       description: "The delivery method",
     }),
@@ -503,12 +514,13 @@ export const VerifiableIdentityAddressSchema = z
  */
 export const UpdateVerificationFlowWithLinkMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     email: z.string().register(z.globalRegistry, {
       description:
         "Email to Verify\n\nNeeds to be set when initiating the flow. If the email is a registered\nverification email, a verification link will be sent. If the email is not known,\na email with details on what happened will be sent instead.\n\nformat: email",
@@ -517,44 +529,49 @@ export const UpdateVerificationFlowWithLinkMethodSchema = z
       description:
         "Method is the method that should be used for this verification flow\n\nAllowed values are `link` and `code`\nlink VerificationStrategyLink\ncode VerificationStrategyCode",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Verification Flow with Link Method",
   });
 
 export const UpdateVerificationFlowWithCodeMethodSchema = z.object({
-  code: z.optional(
-    z.string().register(z.globalRegistry, {
+  code: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Code from the recovery email\n\nIf you want to submit a code, use this field, but make sure to _not_ include the email field, as well.",
-    }),
-  ),
-  csrf_token: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  csrf_token: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Sending the anti-csrf token is only required for browser login flows.",
-    }),
-  ),
-  email: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  email: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "The email address to verify\n\nIf the email belongs to a valid account, a verifiation email will be sent.\n\nIf you want to notify the email address if the account does not exist, see\nthe [notify_unknown_recipients flag](https://www.ory.sh/docs/kratos/self-service/flows/verify-email-account-activation#attempted-verification-notifications)\n\nIf a code was already sent, including this field in the payload will invalidate the sent code and re-send a new code.\n\nformat: email",
-    }),
-  ),
+    })
+    .optional(),
   method: z.enum(["link", "code"]).register(z.globalRegistry, {
     description:
       "Method is the method that should be used for this verification flow\n\nAllowed values are `link` and `code`.\nlink VerificationStrategyLink\ncode VerificationStrategyCode",
   }),
-  transient_payload: z.optional(
-    z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+  transient_payload: z
+    .record(z.string(), z.unknown())
+    .register(z.globalRegistry, {
       description: "Transient data to pass along to any webhooks",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -578,38 +595,43 @@ export const UpdateVerificationFlowBodySchema = z.union([
  */
 export const UpdateSettingsFlowWithWebAuthnMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method\n\nShould be set to "webauthn" when trying to add, update, or remove a webAuthn pairing.',
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
-    webauthn_register: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    webauthn_register: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Register a WebAuthn Security Key\n\nIt is expected that the JSON returned by the WebAuthn registration process\nis included here.",
-      }),
-    ),
-    webauthn_register_displayname: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    webauthn_register_displayname: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Name of the WebAuthn Security Key to be Added\n\nA human-readable name for the security key which will be added.",
-      }),
-    ),
-    webauthn_remove: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    webauthn_remove: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Remove a WebAuthn Security Key\n\nThis must contain the ID of the WebAuthN connection.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with WebAuthn Method",
@@ -620,31 +642,35 @@ export const UpdateSettingsFlowWithWebAuthnMethodSchema = z
  */
 export const UpdateSettingsFlowWithTotpMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method\n\nShould be set to "totp" when trying to add, update, or remove a totp pairing.',
     }),
-    totp_code: z.optional(
-      z.string().register(z.globalRegistry, {
+    totp_code: z
+      .string()
+      .register(z.globalRegistry, {
         description: "ValidationTOTP must contain a valid TOTP based on the",
-      }),
-    ),
-    totp_unlink: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    totp_unlink: z
+      .boolean()
+      .register(z.globalRegistry, {
         description:
           "UnlinkTOTP if true will remove the TOTP pairing,\neffectively removing the credential. This can be used\nto set up a new TOTP device.",
-      }),
-    ),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with TOTP Method",
@@ -655,12 +681,13 @@ export const UpdateSettingsFlowWithTotpMethodSchema = z
  */
 export const UpdateSettingsFlowWithProfileMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "The Anti-CSRF Token\n\nThis token is only required when performing browser flows.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method\n\nShould be set to profile when trying to update a profile.",
@@ -668,11 +695,12 @@ export const UpdateSettingsFlowWithProfileMethodSchema = z
     traits: z.record(z.string(), z.unknown()).register(z.globalRegistry, {
       description: "Traits\n\nThe identity's traits.",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with Profile Method",
@@ -683,11 +711,12 @@ export const UpdateSettingsFlowWithProfileMethodSchema = z
  */
 export const UpdateSettingsFlowWithPasswordMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method\n\nShould be set to password when trying to update a password.",
@@ -695,11 +724,12 @@ export const UpdateSettingsFlowWithPasswordMethodSchema = z
     password: z.string().register(z.globalRegistry, {
       description: "Password is the updated password",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with Password Method",
@@ -710,27 +740,30 @@ export const UpdateSettingsFlowWithPasswordMethodSchema = z
  */
 export const UpdateSettingsFlowWithPasskeyMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method\n\nShould be set to "passkey" when trying to add, update, or remove a webAuthn pairing.',
     }),
-    passkey_remove: z.optional(
-      z.string().register(z.globalRegistry, {
+    passkey_remove: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Remove a WebAuthn Security Key\n\nThis must contain the ID of the WebAuthN connection.",
-      }),
-    ),
-    passkey_settings_register: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    passkey_settings_register: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Register a WebAuthn Security Key\n\nIt is expected that the JSON returned by the WebAuthn registration process\nis included here.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with Passkey Method",
@@ -741,43 +774,49 @@ export const UpdateSettingsFlowWithPasskeyMethodSchema = z
  */
 export const UpdateSettingsFlowWithOidcMethodSchema = z
   .object({
-    flow: z.optional(
-      z.string().register(z.globalRegistry, {
+    flow: z
+      .string()
+      .register(z.globalRegistry, {
         description: "Flow ID is the flow's ID.\n\nin: query",
-      }),
-    ),
-    link: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    link: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Link this provider\n\nEither this or `unlink` must be set.\n\ntype: string\nin: body",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method\n\nShould be set to profile when trying to update a profile.",
     }),
-    traits: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    traits: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "The identity's traits\n\nin: body",
-      }),
-    ),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
-    unlink: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    unlink: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Unlink this provider\n\nEither this or `link` must be set.\n\ntype: string\nin: body",
-      }),
-    ),
-    upstream_parameters: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    upstream_parameters: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "UpstreamParameters are the parameters that are passed to the upstream identity provider.\n\nThese parameters are optional and depend on what the upstream identity provider supports.\nSupported parameters are:\n`login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.\n`hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.\n`prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with OpenID Connect Method",
@@ -788,40 +827,46 @@ export const UpdateSettingsFlowWithOidcMethodSchema = z
  */
 export const UpdateSettingsFlowWithLookupMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
-    lookup_secret_confirm: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    lookup_secret_confirm: z
+      .boolean()
+      .register(z.globalRegistry, {
         description: "If set to true will save the regenerated lookup secrets",
-      }),
-    ),
-    lookup_secret_disable: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    lookup_secret_disable: z
+      .boolean()
+      .register(z.globalRegistry, {
         description: "Disables this method if true.",
-      }),
-    ),
-    lookup_secret_regenerate: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    lookup_secret_regenerate: z
+      .boolean()
+      .register(z.globalRegistry, {
         description: "If set to true will regenerate the lookup secrets",
-      }),
-    ),
-    lookup_secret_reveal: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    lookup_secret_reveal: z
+      .boolean()
+      .register(z.globalRegistry, {
         description: "If set to true will reveal the lookup secrets",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method\n\nShould be set to "lookup" when trying to add, update, or remove a lookup pairing.',
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Settings Flow with Lookup Method",
@@ -873,11 +918,12 @@ export const UpdateSettingsFlowBodySchema = z.union([
  */
 export const UpdateRegistrationFlowWithWebAuthnMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method\n\nShould be set to "webauthn" when trying to add, update, or remove a webAuthn pairing.',
@@ -885,23 +931,26 @@ export const UpdateRegistrationFlowWithWebAuthnMethodSchema = z
     traits: z.record(z.string(), z.unknown()).register(z.globalRegistry, {
       description: "The identity's traits",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
-    webauthn_register: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    webauthn_register: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Register a WebAuthn Security Key\n\nIt is expected that the JSON returned by the WebAuthn registration process\nis included here.",
-      }),
-    ),
-    webauthn_register_displayname: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    webauthn_register_displayname: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Name of the WebAuthn Security Key to be Added\n\nA human-readable name for the security key which will be added.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Registration Flow with WebAuthn Method",
@@ -912,30 +961,33 @@ export const UpdateRegistrationFlowWithWebAuthnMethodSchema = z
  */
 export const UpdateRegistrationFlowWithProfileMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "The Anti-CSRF Token\n\nThis token is only required when performing browser flows.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method\n\nShould be set to profile when trying to update a profile.",
     }),
-    screen: z.optional(
-      z.enum(["credential-selection", "previous"]).register(z.globalRegistry, {
+    screen: z
+      .enum(["credential-selection", "previous"])
+      .register(z.globalRegistry, {
         description:
           "Screen requests navigation to a previous screen.\n\nThis must be set to credential-selection to go back to the credential\nselection screen.\ncredential-selection RegistrationScreenCredentialSelection nolint:gosec // not a credential\nprevious RegistrationScreenPrevious",
-      }),
-    ),
+      })
+      .optional(),
     traits: z.record(z.string(), z.unknown()).register(z.globalRegistry, {
       description: "Traits\n\nThe identity's traits.",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Registration Flow with Profile Method",
@@ -946,11 +998,12 @@ export const UpdateRegistrationFlowWithProfileMethodSchema = z
  */
 export const UpdateRegistrationFlowWithPasswordMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The CSRF Token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method to use\n\nThis field must be set to `password` when using the password method.",
@@ -961,11 +1014,12 @@ export const UpdateRegistrationFlowWithPasswordMethodSchema = z
     traits: z.record(z.string(), z.unknown()).register(z.globalRegistry, {
       description: "The identity's traits",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Registration Flow with Password Method",
@@ -976,29 +1030,32 @@ export const UpdateRegistrationFlowWithPasswordMethodSchema = z
  */
 export const UpdateRegistrationFlowWithPasskeyMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "CSRFToken is the anti-CSRF token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method\n\nShould be set to "passkey" when trying to add, update, or remove a Passkey.',
     }),
-    passkey_register: z.optional(
-      z.string().register(z.globalRegistry, {
+    passkey_register: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Register a WebAuthn Security Key\n\nIt is expected that the JSON returned by the WebAuthn registration process\nis included here.",
-      }),
-    ),
+      })
+      .optional(),
     traits: z.record(z.string(), z.unknown()).register(z.globalRegistry, {
       description: "The identity's traits",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Registration Flow with Passkey Method",
@@ -1009,23 +1066,26 @@ export const UpdateRegistrationFlowWithPasskeyMethodSchema = z
  */
 export const UpdateRegistrationFlowWithOidcMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The CSRF Token",
-      }),
-    ),
-    id_token: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    id_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "IDToken is an optional id token provided by an OIDC provider\n\nIf submitted, it is verified using the OIDC provider's public key set and the claims are used to populate\nthe OIDC credentials of the identity.\nIf the OIDC provider does not store additional claims (such as name, etc.) in the IDToken itself, you can use\nthe `traits` field to populate the identity's traits. Note, that Apple only includes the users email in the IDToken.\n\nSupported providers are\nApple\nGoogle",
-      }),
-    ),
-    id_token_nonce: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    id_token_nonce: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "IDTokenNonce is the nonce, used when generating the IDToken.\nIf the provider supports nonce validation, the nonce will be validated against this value and is required.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method to use\n\nThis field must be set to `oidc` when using the oidc method.",
@@ -1033,22 +1093,25 @@ export const UpdateRegistrationFlowWithOidcMethodSchema = z
     provider: z.string().register(z.globalRegistry, {
       description: "The provider to register with",
     }),
-    traits: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    traits: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "The identity traits",
-      }),
-    ),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
-    upstream_parameters: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    upstream_parameters: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "UpstreamParameters are the parameters that are passed to the upstream identity provider.\n\nThese parameters are optional and depend on what the upstream identity provider supports.\nSupported parameters are:\n`login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.\n`hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.\n`prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Registration Flow with OpenID Connect Method",
@@ -1059,33 +1122,37 @@ export const UpdateRegistrationFlowWithOidcMethodSchema = z
  */
 export const UpdateRegistrationFlowWithCodeMethodSchema = z
   .object({
-    code: z.optional(
-      z.string().register(z.globalRegistry, {
+    code: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The OTP Code sent to the user",
-      }),
-    ),
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The CSRF Token",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method to use\n\nThis field must be set to `code` when using the code method.",
     }),
-    resend: z.optional(
-      z.string().register(z.globalRegistry, {
+    resend: z
+      .string()
+      .register(z.globalRegistry, {
         description: "Resend restarts the flow with a new code",
-      }),
-    ),
+      })
+      .optional(),
     traits: z.record(z.string(), z.unknown()).register(z.globalRegistry, {
       description: "The identity's traits",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Registration Flow with Code Method",
@@ -1132,12 +1199,13 @@ export const UpdateRegistrationFlowBodySchema = z.union([
  */
 export const UpdateRecoveryFlowWithLinkMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     email: z.string().register(z.globalRegistry, {
       description:
         "Email to Recover\n\nNeeds to be set when initiating the flow. If the email is a registered\nrecovery email, a recovery link will be sent. If the email is not known,\na email with details on what happened will be sent instead.\n\nformat: email",
@@ -1146,11 +1214,12 @@ export const UpdateRecoveryFlowWithLinkMethodSchema = z
       description:
         "Method is the method that should be used for this recovery flow\n\nAllowed values are `link` and `code`\nlink RecoveryStrategyLink\ncode RecoveryStrategyCode",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Recovery Flow with Link Method",
@@ -1161,33 +1230,37 @@ export const UpdateRecoveryFlowWithLinkMethodSchema = z
  */
 export const UpdateRecoveryFlowWithCodeMethodSchema = z
   .object({
-    code: z.optional(
-      z.string().register(z.globalRegistry, {
+    code: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Code from the recovery email\n\nIf you want to submit a code, use this field, but make sure to _not_ include the email field, as well.",
-      }),
-    ),
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
-    email: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    email: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "The email address of the account to recover\n\nIf the email belongs to a valid account, a recovery email will be sent.\n\nIf you want to notify the email address if the account does not exist, see\nthe [notify_unknown_recipients flag](https://www.ory.sh/docs/kratos/self-service/flows/account-recovery-password-reset#attempted-recovery-notifications)\n\nIf a code was already sent, including this field in the payload will invalidate the sent code and re-send a new code.\n\nformat: email",
-      }),
-    ),
+      })
+      .optional(),
     method: z.enum(["link", "code"]).register(z.globalRegistry, {
       description:
         "Method is the method that should be used for this recovery flow\n\nAllowed values are `link` and `code`.\nlink RecoveryStrategyLink\ncode RecoveryStrategyCode",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Recovery Flow with Code Method",
@@ -1214,12 +1287,13 @@ export const UpdateRecoveryFlowBodySchema = z.union([
  */
 export const UpdateLoginFlowWithWebAuthnMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     identifier: z.string().register(z.globalRegistry, {
       description:
         "Identifier is the email or username of the user trying to log in.",
@@ -1228,17 +1302,19 @@ export const UpdateLoginFlowWithWebAuthnMethodSchema = z
       description:
         'Method should be set to "webAuthn" when logging in using the WebAuthn strategy.',
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
-    webauthn_login: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    webauthn_login: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Login a WebAuthn Security Key\n\nThis must contain the ID of the WebAuthN connection.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login Flow with WebAuthn Method",
@@ -1249,12 +1325,13 @@ export const UpdateLoginFlowWithWebAuthnMethodSchema = z
  */
 export const UpdateLoginFlowWithTotpMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method should be set to "totp" when logging in using the TOTP strategy.',
@@ -1262,11 +1339,12 @@ export const UpdateLoginFlowWithTotpMethodSchema = z
     totp_code: z.string().register(z.globalRegistry, {
       description: "The TOTP code.",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login Flow with TOTP Method",
@@ -1277,12 +1355,13 @@ export const UpdateLoginFlowWithTotpMethodSchema = z
  */
 export const UpdateLoginFlowWithPasswordMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     identifier: z.string().register(z.globalRegistry, {
       description:
         "Identifier is the email or username of the user trying to log in.",
@@ -1294,17 +1373,19 @@ export const UpdateLoginFlowWithPasswordMethodSchema = z
     password: z.string().register(z.globalRegistry, {
       description: "The user's password.",
     }),
-    password_identifier: z.optional(
-      z.string().register(z.globalRegistry, {
+    password_identifier: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Identifier is the email or username of the user trying to log in.\nThis field is deprecated!",
-      }),
-    ),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login Flow with Password Method",
@@ -1315,22 +1396,24 @@ export const UpdateLoginFlowWithPasswordMethodSchema = z
  */
 export const UpdateLoginFlowWithPasskeyMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method should be set to "passkey" when logging in using the Passkey strategy.',
     }),
-    passkey_login: z.optional(
-      z.string().register(z.globalRegistry, {
+    passkey_login: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Login a WebAuthn Security Key\n\nThis must contain the ID of the WebAuthN connection.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login Flow with Passkey Method",
@@ -1341,23 +1424,26 @@ export const UpdateLoginFlowWithPasskeyMethodSchema = z
  */
 export const UpdateLoginFlowWithOidcMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The CSRF Token",
-      }),
-    ),
-    id_token: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    id_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "IDToken is an optional id token provided by an OIDC provider\n\nIf submitted, it is verified using the OIDC provider's public key set and the claims are used to populate\nthe OIDC credentials of the identity.\nIf the OIDC provider does not store additional claims (such as name, etc.) in the IDToken itself, you can use\nthe `traits` field to populate the identity's traits. Note, that Apple only includes the users email in the IDToken.\n\nSupported providers are\nApple\nGoogle",
-      }),
-    ),
-    id_token_nonce: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    id_token_nonce: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "IDTokenNonce is the nonce, used when generating the IDToken.\nIf the provider supports nonce validation, the nonce will be validated against this value and required.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         "Method to use\n\nThis field must be set to `oidc` when using the oidc method.",
@@ -1365,23 +1451,26 @@ export const UpdateLoginFlowWithOidcMethodSchema = z
     provider: z.string().register(z.globalRegistry, {
       description: "The provider to register with",
     }),
-    traits: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    traits: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "The identity traits. This is a placeholder for the registration flow.",
-      }),
-    ),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
-    upstream_parameters: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    upstream_parameters: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "UpstreamParameters are the parameters that are passed to the upstream identity provider.\n\nThese parameters are optional and depend on what the upstream identity provider supports.\nSupported parameters are:\n`login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.\n`hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.\n`prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login Flow with OpenID Connect Method",
@@ -1392,12 +1481,13 @@ export const UpdateLoginFlowWithOidcMethodSchema = z
  */
 export const UpdateLoginFlowWithLookupSecretMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     lookup_secret: z.string().register(z.globalRegistry, {
       description: "The lookup secret.",
     }),
@@ -1415,12 +1505,13 @@ export const UpdateLoginFlowWithLookupSecretMethodSchema = z
  */
 export const UpdateLoginFlowWithIdentifierFirstMethodSchema = z
   .object({
-    csrf_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    csrf_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Sending the anti-csrf token is only required for browser login flows.",
-      }),
-    ),
+      })
+      .optional(),
     identifier: z.string().register(z.globalRegistry, {
       description:
         "Identifier is the email or username of the user trying to log in.",
@@ -1429,11 +1520,12 @@ export const UpdateLoginFlowWithIdentifierFirstMethodSchema = z
       description:
         'Method should be set to "password" when logging in using the identifier and password strategy.',
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login Flow with Multi-Step Method",
@@ -1444,40 +1536,45 @@ export const UpdateLoginFlowWithIdentifierFirstMethodSchema = z
  */
 export const UpdateLoginFlowWithCodeMethodSchema = z
   .object({
-    address: z.optional(
-      z.string().register(z.globalRegistry, {
+    address: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Address is the address to send the code to, in case that there are multiple addresses. This field\nis only used in two-factor flows and is ineffective for passwordless flows.",
-      }),
-    ),
-    code: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    code: z
+      .string()
+      .register(z.globalRegistry, {
         description: "Code is the 6 digits code sent to the user",
-      }),
-    ),
+      })
+      .optional(),
     csrf_token: z.string().register(z.globalRegistry, {
       description: "CSRFToken is the anti-CSRF token",
     }),
-    identifier: z.optional(
-      z.string().register(z.globalRegistry, {
+    identifier: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Identifier is the code identifier\nThe identifier requires that the user has already completed the registration or settings with code flow.",
-      }),
-    ),
+      })
+      .optional(),
     method: z.string().register(z.globalRegistry, {
       description:
         'Method should be set to "code" when logging in using the code strategy.',
     }),
-    resend: z.optional(
-      z.string().register(z.globalRegistry, {
+    resend: z
+      .string()
+      .register(z.globalRegistry, {
         description: "Resend is set when the user wants to resend the code",
-      }),
-    ),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "Transient data to pass along to any webhooks",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Update Login flow using the code method",
@@ -1534,21 +1631,24 @@ export const SessionDeviceSchema = z
     id: z.uuid().register(z.globalRegistry, {
       description: "Device record ID",
     }),
-    ip_address: z.optional(
-      z.string().register(z.globalRegistry, {
+    ip_address: z
+      .string()
+      .register(z.globalRegistry, {
         description: "IPAddress of the client",
-      }),
-    ),
-    location: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    location: z
+      .string()
+      .register(z.globalRegistry, {
         description: "Geo Location corresponding to the IP Address",
-      }),
-    ),
-    user_agent: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    user_agent: z
+      .string()
+      .register(z.globalRegistry, {
         description: "UserAgent of the client",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Device corresponding to a Session",
@@ -1579,14 +1679,15 @@ export const AuthenticatorAssuranceLevelSchema = z
  */
 export const SessionAuthenticationMethodSchema = z
   .object({
-    aal: z.optional(AuthenticatorAssuranceLevelSchema),
-    completed_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    aal: AuthenticatorAssuranceLevelSchema.optional(),
+    completed_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "When the authentication challenge was completed.",
-      }),
-    ),
-    method: z.optional(
-      z.enum([
+      })
+      .optional(),
+    method: z
+      .enum([
         "link_recovery",
         "code_recovery",
         "password",
@@ -1596,18 +1697,20 @@ export const SessionAuthenticationMethodSchema = z
         "webauthn",
         "lookup_secret",
         "v0.6_legacy_session",
-      ]),
-    ),
-    organization: z.optional(
-      z.string().register(z.globalRegistry, {
+      ])
+      .optional(),
+    organization: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The Organization id used for authentication",
-      }),
-    ),
-    provider: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    provider: z
+      .string()
+      .register(z.globalRegistry, {
         description: "OIDC or SAML provider id used for authentication",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "A singular authenticator used during authentication / login.",
@@ -1641,22 +1744,24 @@ export const IdentityTraitsSchema = z.unknown().register(z.globalRegistry, {
 export const RecoveryAddressTypeSchema = z.string();
 
 export const RecoveryIdentityAddressSchema = z.object({
-  created_at: z.optional(
-    z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+  created_at: z.iso
+    .datetime({ offset: true, local: true })
+    .register(z.globalRegistry, {
       description: "CreatedAt is a helper struct field for gobuffalo.pop.",
-    }),
-  ),
+    })
+    .optional(),
   id: z.uuid(),
-  updated_at: z.optional(
-    z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+  updated_at: z.iso
+    .datetime({ offset: true, local: true })
+    .register(z.globalRegistry, {
       description: "UpdatedAt is a helper struct field for gobuffalo.pop.",
-    }),
-  ),
+    })
+    .optional(),
   value: z.string(),
   via: RecoveryAddressTypeSchema,
 });
 
-export const NullUuidSchema = z.union([z.string(), z.null()]);
+export const NullUuidSchema = z.string().nullable();
 
 /**
  * NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable-
@@ -1676,56 +1781,57 @@ export const JsonRawMessageSchema = z.record(z.string(), z.unknown());
  */
 export const IdentityCredentialsSchema = z
   .object({
-    config: z.optional(JsonRawMessageSchema),
-    created_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    config: JsonRawMessageSchema.optional(),
+    created_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "CreatedAt is a helper struct field for gobuffalo.pop.",
-      }),
-    ),
-    identifiers: z.optional(
-      z.array(z.string()).register(z.globalRegistry, {
+      })
+      .optional(),
+    identifiers: z
+      .array(z.string())
+      .register(z.globalRegistry, {
         description:
           "Identifiers represents a list of unique identifiers this credential type matches.",
-      }),
-    ),
-    type: z.optional(
-      z
-        .enum([
-          "password",
-          "oidc",
-          "totp",
-          "lookup_secret",
-          "webauthn",
-          "code",
-          "passkey",
-          "profile",
-          "link_recovery",
-          "code_recovery",
-        ])
-        .register(z.globalRegistry, {
-          description:
-            "Type discriminates between different types of credentials.\npassword CredentialsTypePassword\noidc CredentialsTypeOIDC\ntotp CredentialsTypeTOTP\nlookup_secret CredentialsTypeLookup\nwebauthn CredentialsTypeWebAuthn\ncode CredentialsTypeCodeAuth\npasskey CredentialsTypePasskey\nprofile CredentialsTypeProfile\nlink_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.\ncode_recovery CredentialsTypeRecoveryCode",
-        }),
-    ),
-    updated_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+      })
+      .optional(),
+    type: z
+      .enum([
+        "password",
+        "oidc",
+        "totp",
+        "lookup_secret",
+        "webauthn",
+        "code",
+        "passkey",
+        "profile",
+        "link_recovery",
+        "code_recovery",
+      ])
+      .register(z.globalRegistry, {
+        description:
+          "Type discriminates between different types of credentials.\npassword CredentialsTypePassword\noidc CredentialsTypeOIDC\ntotp CredentialsTypeTOTP\nlookup_secret CredentialsTypeLookup\nwebauthn CredentialsTypeWebAuthn\ncode CredentialsTypeCodeAuth\npasskey CredentialsTypePasskey\nprofile CredentialsTypeProfile\nlink_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.\ncode_recovery CredentialsTypeRecoveryCode",
+      })
+      .optional(),
+    updated_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "UpdatedAt is a helper struct field for gobuffalo.pop.",
-      }),
-    ),
-    version: z.optional(
-      z.coerce
-        .bigint()
-        .min(BigInt("-9223372036854775808"), {
-          error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-        })
-        .max(BigInt("9223372036854775807"), {
-          error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-        })
-        .register(z.globalRegistry, {
-          description:
-            "Version refers to the version of the credential. Useful when changing the config schema.",
-        }),
-    ),
+      })
+      .optional(),
+    version: z.coerce
+      .bigint()
+      .min(BigInt("-9223372036854775808"), {
+        error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+      })
+      .max(BigInt("9223372036854775807"), {
+        error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+      })
+      .register(z.globalRegistry, {
+        description:
+          "Version refers to the version of the credential. Useful when changing the config schema.",
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Credentials represents a specific credential type",
@@ -1738,32 +1844,33 @@ export const IdentityCredentialsSchema = z
  */
 export const IdentitySchema = z
   .object({
-    created_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    created_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "CreatedAt is a helper struct field for gobuffalo.pop.",
-      }),
-    ),
-    credentials: z.optional(
-      z
-        .record(z.string(), IdentityCredentialsSchema)
-        .register(z.globalRegistry, {
-          description:
-            "Credentials represents all credentials that can be used for authenticating this identity.",
-        }),
-    ),
+      })
+      .optional(),
+    credentials: z
+      .record(z.string(), IdentityCredentialsSchema)
+      .register(z.globalRegistry, {
+        description:
+          "Credentials represents all credentials that can be used for authenticating this identity.",
+      })
+      .optional(),
     id: z.uuid().register(z.globalRegistry, {
       description:
         "ID is the identity's unique identifier.\n\nThe Identity ID can not be changed and can not be chosen. This ensures future\ncompatibility and optimization for distributed stores such as CockroachDB.",
     }),
-    metadata_admin: z.optional(NullJsonRawMessageSchema),
-    metadata_public: z.optional(NullJsonRawMessageSchema),
-    organization_id: z.optional(NullUuidSchema),
-    recovery_addresses: z.optional(
-      z.array(RecoveryIdentityAddressSchema).register(z.globalRegistry, {
+    metadata_admin: NullJsonRawMessageSchema.optional(),
+    metadata_public: NullJsonRawMessageSchema.optional(),
+    organization_id: NullUuidSchema.optional(),
+    recovery_addresses: z
+      .array(RecoveryIdentityAddressSchema)
+      .register(z.globalRegistry, {
         description:
           "RecoveryAddresses contains all the addresses that can be used to recover an identity.",
-      }),
-    ),
+      })
+      .optional(),
     schema_id: z.string().register(z.globalRegistry, {
       description:
         "SchemaID is the ID of the JSON Schema to be used for validating the identity's traits.",
@@ -1772,25 +1879,28 @@ export const IdentitySchema = z
       description:
         "SchemaURL is the URL of the endpoint where the identity's traits schema can be fetched from.\n\nformat: url",
     }),
-    state: z.optional(
-      z.enum(["active", "inactive"]).register(z.globalRegistry, {
+    state: z
+      .enum(["active", "inactive"])
+      .register(z.globalRegistry, {
         description:
           "State is the identity's state.\n\nThis value has currently no effect.\nactive StateActive\ninactive StateInactive",
-      }),
-    ),
-    state_changed_at: z.optional(NullTimeSchema),
+      })
+      .optional(),
+    state_changed_at: NullTimeSchema.optional(),
     traits: IdentityTraitsSchema,
-    updated_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    updated_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "UpdatedAt is a helper struct field for gobuffalo.pop.",
-      }),
-    ),
-    verifiable_addresses: z.optional(
-      z.array(VerifiableIdentityAddressSchema).register(z.globalRegistry, {
+      })
+      .optional(),
+    verifiable_addresses: z
+      .array(VerifiableIdentityAddressSchema)
+      .register(z.globalRegistry, {
         description:
           "VerifiableAddresses contains all the addresses that can be verified by the user.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description:
@@ -1802,48 +1912,52 @@ export const IdentitySchema = z
  */
 export const SessionSchema = z
   .object({
-    active: z.optional(
-      z.boolean().register(z.globalRegistry, {
+    active: z
+      .boolean()
+      .register(z.globalRegistry, {
         description: "Active state. If false the session is no longer active.",
-      }),
-    ),
-    authenticated_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+      })
+      .optional(),
+    authenticated_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description:
           "The Session Authentication Timestamp\n\nWhen this session was authenticated at. If multi-factor authentication was used this\nis the time when the last factor was authenticated (e.g. the TOTP code challenge was completed).",
-      }),
-    ),
-    authentication_methods: z.optional(SessionAuthenticationMethodsSchema),
-    authenticator_assurance_level: z.optional(
-      AuthenticatorAssuranceLevelSchema,
-    ),
-    devices: z.optional(
-      z.array(SessionDeviceSchema).register(z.globalRegistry, {
+      })
+      .optional(),
+    authentication_methods: SessionAuthenticationMethodsSchema.optional(),
+    authenticator_assurance_level: AuthenticatorAssuranceLevelSchema.optional(),
+    devices: z
+      .array(SessionDeviceSchema)
+      .register(z.globalRegistry, {
         description:
           "Devices has history of all endpoints where the session was used",
-      }),
-    ),
-    expires_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+      })
+      .optional(),
+    expires_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "The Session Expiry\n\nWhen this session expires at.",
-      }),
-    ),
+      })
+      .optional(),
     id: z.uuid().register(z.globalRegistry, {
       description: "Session ID",
     }),
-    identity: z.optional(IdentitySchema),
-    issued_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    identity: IdentitySchema.optional(),
+    issued_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description:
           "The Session Issuance Timestamp\n\nWhen this session was issued at. Usually equal or close to `authenticated_at`.",
-      }),
-    ),
-    tokenized: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    tokenized: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Tokenized is the tokenized (e.g. JWT) version of the session.\n\nIt is only set when the `tokenize` query parameter was set to a valid tokenize template during calls to `/session/whoami`.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "A Session",
@@ -1871,12 +1985,13 @@ export const ContinueWithRecoveryUiFlowSchema = z.object({
   id: z.uuid().register(z.globalRegistry, {
     description: "The ID of the recovery flow",
   }),
-  url: z.optional(
-    z.string().register(z.globalRegistry, {
+  url: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "The URL of the recovery flow\n\nIf this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -1899,12 +2014,13 @@ export const ContinueWithSettingsUiFlowSchema = z.object({
   id: z.uuid().register(z.globalRegistry, {
     description: "The ID of the settings flow",
   }),
-  url: z.optional(
-    z.string().register(z.globalRegistry, {
+  url: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "The URL of the settings flow\n\nIf this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -1945,12 +2061,13 @@ export const ContinueWithVerificationUiFlowSchema = z.object({
   id: z.uuid().register(z.globalRegistry, {
     description: "The ID of the verification flow",
   }),
-  url: z.optional(
-    z.string().register(z.globalRegistry, {
+  url: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "The URL of the verification flow\n\nIf this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.",
-    }),
-  ),
+    })
+    .optional(),
   verifiable_address: z.string().register(z.globalRegistry, {
     description: "The address that should be verified in this flow",
   }),
@@ -2005,20 +2122,22 @@ export const ContinueWithSchema = z.union([
  */
 export const SuccessfulNativeRegistrationSchema = z
   .object({
-    continue_with: z.optional(
-      z.array(ContinueWithSchema).register(z.globalRegistry, {
+    continue_with: z
+      .array(ContinueWithSchema)
+      .register(z.globalRegistry, {
         description:
           "Contains a list of actions, that could follow this flow\n\nIt can, for example, this will contain a reference to the verification flow, created as part of the user's\nregistration or the token of the session.",
-      }),
-    ),
+      })
+      .optional(),
     identity: IdentitySchema,
-    session: z.optional(SessionSchema),
-    session_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    session: SessionSchema.optional(),
+    session_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "The Session Token\n\nThis field is only set when the session hook is configured as a post-registration hook.\n\nA session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization\nHeader:\n\nAuthorization: bearer ${session-token}\n\nThe session token is only issued for API flows, not for Browser flows!",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "The Response for Registration Flows via API",
@@ -2029,19 +2148,21 @@ export const SuccessfulNativeRegistrationSchema = z
  */
 export const SuccessfulNativeLoginSchema = z
   .object({
-    continue_with: z.optional(
-      z.array(ContinueWithSchema).register(z.globalRegistry, {
+    continue_with: z
+      .array(ContinueWithSchema)
+      .register(z.globalRegistry, {
         description:
           "Contains a list of actions, that could follow this flow\n\nIt can, for example, this will contain a reference to the verification flow, created as part of the user's\nregistration or the token of the session.",
-      }),
-    ),
+      })
+      .optional(),
     session: SessionSchema,
-    session_token: z.optional(
-      z.string().register(z.globalRegistry, {
+    session_token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "The Session Token\n\nA session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization\nHeader:\n\nAuthorization: bearer ${session-token}\n\nThe session token is only issued for API flows, not for Browser flows!",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "The Response for Login Flows via API",
@@ -2057,18 +2178,20 @@ export const SuccessfulNativeLoginSchema = z
  */
 export const SettingsFlowSchema = z
   .object({
-    active: z.optional(
-      z.string().register(z.globalRegistry, {
+    active: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Active, if set, contains the registration method that is being used. It is initially\nnot set.",
-      }),
-    ),
-    continue_with: z.optional(
-      z.array(ContinueWithSchema).register(z.globalRegistry, {
+      })
+      .optional(),
+    continue_with: z
+      .array(ContinueWithSchema)
+      .register(z.globalRegistry, {
         description:
           "Contains a list of actions, that could follow this flow\n\nIt can, for example, contain a reference to the verification flow, created as part of the user's\nregistration.",
-      }),
-    ),
+      })
+      .optional(),
     expires_at: z.iso
       .datetime({ offset: true, local: true })
       .register(z.globalRegistry, {
@@ -2089,21 +2212,23 @@ export const SettingsFlowSchema = z
       description:
         "RequestURL is the initial URL that was requested from Ory Kratos. It can be used\nto forward information contained in the URL's path or query for example.",
     }),
-    return_to: z.optional(
-      z.string().register(z.globalRegistry, {
+    return_to: z
+      .string()
+      .register(z.globalRegistry, {
         description: "ReturnTo contains the requested return_to URL.",
-      }),
-    ),
+      })
+      .optional(),
     state: z.unknown().register(z.globalRegistry, {
       description:
         'State represents the state of this flow. It knows two states:\n\nshow_form: No user data has been collected, or it is invalid, and thus the form should be shown.\nsuccess: Indicates that the settings flow has been updated successfully with the provided data.\nDone will stay true when repeatedly checking. If set to true, done will revert back to false only\nwhen a flow with invalid (e.g. "please use a valid phone number") data was sent.',
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "TransientPayload is used to pass data from the settings flow to hooks and email templates",
-      }),
-    ),
+      })
+      .optional(),
     type: SelfServiceFlowTypeSchema,
     ui: UiContainerSchema,
   })
@@ -2117,37 +2242,42 @@ export const SettingsFlowSchema = z
  */
 export const OAuth2ConsentRequestOpenIdConnectContextSchema = z
   .object({
-    AdditionalProperties: z.optional(z.record(z.string(), z.unknown())),
-    acr_values: z.optional(
-      z.array(z.string()).register(z.globalRegistry, {
+    AdditionalProperties: z.record(z.string(), z.unknown()).optional(),
+    acr_values: z
+      .array(z.string())
+      .register(z.globalRegistry, {
         description:
           "ACRValues is the Authentication AuthorizationContext Class Reference requested in the OAuth 2.0 Authorization request. It is a parameter defined by OpenID Connect and expresses which level of authentication (e.g. 2FA) is required.  OpenID Connect defines it as follows: > Requested Authentication AuthorizationContext Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication AuthorizationContext Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.",
-      }),
-    ),
-    display: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    display: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           'Display is a string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User. The defined values are: page: The Authorization Server SHOULD display the authentication and consent UI consistent with a full User Agent page view. If the display parameter is not specified, this is the default display mode. popup: The Authorization Server SHOULD display the authentication and consent UI consistent with a popup User Agent window. The popup User Agent window should be of an appropriate size for a login-focused dialog and should not obscure the entire window that it is popping up over. touch: The Authorization Server SHOULD display the authentication and consent UI consistent with a device that leverages a touch interface. wap: The Authorization Server SHOULD display the authentication and consent UI consistent with a \\"feature phone\\" type display.  The Authorization Server MAY also attempt to detect the capabilities of the User Agent and present an appropriate display.',
-      }),
-    ),
-    id_token_hint_claims: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    id_token_hint_claims: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "IDTokenHintClaims are the claims of the ID Token previously issued by the Authorization Server being passed as a hint about the End-User's current or past authenticated session with the Client.",
-      }),
-    ),
-    login_hint: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    login_hint: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "LoginHint hints about the login identifier the End-User might use to log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address (or other identifier) and then wants to pass that value as a hint to the discovered authorization service. This value MAY also be a phone number in the format specified for the phone_number Claim. The use of this parameter is optional.",
-      }),
-    ),
-    ui_locales: z.optional(
-      z.array(z.string()).register(z.globalRegistry, {
+      })
+      .optional(),
+    ui_locales: z
+      .array(z.string())
+      .register(z.globalRegistry, {
         description:
           'UILocales is the End-User\'id preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value \\"fr-CA fr en\\" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.',
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description:
@@ -2158,258 +2288,295 @@ export const OAuth2ConsentRequestOpenIdConnectContextSchema = z
  * OAuth2Client OAuth 2.0 Clients are used to perform OAuth 2.0 and OpenID Connect flows. Usually, OAuth 2.0 clients are generated for applications which want to consume your OAuth 2.0 or OpenID Connect capabilities.
  */
 export const OAuth2ClientSchema = z.object({
-  AdditionalProperties: z.optional(z.record(z.string(), z.unknown())),
-  access_token_strategy: z.optional(
-    z.string().register(z.globalRegistry, {
+  AdditionalProperties: z.record(z.string(), z.unknown()).optional(),
+  access_token_strategy: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Access Token Strategy  AccessTokenStrategy is the strategy used to generate access tokens. Valid options are `jwt` and `opaque`. `jwt` is a bad idea, see https://www.ory.sh/docs/hydra/advanced#json-web-tokens Setting the stragegy here overrides the global setting in `strategies.access_token`.",
-    }),
-  ),
-  allowed_cors_origins: z.optional(z.array(z.string())),
-  audience: z.optional(z.array(z.string())),
-  authorization_code_grant_access_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  allowed_cors_origins: z.array(z.string()).optional(),
+  audience: z.array(z.string()).optional(),
+  authorization_code_grant_access_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  authorization_code_grant_id_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  authorization_code_grant_id_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  authorization_code_grant_refresh_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  authorization_code_grant_refresh_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  backchannel_logout_session_required: z.optional(
-    z.boolean().register(z.globalRegistry, {
+    })
+    .optional(),
+  backchannel_logout_session_required: z
+    .boolean()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Back-Channel Logout Session Required  Boolean value specifying whether the RP requires that a sid (session ID) Claim be included in the Logout Token to identify the RP session with the OP when the backchannel_logout_uri is used. If omitted, the default value is false.",
-    }),
-  ),
-  backchannel_logout_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  backchannel_logout_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Back-Channel Logout URI  RP URL that will cause the RP to log itself out when sent a Logout Token by the OP.",
-    }),
-  ),
-  client_credentials_grant_access_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  client_credentials_grant_access_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  client_id: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  client_id: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client ID  The ID is immutable. If no ID is provided, a UUID4 will be generated.",
-    }),
-  ),
-  client_name: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  client_name: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Name  The human-readable name of the client to be presented to the end-user during authorization.",
-    }),
-  ),
-  client_secret: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  client_secret: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Secret  The secret will be included in the create request as cleartext, and then never again. The secret is kept in hashed format and is not recoverable once lost.",
-    }),
-  ),
-  client_secret_expires_at: z.optional(
-    z.coerce
-      .bigint()
-      .min(BigInt("-9223372036854775808"), {
-        error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-      })
-      .max(BigInt("9223372036854775807"), {
-        error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-      })
-      .register(z.globalRegistry, {
-        description:
-          "OAuth 2.0 Client Secret Expires At  The field is currently not supported and its value is always 0.",
-      }),
-  ),
-  client_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  client_secret_expires_at: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .register(z.globalRegistry, {
+      description:
+        "OAuth 2.0 Client Secret Expires At  The field is currently not supported and its value is always 0.",
+    })
+    .optional(),
+  client_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client URI  ClientURI is a URL string of a web page providing information about the client. If present, the server SHOULD display this URL to the end-user in a clickable fashion.",
-    }),
-  ),
-  contacts: z.optional(z.array(z.string())),
-  created_at: z.optional(
-    z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    })
+    .optional(),
+  contacts: z.array(z.string()).optional(),
+  created_at: z.iso
+    .datetime({ offset: true, local: true })
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Creation Date  CreatedAt returns the timestamp of the client's creation.",
-    }),
-  ),
-  frontchannel_logout_session_required: z.optional(
-    z.boolean().register(z.globalRegistry, {
+    })
+    .optional(),
+  frontchannel_logout_session_required: z
+    .boolean()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Front-Channel Logout Session Required  Boolean value specifying whether the RP requires that iss (issuer) and sid (session ID) query parameters be included to identify the RP session with the OP when the frontchannel_logout_uri is used. If omitted, the default value is false.",
-    }),
-  ),
-  frontchannel_logout_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  frontchannel_logout_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Front-Channel Logout URI  RP URL that will cause the RP to log itself out when rendered in an iframe by the OP. An iss (issuer) query parameter and a sid (session ID) query parameter MAY be included by the OP to enable the RP to validate the request and to determine which of the potentially multiple sessions is to be logged out; if either is included, both MUST be.",
-    }),
-  ),
-  grant_types: z.optional(z.array(z.string())),
-  implicit_grant_access_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  grant_types: z.array(z.string()).optional(),
+  implicit_grant_access_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  implicit_grant_id_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  implicit_grant_id_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  jwks: z.optional(
-    z.unknown().register(z.globalRegistry, {
+    })
+    .optional(),
+  jwks: z
+    .unknown()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client JSON Web Key Set  Client's JSON Web Key Set [JWK] document, passed by value. The semantics of the jwks parameter are the same as the jwks_uri parameter, other than that the JWK Set is passed by value, rather than by reference. This parameter is intended only to be used by Clients that, for some reason, are unable to use the jwks_uri parameter, for instance, by native applications that might not have a location to host the contents of the JWK Set. If a Client can use jwks_uri, it MUST NOT use jwks. One significant downside of jwks is that it does not enable key rotation (which jwks_uri does, as described in Section 10 of OpenID Connect Core 1.0 [OpenID.Core]). The jwks_uri and jwks parameters MUST NOT be used together.",
-    }),
-  ),
-  jwks_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  jwks_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client JSON Web Key Set URL  URL for the Client's JSON Web Key Set [JWK] document. If the Client signs requests to the Server, it contains the signing key(s) the Server uses to validate signatures from the Client. The JWK Set MAY also contain the Client's encryption keys(s), which are used by the Server to encrypt responses to the Client. When both signing and encryption keys are made available, a use (Key Use) parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage. Although some algorithms allow the same key to be used for both signatures and encryption, doing so is NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate.",
-    }),
-  ),
-  jwt_bearer_grant_access_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  jwt_bearer_grant_access_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  logo_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  logo_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Logo URI  A URL string referencing the client's logo.",
-    }),
-  ),
-  metadata: z.optional(z.unknown()),
-  owner: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  metadata: z.unknown().optional(),
+  owner: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Owner  Owner is a string identifying the owner of the OAuth 2.0 Client.",
-    }),
-  ),
-  policy_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  policy_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Policy URI  PolicyURI is a URL string that points to a human-readable privacy policy document that describes how the deployment organization collects, uses, retains, and discloses personal data.",
-    }),
-  ),
-  post_logout_redirect_uris: z.optional(z.array(z.string())),
-  redirect_uris: z.optional(z.array(z.string())),
-  refresh_token_grant_access_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  post_logout_redirect_uris: z.array(z.string()).optional(),
+  redirect_uris: z.array(z.string()).optional(),
+  refresh_token_grant_access_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  refresh_token_grant_id_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  refresh_token_grant_id_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  refresh_token_grant_refresh_token_lifespan: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  refresh_token_grant_refresh_token_lifespan: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Specify a time duration in milliseconds, seconds, minutes, hours.",
-    }),
-  ),
-  registration_access_token: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  registration_access_token: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Dynamic Client Registration Access Token  RegistrationAccessToken can be used to update, get, or delete the OAuth2 Client. It is sent when creating a client using Dynamic Client Registration.",
-    }),
-  ),
-  registration_client_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  registration_client_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Dynamic Client Registration URL  RegistrationClientURI is the URL used to update, get, or delete the OAuth2 Client.",
-    }),
-  ),
-  request_object_signing_alg: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  request_object_signing_alg: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Request Object Signing Algorithm  JWS [JWS] alg algorithm [JWA] that MUST be used for signing Request Objects sent to the OP. All Request Objects from this Client MUST be rejected, if not signed with this algorithm.",
-    }),
-  ),
-  request_uris: z.optional(z.array(z.string())),
-  response_types: z.optional(z.array(z.string())),
-  scope: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  request_uris: z.array(z.string()).optional(),
+  response_types: z.array(z.string()).optional(),
+  scope: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Scope  Scope is a string containing a space-separated list of scope values (as described in Section 3.3 of OAuth 2.0 [RFC6749]) that the client can use when requesting access tokens.",
-    }),
-  ),
-  sector_identifier_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  sector_identifier_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Sector Identifier URI  URL using the https scheme to be used in calculating Pseudonymous Identifiers by the OP. The URL references a file with a single JSON array of redirect_uri values.",
-    }),
-  ),
-  skip_consent: z.optional(
-    z.boolean().register(z.globalRegistry, {
+    })
+    .optional(),
+  skip_consent: z
+    .boolean()
+    .register(z.globalRegistry, {
       description:
         "SkipConsent skips the consent screen for this client. This field can only be set from the admin API.",
-    }),
-  ),
-  skip_logout_consent: z.optional(
-    z.boolean().register(z.globalRegistry, {
+    })
+    .optional(),
+  skip_logout_consent: z
+    .boolean()
+    .register(z.globalRegistry, {
       description:
         "SkipLogoutConsent skips the logout consent screen for this client. This field can only be set from the admin API.",
-    }),
-  ),
-  subject_type: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  subject_type: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Subject Type  The `subject_types_supported` Discovery parameter contains a list of the supported subject_type values for this server. Valid types include `pairwise` and `public`.",
-    }),
-  ),
-  token_endpoint_auth_method: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  token_endpoint_auth_method: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Token Endpoint Authentication Method  Requested Client Authentication method for the Token Endpoint. The options are:  `client_secret_basic`: (default) Send `client_id` and `client_secret` as `application/x-www-form-urlencoded` encoded in the HTTP Authorization header. `client_secret_post`: Send `client_id` and `client_secret` as `application/x-www-form-urlencoded` in the HTTP body. `private_key_jwt`: Use JSON Web Tokens to authenticate the client. `none`: Used for public clients (native apps, mobile apps) which can not have secrets.",
-    }),
-  ),
-  token_endpoint_auth_signing_alg: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  token_endpoint_auth_signing_alg: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Token Endpoint Signing Algorithm  Requested Client Authentication signing algorithm for the Token Endpoint.",
-    }),
-  ),
-  tos_uri: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  tos_uri: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Terms of Service URI  A URL string pointing to a human-readable terms of service document for the client that describes a contractual relationship between the end-user and the client that the end-user accepts when authorizing the client.",
-    }),
-  ),
-  updated_at: z.optional(
-    z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    })
+    .optional(),
+  updated_at: z.iso
+    .datetime({ offset: true, local: true })
+    .register(z.globalRegistry, {
       description:
         "OAuth 2.0 Client Last Update Date  UpdatedAt returns the timestamp of the last update.",
-    }),
-  ),
-  userinfo_signed_response_alg: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  userinfo_signed_response_alg: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "OpenID Connect Request Userinfo Signed Response Algorithm  JWS alg algorithm [JWA] REQUIRED for signing UserInfo Responses. If this is specified, the response will be JWT [JWT] serialized, and signed using JWS. The default, if omitted, is for the UserInfo Response to return the Claims as a UTF-8 encoded JSON object using the application/json content-type.",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -2417,66 +2584,70 @@ export const OAuth2ClientSchema = z.object({
  */
 export const OAuth2LoginRequestSchema = z
   .object({
-    AdditionalProperties: z.optional(z.record(z.string(), z.unknown())),
-    challenge: z.optional(
-      z.string().register(z.globalRegistry, {
+    AdditionalProperties: z.record(z.string(), z.unknown()).optional(),
+    challenge: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           'ID is the identifier (\\"login challenge\\") of the login request. It is used to identify the session.',
-      }),
-    ),
-    client: z.optional(OAuth2ClientSchema),
-    oidc_context: z.optional(OAuth2ConsentRequestOpenIdConnectContextSchema),
-    request_url: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    client: OAuth2ClientSchema.optional(),
+    oidc_context: OAuth2ConsentRequestOpenIdConnectContextSchema.optional(),
+    request_url: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "RequestURL is the original OAuth 2.0 Authorization URL requested by the OAuth 2.0 client. It is the URL which initiates the OAuth 2.0 Authorization Code or OAuth 2.0 Implicit flow. This URL is typically not needed, but might come in handy if you want to deal with additional request parameters.",
-      }),
-    ),
-    requested_access_token_audience: z.optional(z.array(z.string())),
-    requested_scope: z.optional(z.array(z.string())),
-    session_id: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    requested_access_token_audience: z.array(z.string()).optional(),
+    requested_scope: z.array(z.string()).optional(),
+    session_id: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           'SessionID is the login session ID. If the user-agent reuses a login session (via cookie / remember flag) this ID will remain the same. If the user-agent did not have an existing authentication session (e.g. remember is false) this will be a new random value. This value is used as the \\"sid\\" parameter in the ID Token and in OIDC Front-/Back- channel logout. It\'s value can generally be used to associate consecutive login requests by a certain user.',
-      }),
-    ),
-    skip: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    skip: z
+      .boolean()
+      .register(z.globalRegistry, {
         description:
           "Skip, if true, implies that the client has requested the same scopes from the same user previously. If true, you can skip asking the user to grant the requested scopes, and simply forward the user to the redirect URL.  This feature allows you to update / set session information.",
-      }),
-    ),
-    subject: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    subject: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Subject is the user ID of the end-user that authenticated. Now, that end user needs to grant or deny the scope requested by the OAuth 2.0 client. If this value is set and `skip` is true, you MUST include this subject type when accepting the login request, or the request will fail.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "OAuth2LoginRequest struct for OAuth2LoginRequest",
   });
 
 export const RegistrationFlowSchema = z.object({
-  active: z.optional(
-    z
-      .enum([
-        "password",
-        "oidc",
-        "totp",
-        "lookup_secret",
-        "webauthn",
-        "code",
-        "passkey",
-        "profile",
-        "link_recovery",
-        "code_recovery",
-      ])
-      .register(z.globalRegistry, {
-        description:
-          "Active, if set, contains the registration method that is being used. It is initially\nnot set.\npassword CredentialsTypePassword\noidc CredentialsTypeOIDC\ntotp CredentialsTypeTOTP\nlookup_secret CredentialsTypeLookup\nwebauthn CredentialsTypeWebAuthn\ncode CredentialsTypeCodeAuth\npasskey CredentialsTypePasskey\nprofile CredentialsTypeProfile\nlink_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.\ncode_recovery CredentialsTypeRecoveryCode",
-      }),
-  ),
+  active: z
+    .enum([
+      "password",
+      "oidc",
+      "totp",
+      "lookup_secret",
+      "webauthn",
+      "code",
+      "passkey",
+      "profile",
+      "link_recovery",
+      "code_recovery",
+    ])
+    .register(z.globalRegistry, {
+      description:
+        "Active, if set, contains the registration method that is being used. It is initially\nnot set.\npassword CredentialsTypePassword\noidc CredentialsTypeOIDC\ntotp CredentialsTypeTOTP\nlookup_secret CredentialsTypeLookup\nwebauthn CredentialsTypeWebAuthn\ncode CredentialsTypeCodeAuth\npasskey CredentialsTypePasskey\nprofile CredentialsTypeProfile\nlink_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.\ncode_recovery CredentialsTypeRecoveryCode",
+    })
+    .optional(),
   expires_at: z.iso
     .datetime({ offset: true, local: true })
     .register(z.globalRegistry, {
@@ -2492,39 +2663,43 @@ export const RegistrationFlowSchema = z.object({
     .register(z.globalRegistry, {
       description: "IssuedAt is the time (UTC) when the flow occurred.",
     }),
-  oauth2_login_challenge: z.optional(
-    z.string().register(z.globalRegistry, {
+  oauth2_login_challenge: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Ory OAuth 2.0 Login Challenge.\n\nThis value is set using the `login_challenge` query parameter of the registration and login endpoints.\nIf set will cooperate with Ory OAuth2 and OpenID to act as an OAuth2 server / OpenID Provider.",
-    }),
-  ),
-  oauth2_login_request: z.optional(OAuth2LoginRequestSchema),
-  organization_id: z.optional(NullUuidSchema),
+    })
+    .optional(),
+  oauth2_login_request: OAuth2LoginRequestSchema.optional(),
+  organization_id: NullUuidSchema.optional(),
   request_url: z.string().register(z.globalRegistry, {
     description:
       "RequestURL is the initial URL that was requested from Ory Kratos. It can be used\nto forward information contained in the URL's path or query for example.",
   }),
-  return_to: z.optional(
-    z.string().register(z.globalRegistry, {
+  return_to: z
+    .string()
+    .register(z.globalRegistry, {
       description: "ReturnTo contains the requested return_to URL.",
-    }),
-  ),
-  session_token_exchange_code: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  session_token_exchange_code: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         'SessionTokenExchangeCode holds the secret code that the client can use to retrieve a session token after the flow has been completed.\nThis is only set if the client has requested a session token exchange code, and if the flow is of type "api",\nand only on creating the flow.',
-    }),
-  ),
+    })
+    .optional(),
   state: z.unknown().register(z.globalRegistry, {
     description:
       "State represents the state of this request:\n\nchoose_method: ask the user to choose a method (e.g. registration with email)\nsent_email: the email has been sent to the user\npassed_challenge: the request was successful and the registration challenge was passed.",
   }),
-  transient_payload: z.optional(
-    z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+  transient_payload: z
+    .record(z.string(), z.unknown())
+    .register(z.globalRegistry, {
       description:
         "TransientPayload is used to pass data from the registration to a webhook",
-    }),
-  ),
+    })
+    .optional(),
   type: SelfServiceFlowTypeSchema,
   ui: UiContainerSchema,
 });
@@ -2538,17 +2713,19 @@ export const RegistrationFlowSchema = z.object({
  */
 export const RecoveryFlowSchema = z
   .object({
-    active: z.optional(
-      z.string().register(z.globalRegistry, {
+    active: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Active, if set, contains the recovery method that is being used. It is initially\nnot set.",
-      }),
-    ),
-    continue_with: z.optional(
-      z.array(ContinueWithSchema).register(z.globalRegistry, {
+      })
+      .optional(),
+    continue_with: z
+      .array(ContinueWithSchema)
+      .register(z.globalRegistry, {
         description: "Contains possible actions that could follow this flow",
-      }),
-    ),
+      })
+      .optional(),
     expires_at: z.iso
       .datetime({ offset: true, local: true })
       .register(z.globalRegistry, {
@@ -2568,21 +2745,23 @@ export const RecoveryFlowSchema = z
       description:
         "RequestURL is the initial URL that was requested from Ory Kratos. It can be used\nto forward information contained in the URL's path or query for example.",
     }),
-    return_to: z.optional(
-      z.string().register(z.globalRegistry, {
+    return_to: z
+      .string()
+      .register(z.globalRegistry, {
         description: "ReturnTo contains the requested return_to URL.",
-      }),
-    ),
+      })
+      .optional(),
     state: z.unknown().register(z.globalRegistry, {
       description:
         "State represents the state of this request:\n\nchoose_method: ask the user to choose a method (e.g. recover account via email)\nsent_email: the email has been sent to the user\npassed_challenge: the request was successful and the recovery challenge was passed.",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "TransientPayload is used to pass data from the recovery flow to hooks and email templates",
-      }),
-    ),
+      })
+      .optional(),
     type: SelfServiceFlowTypeSchema,
     ui: UiContainerSchema,
   })
@@ -2631,30 +2810,30 @@ export const LogoutFlowSchema = z
  */
 export const LoginFlowSchema = z
   .object({
-    active: z.optional(
-      z
-        .enum([
-          "password",
-          "oidc",
-          "totp",
-          "lookup_secret",
-          "webauthn",
-          "code",
-          "passkey",
-          "profile",
-          "link_recovery",
-          "code_recovery",
-        ])
-        .register(z.globalRegistry, {
-          description:
-            "The active login method\n\nIf set contains the login method used. If the flow is new, it is unset.\npassword CredentialsTypePassword\noidc CredentialsTypeOIDC\ntotp CredentialsTypeTOTP\nlookup_secret CredentialsTypeLookup\nwebauthn CredentialsTypeWebAuthn\ncode CredentialsTypeCodeAuth\npasskey CredentialsTypePasskey\nprofile CredentialsTypeProfile\nlink_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.\ncode_recovery CredentialsTypeRecoveryCode",
-        }),
-    ),
-    created_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    active: z
+      .enum([
+        "password",
+        "oidc",
+        "totp",
+        "lookup_secret",
+        "webauthn",
+        "code",
+        "passkey",
+        "profile",
+        "link_recovery",
+        "code_recovery",
+      ])
+      .register(z.globalRegistry, {
+        description:
+          "The active login method\n\nIf set contains the login method used. If the flow is new, it is unset.\npassword CredentialsTypePassword\noidc CredentialsTypeOIDC\ntotp CredentialsTypeTOTP\nlookup_secret CredentialsTypeLookup\nwebauthn CredentialsTypeWebAuthn\ncode CredentialsTypeCodeAuth\npasskey CredentialsTypePasskey\nprofile CredentialsTypeProfile\nlink_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.\ncode_recovery CredentialsTypeRecoveryCode",
+      })
+      .optional(),
+    created_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "CreatedAt is a helper struct field for gobuffalo.pop.",
-      }),
-    ),
+      })
+      .optional(),
     expires_at: z.iso
       .datetime({ offset: true, local: true })
       .register(z.globalRegistry, {
@@ -2670,53 +2849,59 @@ export const LoginFlowSchema = z
       .register(z.globalRegistry, {
         description: "IssuedAt is the time (UTC) when the flow started.",
       }),
-    oauth2_login_challenge: z.optional(
-      z.string().register(z.globalRegistry, {
+    oauth2_login_challenge: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Ory OAuth 2.0 Login Challenge.\n\nThis value is set using the `login_challenge` query parameter of the registration and login endpoints.\nIf set will cooperate with Ory OAuth2 and OpenID to act as an OAuth2 server / OpenID Provider.",
-      }),
-    ),
-    oauth2_login_request: z.optional(OAuth2LoginRequestSchema),
-    organization_id: z.optional(NullUuidSchema),
-    refresh: z.optional(
-      z.boolean().register(z.globalRegistry, {
+      })
+      .optional(),
+    oauth2_login_request: OAuth2LoginRequestSchema.optional(),
+    organization_id: NullUuidSchema.optional(),
+    refresh: z
+      .boolean()
+      .register(z.globalRegistry, {
         description:
           "Refresh stores whether this login flow should enforce re-authentication.",
-      }),
-    ),
+      })
+      .optional(),
     request_url: z.string().register(z.globalRegistry, {
       description:
         "RequestURL is the initial URL that was requested from Ory Kratos. It can be used\nto forward information contained in the URL's path or query for example.",
     }),
-    requested_aal: z.optional(AuthenticatorAssuranceLevelSchema),
-    return_to: z.optional(
-      z.string().register(z.globalRegistry, {
+    requested_aal: AuthenticatorAssuranceLevelSchema.optional(),
+    return_to: z
+      .string()
+      .register(z.globalRegistry, {
         description: "ReturnTo contains the requested return_to URL.",
-      }),
-    ),
-    session_token_exchange_code: z.optional(
-      z.string().register(z.globalRegistry, {
+      })
+      .optional(),
+    session_token_exchange_code: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           'SessionTokenExchangeCode holds the secret code that the client can use to retrieve a session token after the login flow has been completed.\nThis is only set if the client has requested a session token exchange code, and if the flow is of type "api",\nand only on creating the login flow.',
-      }),
-    ),
+      })
+      .optional(),
     state: z.unknown().register(z.globalRegistry, {
       description:
         "State represents the state of this request:\n\nchoose_method: ask the user to choose a method to sign in with\nsent_email: the email has been sent to the user\npassed_challenge: the request was successful and the login challenge was passed.",
     }),
-    transient_payload: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+    transient_payload: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description:
           "TransientPayload is used to pass data from the login to hooks and email templates",
-      }),
-    ),
+      })
+      .optional(),
     type: SelfServiceFlowTypeSchema,
     ui: UiContainerSchema,
-    updated_at: z.optional(
-      z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+    updated_at: z.iso
+      .datetime({ offset: true, local: true })
+      .register(z.globalRegistry, {
         description: "UpdatedAt is a helper struct field for gobuffalo.pop.",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description:
@@ -2728,16 +2913,18 @@ export const LoginFlowSchema = z
  */
 export const IdentitySchemaContainerSchema = z
   .object({
-    id: z.optional(
-      z.string().register(z.globalRegistry, {
+    id: z
+      .string()
+      .register(z.globalRegistry, {
         description: "The ID of the Identity JSON Schema",
-      }),
-    ),
-    schema: z.optional(
-      z.record(z.string(), z.unknown()).register(z.globalRegistry, {
+      })
+      .optional(),
+    schema: z
+      .record(z.string(), z.unknown())
+      .register(z.globalRegistry, {
         description: "The actual Identity JSON Schema",
-      }),
-    ),
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "An Identity JSON Schema Container",
@@ -2762,72 +2949,79 @@ export const IdentitySchemaSchema = z
   });
 
 export const GenericErrorSchema = z.object({
-  code: z.optional(
-    z.coerce
-      .bigint()
-      .min(BigInt("-9223372036854775808"), {
-        error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-      })
-      .max(BigInt("9223372036854775807"), {
-        error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-      })
-      .register(z.globalRegistry, {
-        description: "The status code",
-      }),
-  ),
-  debug: z.optional(
-    z.string().register(z.globalRegistry, {
+  code: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .register(z.globalRegistry, {
+      description: "The status code",
+    })
+    .optional(),
+  debug: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "Debug information\n\nThis field is often not exposed to protect against leaking\nsensitive information.",
-    }),
-  ),
-  details: z.optional(
-    z.record(z.string(), z.never()).register(z.globalRegistry, {
+    })
+    .optional(),
+  details: z
+    .record(z.string(), z.never())
+    .register(z.globalRegistry, {
       description: "Further error details",
-    }),
-  ),
-  id: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  id: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "The error ID\n\nUseful when trying to identify various errors in application logic.",
-    }),
-  ),
+    })
+    .optional(),
   message: z.string().register(z.globalRegistry, {
     description: "Error message\n\nThe error's message.",
   }),
-  reason: z.optional(
-    z.string().register(z.globalRegistry, {
+  reason: z
+    .string()
+    .register(z.globalRegistry, {
       description: "A human-readable reason for the error",
-    }),
-  ),
-  request: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  request: z
+    .string()
+    .register(z.globalRegistry, {
       description:
         "The request ID\n\nThe request ID is often exposed internally in order to trace\nerrors across service architectures. This is often a UUID.",
-    }),
-  ),
-  status: z.optional(
-    z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  status: z
+    .string()
+    .register(z.globalRegistry, {
       description: "The status description",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 export const FlowErrorSchema = z.object({
-  created_at: z.optional(
-    z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+  created_at: z.iso
+    .datetime({ offset: true, local: true })
+    .register(z.globalRegistry, {
       description: "CreatedAt is a helper struct field for gobuffalo.pop.",
-    }),
-  ),
-  error: z.optional(z.record(z.string(), z.unknown())),
+    })
+    .optional(),
+  error: z.record(z.string(), z.unknown()).optional(),
   id: z.uuid().register(z.globalRegistry, {
     description: "ID of the error container.",
   }),
-  updated_at: z.optional(
-    z.iso.datetime({ offset: true, local: true }).register(z.globalRegistry, {
+  updated_at: z.iso
+    .datetime({ offset: true, local: true })
+    .register(z.globalRegistry, {
       description: "UpdatedAt is a helper struct field for gobuffalo.pop.",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -2847,12 +3041,13 @@ export const ErrorGenericSchema = z
  * Is sent when a flow requires a browser to change its location.
  */
 export const ErrorBrowserLocationChangeRequiredSchema = z.object({
-  error: z.optional(ErrorGenericSchema),
-  redirect_browser_to: z.optional(
-    z.string().register(z.globalRegistry, {
+  error: ErrorGenericSchema.optional(),
+  redirect_browser_to: z
+    .string()
+    .register(z.globalRegistry, {
       description: "Points to where to redirect the user to next.",
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -2860,28 +3055,27 @@ export const ErrorBrowserLocationChangeRequiredSchema = z.object({
  */
 export const DeleteMySessionsCountSchema = z
   .object({
-    count: z.optional(
-      z.coerce
-        .bigint()
-        .min(BigInt("-9223372036854775808"), {
-          error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-        })
-        .max(BigInt("9223372036854775807"), {
-          error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-        })
-        .register(z.globalRegistry, {
-          description: "The number of sessions that were revoked.",
-        }),
-    ),
+    count: z.coerce
+      .bigint()
+      .min(BigInt("-9223372036854775808"), {
+        error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+      })
+      .max(BigInt("9223372036854775807"), {
+        error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+      })
+      .register(z.globalRegistry, {
+        description: "The number of sessions that were revoked.",
+      })
+      .optional(),
   })
   .register(z.globalRegistry, {
     description: "Deleted Session Count",
   });
 
 export const GetWebAuthnJavaScriptRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
 /**
@@ -2890,9 +3084,9 @@ export const GetWebAuthnJavaScriptRequestSchema = z.object({
 export const GetWebAuthnJavaScriptResponseSchema = WebAuthnJavaScriptSchema;
 
 export const IsAliveRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
 /**
@@ -2909,9 +3103,9 @@ export const IsAliveResponseSchema = z
   });
 
 export const IsReadyRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
 /**
@@ -2928,59 +3122,53 @@ export const IsReadyResponseSchema = z
   });
 
 export const ListIdentitySchemasRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      per_page: z
-        .optional(
-          z.coerce
-            .bigint()
-            .gte(BigInt(1))
-            .lte(BigInt(1000))
-            .register(z.globalRegistry, {
-              description:
-                "Deprecated Items per Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis is the number of items per page.",
-            }),
-        )
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      per_page: z.coerce
+        .bigint()
+        .gte(BigInt(1))
+        .lte(BigInt(1000))
+        .register(z.globalRegistry, {
+          description:
+            "Deprecated Items per Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis is the number of items per page.",
+        })
+        .optional()
         .default(BigInt(250)),
-      page: z.optional(
-        z.coerce
-          .bigint()
-          .min(BigInt("-9223372036854775808"), {
-            error:
-              "Invalid value: Expected int64 to be >= -9223372036854775808",
-          })
-          .max(BigInt("9223372036854775807"), {
-            error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-          })
-          .register(z.globalRegistry, {
-            description:
-              "Deprecated Pagination Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis value is currently an integer, but it is not sequential. The value is not the page number, but a\nreference. The next page can be any number and some numbers might return an empty list.\n\nFor example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist.\nThe first page can be retrieved by omitting this parameter. Following page pointers will be returned in the\n`Link` header.",
-          }),
-      ),
-      page_size: z
-        .optional(
-          z.coerce
-            .bigint()
-            .gte(BigInt(1))
-            .lte(BigInt(500))
-            .register(z.globalRegistry, {
-              description:
-                "Page Size\n\nThis is the number of items per page to return. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
-            }),
-        )
+      page: z.coerce
+        .bigint()
+        .min(BigInt("-9223372036854775808"), {
+          error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+        })
+        .max(BigInt("9223372036854775807"), {
+          error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+        })
+        .register(z.globalRegistry, {
+          description:
+            "Deprecated Pagination Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis value is currently an integer, but it is not sequential. The value is not the page number, but a\nreference. The next page can be any number and some numbers might return an empty list.\n\nFor example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist.\nThe first page can be retrieved by omitting this parameter. Following page pointers will be returned in the\n`Link` header.",
+        })
+        .optional(),
+      page_size: z.coerce
+        .bigint()
+        .gte(BigInt(1))
+        .lte(BigInt(500))
+        .register(z.globalRegistry, {
+          description:
+            "Page Size\n\nThis is the number of items per page to return. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
+        })
+        .optional()
         .default(BigInt(250)),
       page_token: z
-        .optional(
-          z.string().register(z.globalRegistry, {
-            description:
-              "Next Page Token\n\nThe next page token. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
-          }),
-        )
+        .string()
+        .register(z.globalRegistry, {
+          description:
+            "Next Page Token\n\nThe next page token. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
+        })
+        .optional()
         .default("1"),
-    }),
-  ),
+    })
+    .optional(),
 });
 
 /**
@@ -2989,13 +3177,13 @@ export const ListIdentitySchemasRequestSchema = z.object({
 export const ListIdentitySchemasResponseSchema = IdentitySchemasSchema;
 
 export const GetIdentitySchemaRequestSchema = z.object({
-  body: z.optional(z.never()),
+  body: z.never().optional(),
   path: z.object({
     id: z.string().register(z.globalRegistry, {
       description: "ID must be set to the ID of schema you want to get",
     }),
   }),
-  query: z.optional(z.never()),
+  query: z.never().optional(),
 });
 
 /**
@@ -3004,8 +3192,8 @@ export const GetIdentitySchemaRequestSchema = z.object({
 export const GetIdentitySchemaResponseSchema = IdentitySchemaSchema;
 
 export const GetFlowErrorRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     id: z.string().register(z.globalRegistry, {
       description: "Error is the error's ID",
@@ -3020,29 +3208,31 @@ export const GetFlowErrorResponseSchema = FlowErrorSchema;
 
 export const UpdateLoginFlowRequestSchema = z.object({
   body: UpdateLoginFlowBodySchema,
-  path: z.optional(z.never()),
+  path: z.never().optional(),
   query: z.object({
     flow: z.string().register(z.globalRegistry, {
       description:
         "The Login Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/login?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The Session Token of the Identity performing the settings flow.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3051,52 +3241,58 @@ export const UpdateLoginFlowRequestSchema = z.object({
 export const UpdateLoginFlowResponseSchema = SuccessfulNativeLoginSchema;
 
 export const CreateNativeLoginFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      refresh: z.optional(
-        z.boolean().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      refresh: z
+        .boolean()
+        .register(z.globalRegistry, {
           description:
             "Refresh a login session\n\nIf set to true, this will refresh an existing login session by\nasking the user to sign in again. This will reset the\nauthenticated_at time of the session.",
-        }),
-      ),
-      aal: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      aal: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             'Request a Specific AuthenticationMethod Assurance Level\n\nUse this parameter to upgrade an existing session\'s authenticator assurance level (AAL). This\nallows you to ask for multi-factor authentication. When an identity sign in using e.g. username+password,\nthe AAL is 1. If you wish to "upgrade" the session\'s security by asking the user to perform TOTP / WebAuth/ ...\nyou would set this to "aal2".',
-        }),
-      ),
-      return_session_token_exchange_code: z.optional(
-        z.boolean().register(z.globalRegistry, {
+        })
+        .optional(),
+      return_session_token_exchange_code: z
+        .boolean()
+        .register(z.globalRegistry, {
           description:
             "EnableSessionTokenExchangeCode requests the login flow to include a code that can be used to retrieve the session token\nafter the login flow has been completed.",
-        }),
-      ),
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-      via: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      via: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Via should contain the identity's credential the code should be sent to. Only relevant in aal2 flows.\n\nDEPRECATED: This field is deprecated. Please remove it from your requests. The user will now see a choice\nof MFA credentials to choose from to perform the second factor instead.",
-        }),
-      ),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+    })
+    .optional(),
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The Session Token of the Identity performing the settings flow.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3105,58 +3301,65 @@ export const CreateNativeLoginFlowRequestSchema = z.object({
 export const CreateNativeLoginFlowResponseSchema = LoginFlowSchema;
 
 export const CreateBrowserLoginFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      refresh: z.optional(
-        z.boolean().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      refresh: z
+        .boolean()
+        .register(z.globalRegistry, {
           description:
             "Refresh a login session\n\nIf set to true, this will refresh an existing login session by\nasking the user to sign in again. This will reset the\nauthenticated_at time of the session.",
-        }),
-      ),
-      aal: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      aal: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             'Request a Specific AuthenticationMethod Assurance Level\n\nUse this parameter to upgrade an existing session\'s authenticator assurance level (AAL). This\nallows you to ask for multi-factor authentication. When an identity sign in using e.g. username+password,\nthe AAL is 1. If you wish to "upgrade" the session\'s security by asking the user to perform TOTP / WebAuth/ ...\nyou would set this to "aal2".',
-        }),
-      ),
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-      login_challenge: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      login_challenge: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "An optional Hydra login challenge. If present, Kratos will cooperate with\nOry Hydra to act as an OAuth2 identity provider.\n\nThe value for this parameter comes from `login_challenge` URL Query parameter sent to your\napplication (e.g. `/login?login_challenge=abcde`).",
-        }),
-      ),
-      organization: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      organization: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "An optional organization ID that should be used for logging this user in.\nThis parameter is only effective in the Ory Network.",
-        }),
-      ),
-      via: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      via: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Via should contain the identity's credential the code should be sent to. Only relevant in aal2 flows.\n\nDEPRECATED: This field is deprecated. Please remove it from your requests. The user will now see a choice\nof MFA credentials to choose from to perform the second factor instead.",
-        }),
-      ),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+    })
+    .optional(),
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3165,24 +3368,25 @@ export const CreateBrowserLoginFlowRequestSchema = z.object({
 export const CreateBrowserLoginFlowResponseSchema = LoginFlowSchema;
 
 export const GetLoginFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     id: z.string().register(z.globalRegistry, {
       description:
         "The Login Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/login?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3191,33 +3395,36 @@ export const GetLoginFlowRequestSchema = z.object({
 export const GetLoginFlowResponseSchema = LoginFlowSchema;
 
 export const UpdateLogoutFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      token: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      token: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "A Valid Logout Token\n\nIf you do not have a logout token because you only have a session cookie,\ncall `/self-service/logout/browser` to generate a URL for this endpoint.",
-        }),
-      ),
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description: "The URL to return to after the logout was completed.",
-        }),
-      ),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+    })
+    .optional(),
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3232,8 +3439,8 @@ export const UpdateLogoutFlowResponseSchema = z
 
 export const PerformNativeLogoutRequestSchema = z.object({
   body: PerformNativeLogoutBodySchema,
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
 /**
@@ -3247,28 +3454,30 @@ export const PerformNativeLogoutResponseSchema = z
   });
 
 export const CreateBrowserLogoutFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Return to URL\n\nThe URL to which the browser should be redirected to after the logout\nhas been performed.",
-        }),
-      ),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+    })
+    .optional(),
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nIf you call this endpoint from a backend, please include the\noriginal Cookie header in the request.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3278,29 +3487,31 @@ export const CreateBrowserLogoutFlowResponseSchema = LogoutFlowSchema;
 
 export const UpdateRecoveryFlowRequestSchema = z.object({
   body: UpdateRecoveryFlowBodySchema,
-  path: z.optional(z.never()),
+  path: z.never().optional(),
   query: z.object({
     flow: z.string().register(z.globalRegistry, {
       description:
         "The Recovery Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/recovery?flow=abcde`).",
     }),
-    token: z.optional(
-      z.string().register(z.globalRegistry, {
+    token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Recovery Token\n\nThe recovery token which completes the recovery request. If the token\nis invalid (e.g. expired) an error will be shown to the end-user.\n\nThis parameter is usually set in a link and not used by any direct API call.",
-      }),
-    ),
+      })
+      .optional(),
   }),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3309,9 +3520,9 @@ export const UpdateRecoveryFlowRequestSchema = z.object({
 export const UpdateRecoveryFlowResponseSchema = RecoveryFlowSchema;
 
 export const CreateNativeRecoveryFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
 /**
@@ -3320,18 +3531,19 @@ export const CreateNativeRecoveryFlowRequestSchema = z.object({
 export const CreateNativeRecoveryFlowResponseSchema = RecoveryFlowSchema;
 
 export const CreateBrowserRecoveryFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3340,24 +3552,25 @@ export const CreateBrowserRecoveryFlowRequestSchema = z.object({
 export const CreateBrowserRecoveryFlowResponseSchema = RecoveryFlowSchema;
 
 export const GetRecoveryFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     id: z.string().register(z.globalRegistry, {
       description:
         "The Flow ID\n\nThe value for this parameter comes from `request` URL Query parameter sent to your\napplication (e.g. `/recovery?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3367,23 +3580,24 @@ export const GetRecoveryFlowResponseSchema = RecoveryFlowSchema;
 
 export const UpdateRegistrationFlowRequestSchema = z.object({
   body: UpdateRegistrationFlowBodySchema,
-  path: z.optional(z.never()),
+  path: z.never().optional(),
   query: z.object({
     flow: z.string().register(z.globalRegistry, {
       description:
         "The Registration Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/registration?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3393,24 +3607,26 @@ export const UpdateRegistrationFlowResponseSchema =
   SuccessfulNativeRegistrationSchema;
 
 export const CreateNativeRegistrationFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      return_session_token_exchange_code: z.optional(
-        z.boolean().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      return_session_token_exchange_code: z
+        .boolean()
+        .register(z.globalRegistry, {
           description:
             "EnableSessionTokenExchangeCode requests the login flow to include a code that can be used to retrieve the session token\nafter the login flow has been completed.",
-        }),
-      ),
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3420,31 +3636,34 @@ export const CreateNativeRegistrationFlowResponseSchema =
   RegistrationFlowSchema;
 
 export const CreateBrowserRegistrationFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-      login_challenge: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      login_challenge: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Ory OAuth 2.0 Login Challenge.\n\nIf set will cooperate with Ory OAuth2 and OpenID to act as an OAuth2 server / OpenID Provider.\n\nThe value for this parameter comes from `login_challenge` URL Query parameter sent to your\napplication (e.g. `/registration?login_challenge=abcde`).\n\nThis feature is compatible with Ory Hydra when not running on the Ory Network.",
-        }),
-      ),
-      after_verification_return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      after_verification_return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the verification flow was completed.\n\nAfter the registration flow is completed, the user will be sent a verification email.\nUpon completing the verification flow, this URL will be used to override the default\n`selfservice.flows.verification.after.default_redirect_to` value.",
-        }),
-      ),
-      organization: z.optional(z.string()),
-    }),
-  ),
+        })
+        .optional(),
+      organization: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3454,24 +3673,25 @@ export const CreateBrowserRegistrationFlowResponseSchema =
   RegistrationFlowSchema;
 
 export const GetRegistrationFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     id: z.string().register(z.globalRegistry, {
       description:
         "The Registration Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/registration?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3481,29 +3701,31 @@ export const GetRegistrationFlowResponseSchema = RegistrationFlowSchema;
 
 export const UpdateSettingsFlowRequestSchema = z.object({
   body: UpdateSettingsFlowBodySchema,
-  path: z.optional(z.never()),
+  path: z.never().optional(),
   query: z.object({
     flow: z.string().register(z.globalRegistry, {
       description:
         "The Settings Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/settings?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The Session Token of the Identity performing the settings flow.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3512,19 +3734,20 @@ export const UpdateSettingsFlowRequestSchema = z.object({
 export const UpdateSettingsFlowResponseSchema = SettingsFlowSchema;
 
 export const CreateNativeSettingsFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The Session Token of the Identity performing the settings flow.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3533,28 +3756,30 @@ export const CreateNativeSettingsFlowRequestSchema = z.object({
 export const CreateNativeSettingsFlowResponseSchema = SettingsFlowSchema;
 
 export const CreateBrowserSettingsFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+    })
+    .optional(),
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3563,30 +3788,32 @@ export const CreateBrowserSettingsFlowRequestSchema = z.object({
 export const CreateBrowserSettingsFlowResponseSchema = SettingsFlowSchema;
 
 export const GetSettingsFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     id: z.string().register(z.globalRegistry, {
       description:
         "ID is the Settings Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/settings?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The Session Token\n\nWhen using the SDK in an app without a browser, please include the\nsession token here.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3596,29 +3823,31 @@ export const GetSettingsFlowResponseSchema = SettingsFlowSchema;
 
 export const UpdateVerificationFlowRequestSchema = z.object({
   body: UpdateVerificationFlowBodySchema,
-  path: z.optional(z.never()),
+  path: z.never().optional(),
   query: z.object({
     flow: z.string().register(z.globalRegistry, {
       description:
         "The Verification Flow ID\n\nThe value for this parameter comes from `flow` URL Query parameter sent to your\napplication (e.g. `/verification?flow=abcde`).",
     }),
-    token: z.optional(
-      z.string().register(z.globalRegistry, {
+    token: z
+      .string()
+      .register(z.globalRegistry, {
         description:
           "Verification Token\n\nThe verification token which completes the verification request. If the token\nis invalid (e.g. expired) an error will be shown to the end-user.\n\nThis parameter is usually set in a link and not used by any direct API call.",
-      }),
-    ),
+      })
+      .optional(),
   }),
-  headers: z.optional(
-    z.object({
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK in a browser app, on the server side you must include the HTTP Cookie Header\nsent by the client to your server here. This ensures that CSRF and session cookies are respected.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3627,9 +3856,9 @@ export const UpdateVerificationFlowRequestSchema = z.object({
 export const UpdateVerificationFlowResponseSchema = VerificationFlowSchema;
 
 export const CreateNativeVerificationFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
 /**
@@ -3639,18 +3868,19 @@ export const CreateNativeVerificationFlowResponseSchema =
   VerificationFlowSchema;
 
 export const CreateBrowserVerificationFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      return_to: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      return_to: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "The URL to return the browser to after the flow was completed.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3660,24 +3890,25 @@ export const CreateBrowserVerificationFlowResponseSchema =
   VerificationFlowSchema;
 
 export const GetVerificationFlowRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     id: z.string().register(z.globalRegistry, {
       description:
         "The Flow ID\n\nThe value for this parameter comes from `request` URL Query parameter sent to your\napplication (e.g. `/verification?flow=abcde`).",
     }),
   }),
-  headers: z.optional(
-    z.object({
-      cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+  headers: z
+    .object({
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "HTTP Cookies\n\nWhen using the SDK on the server side you must include the HTTP Cookie Header\noriginally sent to your HTTP handler here.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3686,25 +3917,27 @@ export const GetVerificationFlowRequestSchema = z.object({
 export const GetVerificationFlowResponseSchema = VerificationFlowSchema;
 
 export const DisableMyOtherSessionsRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Session Token when calling from non-browser clients. A session token has a format of `MP2YWEMeM8MxjkGKpH4dqOQ4Q4DlSPaj`.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Cookie Header. This is especially useful when calling this endpoint from a server-side application. In that\nscenario you must include the HTTP Cookie Header which originally was included in the request to your server.\nAn example of a session in the HTTP Cookie Header is: `ory_kratos_session=a19iOVAbdzdgl70Rq1QZmrKmcjDtdsviCTZx7m9a9yHIUS8Wa9T7hvqyGTsLHi6Qifn2WUfpAKx9DWp0SJGleIn9vh2YF4A16id93kXFTgIgmwIOvbVAScyrx7yVl6bPZnCx27ec4WQDtaTewC1CpgudeDV2jQQnSaCP6ny3xa8qLH-QUgYqdQuoA_LF1phxgRCUfIrCLQOkolX5nv3ze_f==`.\n\nIt is ok if more than one cookie are included here as all other cookies will be ignored.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3713,75 +3946,71 @@ export const DisableMyOtherSessionsRequestSchema = z.object({
 export const DisableMyOtherSessionsResponseSchema = DeleteMySessionsCountSchema;
 
 export const ListMySessionsRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      per_page: z
-        .optional(
-          z.coerce
-            .bigint()
-            .gte(BigInt(1))
-            .lte(BigInt(1000))
-            .register(z.globalRegistry, {
-              description:
-                "Deprecated Items per Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis is the number of items per page.",
-            }),
-        )
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      per_page: z.coerce
+        .bigint()
+        .gte(BigInt(1))
+        .lte(BigInt(1000))
+        .register(z.globalRegistry, {
+          description:
+            "Deprecated Items per Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis is the number of items per page.",
+        })
+        .optional()
         .default(BigInt(250)),
-      page: z.optional(
-        z.coerce
-          .bigint()
-          .min(BigInt("-9223372036854775808"), {
-            error:
-              "Invalid value: Expected int64 to be >= -9223372036854775808",
-          })
-          .max(BigInt("9223372036854775807"), {
-            error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-          })
-          .register(z.globalRegistry, {
-            description:
-              "Deprecated Pagination Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis value is currently an integer, but it is not sequential. The value is not the page number, but a\nreference. The next page can be any number and some numbers might return an empty list.\n\nFor example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist.\nThe first page can be retrieved by omitting this parameter. Following page pointers will be returned in the\n`Link` header.",
-          }),
-      ),
-      page_size: z
-        .optional(
-          z.coerce
-            .bigint()
-            .gte(BigInt(1))
-            .lte(BigInt(500))
-            .register(z.globalRegistry, {
-              description:
-                "Page Size\n\nThis is the number of items per page to return. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
-            }),
-        )
+      page: z.coerce
+        .bigint()
+        .min(BigInt("-9223372036854775808"), {
+          error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+        })
+        .max(BigInt("9223372036854775807"), {
+          error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+        })
+        .register(z.globalRegistry, {
+          description:
+            "Deprecated Pagination Page\n\nDEPRECATED: Please use `page_token` instead. This parameter will be removed in the future.\n\nThis value is currently an integer, but it is not sequential. The value is not the page number, but a\nreference. The next page can be any number and some numbers might return an empty list.\n\nFor example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist.\nThe first page can be retrieved by omitting this parameter. Following page pointers will be returned in the\n`Link` header.",
+        })
+        .optional(),
+      page_size: z.coerce
+        .bigint()
+        .gte(BigInt(1))
+        .lte(BigInt(500))
+        .register(z.globalRegistry, {
+          description:
+            "Page Size\n\nThis is the number of items per page to return. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
+        })
+        .optional()
         .default(BigInt(250)),
       page_token: z
-        .optional(
-          z.string().register(z.globalRegistry, {
-            description:
-              "Next Page Token\n\nThe next page token. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
-          }),
-        )
+        .string()
+        .register(z.globalRegistry, {
+          description:
+            "Next Page Token\n\nThe next page token. For details on pagination please head over to the\n[pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).",
+        })
+        .optional()
         .default("1"),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+    })
+    .optional(),
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Session Token when calling from non-browser clients. A session token has a format of `MP2YWEMeM8MxjkGKpH4dqOQ4Q4DlSPaj`.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Cookie Header. This is especially useful when calling this endpoint from a server-side application. In that\nscenario you must include the HTTP Cookie Header which originally was included in the request to your server.\nAn example of a session in the HTTP Cookie Header is: `ory_kratos_session=a19iOVAbdzdgl70Rq1QZmrKmcjDtdsviCTZx7m9a9yHIUS8Wa9T7hvqyGTsLHi6Qifn2WUfpAKx9DWp0SJGleIn9vh2YF4A16id93kXFTgIgmwIOvbVAScyrx7yVl6bPZnCx27ec4WQDtaTewC1CpgudeDV2jQQnSaCP6ny3xa8qLH-QUgYqdQuoA_LF1phxgRCUfIrCLQOkolX5nv3ze_f==`.\n\nIt is ok if more than one cookie are included here as all other cookies will be ignored.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3794,8 +4023,8 @@ export const ListMySessionsResponseSchema = z
   });
 
 export const ExchangeSessionTokenRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
+  body: z.never().optional(),
+  path: z.never().optional(),
   query: z.object({
     init_code: z.string().register(z.globalRegistry, {
       description: "The part of the code return when initializing the flow.",
@@ -3812,34 +4041,37 @@ export const ExchangeSessionTokenRequestSchema = z.object({
 export const ExchangeSessionTokenResponseSchema = SuccessfulNativeLoginSchema;
 
 export const ToSessionRequestSchema = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(
-    z.object({
-      tokenize_as: z.optional(
-        z.string().register(z.globalRegistry, {
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      tokenize_as: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Returns the session additionally as a token (such as a JWT)\n\nThe value of this parameter has to be a valid, configured Ory Session token template. For more information head over to [the documentation](http://ory.sh/docs/identities/session-to-jwt-cors).",
-        }),
-      ),
-    }),
-  ),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+    })
+    .optional(),
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Session Token when calling from non-browser clients. A session token has a format of `MP2YWEMeM8MxjkGKpH4dqOQ4Q4DlSPaj`.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Cookie Header. This is especially useful when calling this endpoint from a server-side application. In that\nscenario you must include the HTTP Cookie Header which originally was included in the request to your server.\nAn example of a session in the HTTP Cookie Header is: `ory_kratos_session=a19iOVAbdzdgl70Rq1QZmrKmcjDtdsviCTZx7m9a9yHIUS8Wa9T7hvqyGTsLHi6Qifn2WUfpAKx9DWp0SJGleIn9vh2YF4A16id93kXFTgIgmwIOvbVAScyrx7yVl6bPZnCx27ec4WQDtaTewC1CpgudeDV2jQQnSaCP6ny3xa8qLH-QUgYqdQuoA_LF1phxgRCUfIrCLQOkolX5nv3ze_f==`.\n\nIt is ok if more than one cookie are included here as all other cookies will be ignored.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -3848,29 +4080,31 @@ export const ToSessionRequestSchema = z.object({
 export const ToSessionResponseSchema = SessionSchema;
 
 export const DisableMySessionRequestSchema = z.object({
-  body: z.optional(z.never()),
+  body: z.never().optional(),
   path: z.object({
     id: z.string().register(z.globalRegistry, {
       description: "ID is the session's ID.",
     }),
   }),
-  query: z.optional(z.never()),
-  headers: z.optional(
-    z.object({
-      "X-Session-Token": z.optional(
-        z.string().register(z.globalRegistry, {
+  query: z.never().optional(),
+  headers: z
+    .object({
+      "x-session-token": z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Session Token when calling from non-browser clients. A session token has a format of `MP2YWEMeM8MxjkGKpH4dqOQ4Q4DlSPaj`.",
-        }),
-      ),
-      Cookie: z.optional(
-        z.string().register(z.globalRegistry, {
+        })
+        .optional(),
+      cookie: z
+        .string()
+        .register(z.globalRegistry, {
           description:
             "Set the Cookie Header. This is especially useful when calling this endpoint from a server-side application. In that\nscenario you must include the HTTP Cookie Header which originally was included in the request to your server.\nAn example of a session in the HTTP Cookie Header is: `ory_kratos_session=a19iOVAbdzdgl70Rq1QZmrKmcjDtdsviCTZx7m9a9yHIUS8Wa9T7hvqyGTsLHi6Qifn2WUfpAKx9DWp0SJGleIn9vh2YF4A16id93kXFTgIgmwIOvbVAScyrx7yVl6bPZnCx27ec4WQDtaTewC1CpgudeDV2jQQnSaCP6ny3xa8qLH-QUgYqdQuoA_LF1phxgRCUfIrCLQOkolX5nv3ze_f==`.\n\nIt is ok if more than one cookie are included here as all other cookies will be ignored.",
-        }),
-      ),
-    }),
-  ),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
