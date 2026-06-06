@@ -1,7 +1,7 @@
 "use client";
 
 import { msg } from "@lingui/core/macro";
-import { Button, Stack, TextInput } from "@mantine/core";
+import { Button, Select, Stack, TextInput } from "@mantine/core";
 
 import type { SettingsWidgetInput } from "./types";
 
@@ -33,22 +33,28 @@ export function SettingsWidget({ flow }: SettingsWidgetInput) {
           label={localization.localize(msg({ message: "Display Name" }))}
           name={constants.nodes.displayName}
           required={nodes.displayName.attributes.required}
-          type={nodes.displayName.attributes.type}
         />
         <TextInput
           autoComplete={nodes.profilePictureUrl.attributes.autocomplete}
-          defaultValue={nodes.profilePictureUrl.attributes.value as string}
+          defaultValue={
+            nodes.profilePictureUrl.attributes.value as string | undefined
+          }
           label={localization.localize(msg({ message: "Profile Picture URL" }))}
           name={constants.nodes.profilePictureUrl}
           required={nodes.profilePictureUrl.attributes.required}
-          type={nodes.profilePictureUrl.attributes.type}
+          type="url"
         />
-        <TextInput
-          defaultValue={nodes.preferredLocale.attributes.value as string}
+        <Select
+          data={Object.entries(constants.locales).map(([value, { label }]) => ({
+            label: label,
+            value: value,
+          }))}
+          defaultValue={
+            nodes.preferredLocale.attributes.value as string | undefined
+          }
           label={localization.localize(msg({ message: "Preferred Locale" }))}
           name={constants.nodes.preferredLocale}
           required={nodes.preferredLocale.attributes.required}
-          type={nodes.preferredLocale.attributes.type}
         />
         <Button
           name={constants.nodes.method}
