@@ -30,12 +30,12 @@ msgstr "Display Name"
 msgid "Enter some value"
 msgstr "Enter some value"
 
-#: src/isomorphic/notifications/hooks/use-notifications/main.ts:46
+#: src/isomorphic/notifications/hooks/use-notifications/main.ts:40
 msgid "Error"
 msgstr "Error"
 
-#: src/app/(root)/(main)/error.tsx:11
 #: src/app/(root)/(main)/error/page.tsx:20
+#: src/app/(root)/error.tsx:11
 msgid "Error • orchid"
 msgstr "Error • orchid"
 
@@ -47,7 +47,7 @@ msgstr "Error in identity flow"
 msgid "Error not found"
 msgstr "Error not found"
 
-#: src/isomorphic/notifications/hooks/use-notifications/main.ts:56
+#: src/isomorphic/notifications/hooks/use-notifications/main.ts:51
 msgid "Info"
 msgstr "Info"
 
@@ -60,16 +60,16 @@ msgstr "Invalid input"
 msgid "Login • orchid"
 msgstr "Login • orchid"
 
-#: src/app/(root)/(main)/not-found.tsx:15
+#: src/app/(root)/not-found.tsx:15
 msgid "Not Found • orchid"
 msgstr "Not Found • orchid"
 
 #: src/app/(root)/(main)/default/page.tsx:20
-#: src/app/(root)/layout.tsx:39
+#: src/app/(root)/layout.tsx:40
 msgid "orchid"
 msgstr "orchid"
 
-#: src/app/(root)/(main)/not-found.view.tsx:8
+#: src/isomorphic/core/components/generic/not-found-widget/main.tsx:15
 msgid "Page not found"
 msgstr "Page not found"
 
@@ -87,7 +87,7 @@ msgstr "Profile Picture URL"
 msgid "Registration • orchid"
 msgstr "Registration • orchid"
 
-#: src/isomorphic/core/components/generic/error-widget/main.tsx:21
+#: src/isomorphic/core/components/generic/error-widget/main.tsx:25
 msgid "Retry"
 msgstr "Retry"
 
@@ -99,7 +99,7 @@ msgstr "Save"
 msgid "Settings • orchid"
 msgstr "Settings • orchid"
 
-#: src/app/(root)/(main)/error.view.tsx:10
+#: src/isomorphic/core/components/generic/error-widget/main.tsx:16
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -107,15 +107,15 @@ msgstr "Something went wrong"
 msgid "Submit"
 msgstr "Submit"
 
-#: src/isomorphic/notifications/hooks/use-notifications/main.ts:66
+#: src/isomorphic/notifications/hooks/use-notifications/main.ts:62
 msgid "Success"
 msgstr "Success"
 
-#: src/app/(root)/layout.tsx:33
+#: src/app/(root)/layout.tsx:34
 msgid "Users identity app 👤"
 msgstr "Users identity app 👤"
 
-#: src/isomorphic/notifications/hooks/use-notifications/main.ts:76
+#: src/isomorphic/notifications/hooks/use-notifications/main.ts:73
 msgid "Warning"
 msgstr "Warning"
 
