@@ -14,12 +14,14 @@ import type { Schemas } from "./schemas";
 import type { Keys } from "./types";
 
 import { ThemeScript } from "../../common/theme/components/theme-script";
+import { IdentityProvider } from "../../isomorphic/identity/components/identity-provider";
 import { LocalizationProvider } from "../../isomorphic/localization/components/localization-provider";
 import { Metadata } from "../../isomorphic/metadata/components/metadata";
 import { MetadataProvider } from "../../isomorphic/metadata/components/metadata-provider";
 import { QueryProvider } from "../../isomorphic/query/components/query-provider";
 import { StateProvider } from "../../isomorphic/state/components/state-provider";
 import { ThemeProvider } from "../../isomorphic/theme/components/theme-provider";
+import { getIdentity } from "../../server/identity/lib/get-identity";
 import { resolveLocale } from "../../server/localization/lib/resolve-locale";
 import { createMetadata } from "../../server/metadata/lib/create-metadata";
 import { createViewport } from "../../server/metadata/lib/create-viewport";
@@ -85,6 +87,7 @@ export default async function RootLayout({
 
   const { queryClient } = getQueryClient();
   const { locale } = await resolveLocale({ queryClient: queryClient });
+  const { identity } = await getIdentity({ queryClient: queryClient });
 
   return (
     <html lang={locale} suppressHydrationWarning={true}>
@@ -103,11 +106,13 @@ export default async function RootLayout({
                     primaryColor={constants.colors.primary.name}
                     primaryShade={constants.colors.primary.shade}
                   >
-                    <Metadata
-                      description={await getDescription()}
-                      title={await getTitle()}
-                    />
-                    <RootLayoutView>{children}</RootLayoutView>
+                    <IdentityProvider user={identity.user}>
+                      <Metadata
+                        description={await getDescription()}
+                        title={await getTitle()}
+                      />
+                      <RootLayoutView>{children}</RootLayoutView>
+                    </IdentityProvider>
                   </ThemeProvider>
                 </LocalizationProvider>
               </HydrationBoundary>
