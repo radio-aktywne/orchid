@@ -74,12 +74,12 @@ msgid "Page not found"
 msgstr "Page not found"
 
 #: src/isomorphic/core/components/flow/registration-widget/components/complete-registration-form/main.tsx:51
-#: src/isomorphic/core/components/flow/settings-widget/main.tsx:48
+#: src/isomorphic/core/components/flow/settings-widget/main.tsx:55
 msgid "Preferred Locale"
 msgstr "Preferred Locale"
 
 #: src/isomorphic/core/components/flow/registration-widget/components/complete-registration-form/main.tsx:44
-#: src/isomorphic/core/components/flow/settings-widget/main.tsx:41
+#: src/isomorphic/core/components/flow/settings-widget/main.tsx:42
 msgid "Profile Picture URL"
 msgstr "Profile Picture URL"
 
@@ -91,7 +91,7 @@ msgstr "Registration • orchid"
 msgid "Retry"
 msgstr "Retry"
 
-#: src/isomorphic/core/components/flow/settings-widget/main.tsx:58
+#: src/isomorphic/core/components/flow/settings-widget/main.tsx:64
 msgid "Save"
 msgstr "Save"
 

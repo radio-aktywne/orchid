@@ -1,4 +1,8 @@
 export const constants = {
+  locales: {
+    en: { label: "English" },
+    pl: { label: "Polski" },
+  },
   nodes: {
     csrf: "csrf_token",
     displayName: "traits.names.display",

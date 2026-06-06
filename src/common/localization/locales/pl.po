@@ -74,12 +74,12 @@ msgid "Page not found"
 msgstr "Nie znaleziono strony"
 
 #: src/isomorphic/core/components/flow/registration-widget/components/complete-registration-form/main.tsx:51
-#: src/isomorphic/core/components/flow/settings-widget/main.tsx:48
+#: src/isomorphic/core/components/flow/settings-widget/main.tsx:55
 msgid "Preferred Locale"
 msgstr "Preferowany język"
 
 #: src/isomorphic/core/components/flow/registration-widget/components/complete-registration-form/main.tsx:44
-#: src/isomorphic/core/components/flow/settings-widget/main.tsx:41
+#: src/isomorphic/core/components/flow/settings-widget/main.tsx:42
 msgid "Profile Picture URL"
 msgstr "Link do zdjęcia profilowego"
 
@@ -91,7 +91,7 @@ msgstr "Rejestracja • orchid"
 msgid "Retry"
 msgstr "Spróbuj ponownie"
 
-#: src/isomorphic/core/components/flow/settings-widget/main.tsx:58
+#: src/isomorphic/core/components/flow/settings-widget/main.tsx:64
 msgid "Save"
 msgstr "Zapisz"
 
