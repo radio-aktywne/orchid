@@ -60,12 +60,16 @@ msgstr "Invalid input"
 msgid "Login • orchid"
 msgstr "Login • orchid"
 
+#: src/isomorphic/identity/components/identity-widget/main.tsx:21
+msgid "Logout"
+msgstr "Logout"
+
 #: src/app/(root)/not-found.tsx:15
 msgid "Not Found • orchid"
 msgstr "Not Found • orchid"
 
 #: src/app/(root)/(main)/default/page.tsx:20
-#: src/app/(root)/layout.tsx:40
+#: src/app/(root)/layout.tsx:42
 msgid "orchid"
 msgstr "orchid"
 
@@ -111,7 +115,7 @@ msgstr "Submit"
 msgid "Success"
 msgstr "Success"
 
-#: src/app/(root)/layout.tsx:34
+#: src/app/(root)/layout.tsx:36
 msgid "Users identity app 👤"
 msgstr "Users identity app 👤"
 
