@@ -13,7 +13,7 @@ export const userMiddleware = headersMiddleware.concat(
             executed: context.userMiddleware.executed,
             user: context.userMiddleware.user,
           },
-        } satisfies UserMiddlewareOutputContext as UserMiddlewareOutputContext,
+        } satisfies UserMiddlewareOutputContext,
       });
 
     const headers = context.headersMiddleware.headers;
@@ -26,7 +26,7 @@ export const userMiddleware = headersMiddleware.concat(
           executed: true,
           user: user,
         },
-      } satisfies UserMiddlewareOutputContext as UserMiddlewareOutputContext,
+      } satisfies UserMiddlewareOutputContext,
     });
   },
 );

@@ -39,7 +39,7 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
       headers: { Cookie: request.headers.get("Cookie") ?? undefined },
     });
 
-    if (response.status === 401) return;
+    if (response?.status === 401) return;
     if (error) redirect(createErrorUrl().url);
 
     redirect((await createLogoutInitUrl(requestToken)).url);

@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: falcon
-  version: "0.6.0"
+  version: "0.8.0"
 paths:
   /.well-known/ory/webauthn.js:
     get:
@@ -217,8 +217,6 @@ paths:
           in: query
           name: page_token
           schema:
-            default: "1"
-            minimum: 1
             type: string
       responses:
         "200":
@@ -314,6 +312,88 @@ paths:
                 $ref: "#/components/schemas/errorGeneric"
           description: errorGeneric
       summary: Get User-Flow Errors
+      tags:
+        - frontend
+  /self-service/fed-cm/parameters:
+    get:
+      description: >-
+        This endpoint returns a list of all available FedCM providers. It is
+        only supported on the Ory Network.
+      operationId: createFedcmFlow
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/createFedcmFlowResponse"
+          description: createFedcmFlowResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorGeneric"
+          description: errorGeneric
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorGeneric"
+          description: errorGeneric
+      summary: Get FedCM Parameters
+      tags:
+        - frontend
+  /self-service/fed-cm/token:
+    post:
+      description: |-
+        Use this endpoint to submit a token from a FedCM provider through
+        `navigator.credentials.get` and log the user in. The parameters from
+        `navigator.credentials.get` must have come from `GET
+        self-service/fed-cm/parameters`.
+      operationId: updateFedcmFlow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFedcmFlowBody"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/UpdateFedcmFlowBody"
+        required: true
+        x-originalParamName: Body
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successfulNativeLogin"
+          description: successfulNativeLogin
+        "303":
+          $ref: "#/components/responses/emptyResponse"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loginFlow"
+          description: loginFlow
+        "410":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorGeneric"
+          description: errorGeneric
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorBrowserLocationChangeRequired"
+          description: errorBrowserLocationChangeRequired
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorGeneric"
+          description: errorGeneric
+      summary: Submit a FedCM token
       tags:
         - frontend
   /self-service/login:
@@ -563,6 +643,15 @@ paths:
           schema:
             type: string
         - description: >-
+            An optional organization ID that should be used for logging this
+            user in.
+
+            This parameter is only effective in the Ory Network.
+          in: query
+          name: organization
+          schema:
+            type: string
+        - description: >-
             Via should contain the identity's credential the code should be sent
             to. Only relevant in aal2 flows.
 
@@ -574,6 +663,11 @@ paths:
             instead.
           in: query
           name: via
+          schema:
+            type: string
+        - description: An optional identity schema to use for the login flow.
+          in: query
+          name: identity_schema
           schema:
             type: string
       responses:
@@ -739,6 +833,11 @@ paths:
             instead.
           in: query
           name: via
+          schema:
+            type: string
+        - description: An optional identity schema to use for the login flow.
+          in: query
+          name: identity_schema
           schema:
             type: string
       responses:
@@ -1619,6 +1718,21 @@ paths:
           name: return_to
           schema:
             type: string
+        - description: >-
+            An optional organization ID that should be used to register this
+            user.
+
+            This parameter is only effective in the Ory Network.
+          in: query
+          name: organization
+          schema:
+            type: string
+        - description: >-
+            An optional identity schema to use for the registration flow.
+          in: query
+          name: identity_schema
+          schema:
+            type: string
       responses:
         "200":
           content:
@@ -1732,8 +1846,19 @@ paths:
           name: after_verification_return_to
           schema:
             type: string
-        - in: query
+        - description: >-
+            An optional organization ID that should be used to register this
+            user.
+
+            This parameter is only effective in the Ory Network.
+          in: query
           name: organization
+          schema:
+            type: string
+        - description: >-
+            An optional identity schema to use for the registration flow.
+          in: query
+          name: identity_schema
           schema:
             type: string
       responses:
@@ -2549,6 +2674,16 @@ paths:
         More information can be found at [Ory Email and Phone Verification
         Documentation](https://www.ory.sh/docs/kratos/self-service/flows/verify-email-account-activation).
       operationId: createNativeVerificationFlow
+      parameters:
+        - description: >-
+            A URL contained in the return_to key of the verification flow.
+
+            This piece of data has no effect on the actual logic of the flow and
+            is purely informational.
+          in: query
+          name: return_to
+          schema:
+            type: string
       responses:
         "200":
           content:
@@ -2857,8 +2992,6 @@ paths:
           in: query
           name: page_token
           schema:
-            default: "1"
-            minimum: 1
             type: string
         - description: >-
             Set the Session Token when calling from non-browser clients. A
@@ -3245,9 +3378,6 @@ components:
       type: string
     OAuth2Client:
       properties:
-        AdditionalProperties:
-          additionalProperties: {}
-          type: object
         access_token_strategy:
           description: >-
             OAuth 2.0 Access Token Strategy  AccessTokenStrategy is the strategy
@@ -3540,9 +3670,6 @@ components:
         OAuth2ConsentRequestOpenIDConnectContext struct for
         OAuth2ConsentRequestOpenIDConnectContext
       properties:
-        AdditionalProperties:
-          additionalProperties: {}
-          type: object
         acr_values:
           description: >-
             ACRValues is the Authentication AuthorizationContext Class Reference
@@ -3614,9 +3741,6 @@ components:
     OAuth2LoginRequest:
       description: OAuth2LoginRequest struct for OAuth2LoginRequest
       properties:
-        AdditionalProperties:
-          additionalProperties: {}
-          type: object
         challenge:
           description: >-
             ID is the identifier (\"login challenge\") of the login request. It
@@ -3669,11 +3793,93 @@ components:
             will fail.
           type: string
       type: object
-    RecoveryAddressType:
-      title: >-
-        RecoveryAddressType must not exceed 16 characters as that is the
-        limitation in the SQL Schema.
-      type: string
+    Provider:
+      properties:
+        client_id:
+          description: The RP's client identifier, issued by the IdP.
+          type: string
+        config_url:
+          description: A full path of the IdP config file.
+          type: string
+        domain_hint:
+          description: >-
+            By specifying one of domain_hints values provided by the accounts
+            endpoints,
+
+            the FedCM dialog selectively shows the specified account.
+          type: string
+        fields:
+          description: >-
+            Array of strings that specifies the user information ("name", "
+            email",
+
+            "picture") that RP needs IdP to share with them.
+
+
+            Note: Field API is supported by Chrome 132 and later.
+          items:
+            type: string
+          type: array
+        login_hint:
+          description: >-
+            By specifying one of login_hints values provided by the accounts
+            endpoints,
+
+            the FedCM dialog selectively shows the specified account.
+          type: string
+        nonce:
+          description: >-
+            A random string to ensure the response is issued for this specific
+            request.
+
+            Prevents replay attacks.
+          type: string
+        parameters:
+          additionalProperties:
+            type: string
+          description: >-
+            Custom object that allows to specify additional key-value
+            parameters:
+
+            scope: A string value containing additional permissions that RP
+            needs to
+
+            request, for example " drive.readonly calendar.readonly"
+
+            nonce: A random string to ensure the response is issued for this
+            specific
+
+            request. Prevents replay attacks.
+
+
+            Other custom key-value parameters.
+
+
+            Note: parameters is supported from Chrome 132.
+          type: object
+      type: object
+    UpdateFedcmFlowBody:
+      properties:
+        csrf_token:
+          description: CSRFToken is the anti-CSRF token.
+          type: string
+        nonce:
+          description: >-
+            Nonce is the nonce that was used in the `navigator.credentials.get`
+            call. If
+
+            specified, it must match the `nonce` claim in the token.
+          type: string
+        token:
+          description: Token contains the result of `navigator.credentials.get`.
+          type: string
+        transient_payload:
+          description: Transient data to pass along to any webhooks.
+          type: object
+      required:
+        - token
+        - csrf_token
+      type: object
     authenticatorAssuranceLevel:
       description: >-
         The authenticator assurance level can be one of "aal1", "aal2", or
@@ -3712,6 +3918,7 @@ components:
         - $ref: "#/components/schemas/continueWithSettingsUi"
         - $ref: "#/components/schemas/continueWithRecoveryUi"
         - $ref: "#/components/schemas/continueWithRedirectBrowserTo"
+      type: object
     continueWithRecoveryUi:
       description: >-
         Indicates, that the UI flow could be continued by showing a recovery ui
@@ -3723,8 +3930,6 @@ components:
           enum:
             - show_recovery_ui
           type: string
-          x-go-enum-desc: >-
-            show_recovery_ui ContinueWithActionShowRecoveryUIString
         flow:
           $ref: "#/components/schemas/continueWithRecoveryUiFlow"
       required:
@@ -3759,8 +3964,6 @@ components:
           enum:
             - redirect_browser_to
           type: string
-          x-go-enum-desc: >-
-            redirect_browser_to ContinueWithActionRedirectBrowserToString
         redirect_browser_to:
           description: The URL to redirect the browser to
           type: string
@@ -3780,8 +3983,6 @@ components:
           enum:
             - set_ory_session_token
           type: string
-          x-go-enum-desc: >-
-            set_ory_session_token ContinueWithActionSetOrySessionTokenString
         ory_session_token:
           description: Token is the token of the session
           type: string
@@ -3800,8 +4001,6 @@ components:
           enum:
             - show_settings_ui
           type: string
-          x-go-enum-desc: >-
-            show_settings_ui ContinueWithActionShowSettingsUIString
         flow:
           $ref: "#/components/schemas/continueWithSettingsUiFlow"
       required:
@@ -3837,8 +4036,6 @@ components:
           enum:
             - show_verification_ui
           type: string
-          x-go-enum-desc: >-
-            show_verification_ui ContinueWithActionShowVerificationUIString
         flow:
           $ref: "#/components/schemas/continueWithVerificationUiFlow"
       required:
@@ -3865,6 +4062,17 @@ components:
       required:
         - id
         - verifiable_address
+      type: object
+    createFedcmFlowResponse:
+      description: Contains a list of all available FedCM providers.
+      properties:
+        csrf_token:
+          type: string
+        providers:
+          items:
+            $ref: "#/components/schemas/Provider"
+          type: array
+      title: CreateFedcmFlowResponse
       type: object
     deleteMySessionsCount:
       description: Deleted Session Count
@@ -3979,6 +4187,16 @@ components:
             Credentials represents all credentials that can be used for
             authenticating this identity.
           type: object
+        external_id:
+          description: >-
+            ExternalID is an optional external ID of the identity. This is used
+            to link
+
+            the identity to an external system. If set, the external ID must be
+            unique
+
+            across all identities.
+          type: string
         id:
           description: >-
             ID is the identity's unique identifier.
@@ -4029,9 +4247,6 @@ components:
             - active
             - inactive
           type: string
-          x-go-enum-desc: |-
-            active StateActive
-            inactive StateInactive
         state_changed_at:
           $ref: "#/components/schemas/nullTime"
         traits:
@@ -4066,7 +4281,7 @@ components:
           type: string
         identifiers:
           description: >-
-            Identifiers represents a list of unique identifiers this credential
+            Identifiers represent a list of unique identifiers this credential
             type matches.
           items:
             type: string
@@ -4091,6 +4306,8 @@ components:
 
             profile CredentialsTypeProfile
 
+            saml CredentialsTypeSAML
+
             link_recovery CredentialsTypeRecoveryLink 
             CredentialsTypeRecoveryLink is a special credential type linked to
             the link strategy (recovery flow).  It is not used within the
@@ -4106,32 +4323,10 @@ components:
             - code
             - passkey
             - profile
+            - saml
             - link_recovery
             - code_recovery
           type: string
-          x-go-enum-desc: >-
-            password CredentialsTypePassword
-
-            oidc CredentialsTypeOIDC
-
-            totp CredentialsTypeTOTP
-
-            lookup_secret CredentialsTypeLookup
-
-            webauthn CredentialsTypeWebAuthn
-
-            code CredentialsTypeCodeAuth
-
-            passkey CredentialsTypePasskey
-
-            profile CredentialsTypeProfile
-
-            link_recovery CredentialsTypeRecoveryLink 
-            CredentialsTypeRecoveryLink is a special credential type linked to
-            the link strategy (recovery flow).  It is not used within the
-            credentials object itself.
-
-            code_recovery CredentialsTypeRecoveryCode
         updated_at:
           description: UpdatedAt is a helper struct field for gobuffalo.pop.
           format: date-time
@@ -4155,6 +4350,9 @@ components:
         schema:
           description: The actual Identity JSON Schema
           type: object
+      required:
+        - id
+        - schema
       type: object
     identitySchemas:
       description: List of Identity JSON Schemas
@@ -4210,6 +4408,8 @@ components:
 
             profile CredentialsTypeProfile
 
+            saml CredentialsTypeSAML
+
             link_recovery CredentialsTypeRecoveryLink 
             CredentialsTypeRecoveryLink is a special credential type linked to
             the link strategy (recovery flow).  It is not used within the
@@ -4225,32 +4425,10 @@ components:
             - code
             - passkey
             - profile
+            - saml
             - link_recovery
             - code_recovery
           type: string
-          x-go-enum-desc: >-
-            password CredentialsTypePassword
-
-            oidc CredentialsTypeOIDC
-
-            totp CredentialsTypeTOTP
-
-            lookup_secret CredentialsTypeLookup
-
-            webauthn CredentialsTypeWebAuthn
-
-            code CredentialsTypeCodeAuth
-
-            passkey CredentialsTypePasskey
-
-            profile CredentialsTypeProfile
-
-            link_recovery CredentialsTypeRecoveryLink 
-            CredentialsTypeRecoveryLink is a special credential type linked to
-            the link strategy (recovery flow).  It is not used within the
-            credentials object itself.
-
-            code_recovery CredentialsTypeRecoveryCode
         created_at:
           description: CreatedAt is a helper struct field for gobuffalo.pop.
           format: date-time
@@ -4271,6 +4449,17 @@ components:
             represents the id in the login UI's query parameter:
             http://<selfservice.flows.login.ui_url>/?flow=<flow_id>
           format: uuid
+          type: string
+        identity_schema:
+          description: >-
+            IdentitySchema optionally holds the ID of the identity schema that
+            is used
+
+            for this flow. This value can be set by the user when creating the
+            flow and
+
+            should be retained when the flow is saved or converted to another
+            flow.
           type: string
         issued_at:
           description: IssuedAt is the time (UTC) when the flow started.
@@ -4490,9 +4679,8 @@ components:
         value:
           type: string
         via:
-          $ref: "#/components/schemas/RecoveryAddressType"
+          type: string
       required:
-        - id
         - value
         - via
       type: object
@@ -4521,6 +4709,8 @@ components:
 
             profile CredentialsTypeProfile
 
+            saml CredentialsTypeSAML
+
             link_recovery CredentialsTypeRecoveryLink 
             CredentialsTypeRecoveryLink is a special credential type linked to
             the link strategy (recovery flow).  It is not used within the
@@ -4536,32 +4726,10 @@ components:
             - code
             - passkey
             - profile
+            - saml
             - link_recovery
             - code_recovery
           type: string
-          x-go-enum-desc: >-
-            password CredentialsTypePassword
-
-            oidc CredentialsTypeOIDC
-
-            totp CredentialsTypeTOTP
-
-            lookup_secret CredentialsTypeLookup
-
-            webauthn CredentialsTypeWebAuthn
-
-            code CredentialsTypeCodeAuth
-
-            passkey CredentialsTypePasskey
-
-            profile CredentialsTypeProfile
-
-            link_recovery CredentialsTypeRecoveryLink 
-            CredentialsTypeRecoveryLink is a special credential type linked to
-            the link strategy (recovery flow).  It is not used within the
-            credentials object itself.
-
-            code_recovery CredentialsTypeRecoveryCode
         expires_at:
           description: >-
             ExpiresAt is the time (UTC) when the flow expires. If the user still
@@ -4578,6 +4746,17 @@ components:
             represents the id in the registration ui's query parameter:
             http://<selfservice.flows.registration.ui_url>/?flow=<id>
           format: uuid
+          type: string
+        identity_schema:
+          description: >-
+            IdentitySchema optionally holds the ID of the identity schema that
+            is used
+
+            for this flow. This value can be set by the user when creating the
+            flow and
+
+            should be retained when the flow is saved or converted to another
+            flow.
           type: string
         issued_at:
           description: IssuedAt is the time (UTC) when the flow occurred.
@@ -4708,7 +4887,7 @@ components:
             Tokenized is the tokenized (e.g. JWT) version of the session.
 
 
-            It is only set when the `tokenize` query parameter was set to a
+            It is only set when the `tokenize_as` query parameter was set to a
             valid tokenize template during calls to `/session/whoami`.
           type: string
       required:
@@ -4724,17 +4903,45 @@ components:
           format: date-time
           type: string
         method:
+          description: >-
+            The method used in this authenticator.
+
+            password CredentialsTypePassword
+
+            oidc CredentialsTypeOIDC
+
+            totp CredentialsTypeTOTP
+
+            lookup_secret CredentialsTypeLookup
+
+            webauthn CredentialsTypeWebAuthn
+
+            code CredentialsTypeCodeAuth
+
+            passkey CredentialsTypePasskey
+
+            profile CredentialsTypeProfile
+
+            saml CredentialsTypeSAML
+
+            link_recovery CredentialsTypeRecoveryLink
+            CredentialsTypeRecoveryLink is a special credential type linked to
+            the link strategy (recovery flow).  It is not used within the
+            credentials object itself.
+
+            code_recovery CredentialsTypeRecoveryCode
           enum:
+            - password
+            - oidc
+            - totp
+            - lookup_secret
+            - webauthn
+            - code
+            - passkey
+            - profile
+            - saml
             - link_recovery
             - code_recovery
-            - password
-            - code
-            - totp
-            - oidc
-            - webauthn
-            - lookup_secret
-            - v0.6_legacy_session
-          title: The method used
           type: string
         organization:
           description: The Organization id used for authentication
@@ -5007,6 +5214,10 @@ components:
             passkey PasskeyGroup
 
             identifier_first IdentifierFirstGroup
+
+            captcha CaptchaGroup
+
+            saml SAMLGroup
           enum:
             - default
             - password
@@ -5019,19 +5230,9 @@ components:
             - webauthn
             - passkey
             - identifier_first
+            - captcha
+            - saml
           type: string
-          x-go-enum-desc: |-
-            default DefaultGroup
-            password PasswordGroup
-            oidc OpenIDConnectGroup
-            profile ProfileGroup
-            link LinkGroup
-            code CodeGroup
-            totp TOTPGroup
-            lookup_secret LookupGroup
-            webauthn WebAuthnGroup
-            passkey PasskeyGroup
-            identifier_first IdentifierFirstGroup
         messages:
           $ref: "#/components/schemas/uiTexts"
         meta:
@@ -5044,19 +5245,15 @@ components:
             img Image
             a Anchor
             script Script
+            div Division
           enum:
             - text
             - input
             - img
             - a
             - script
+            - div
           type: string
-          x-go-enum-desc: |-
-            text Text
-            input Input
-            img Image
-            a Anchor
-            script Script
       required:
         - type
         - group
@@ -5093,19 +5290,11 @@ components:
             a Anchor
 
             script Script
+
+            div Division
           enum:
-            - text
-            - input
-            - img
             - a
-            - script
           type: string
-          x-go-enum-desc: |-
-            text Text
-            input Input
-            img Image
-            a Anchor
-            script Script
         title:
           $ref: "#/components/schemas/uiText"
       required:
@@ -5119,6 +5308,7 @@ components:
       discriminator:
         mapping:
           a: "#/components/schemas/uiNodeAnchorAttributes"
+          div: "#/components/schemas/uiNodeDivisionAttributes"
           img: "#/components/schemas/uiNodeImageAttributes"
           input: "#/components/schemas/uiNodeInputAttributes"
           script: "#/components/schemas/uiNodeScriptAttributes"
@@ -5130,9 +5320,56 @@ components:
         - $ref: "#/components/schemas/uiNodeImageAttributes"
         - $ref: "#/components/schemas/uiNodeAnchorAttributes"
         - $ref: "#/components/schemas/uiNodeScriptAttributes"
+        - $ref: "#/components/schemas/uiNodeDivisionAttributes"
       title: >-
         Attributes represents a list of attributes (e.g. `href="foo"` for
         links).
+    uiNodeDivisionAttributes:
+      description: >-
+        Division sections are used for interactive widgets that require a hook
+        in the DOM / view.
+      properties:
+        class:
+          description: A classname that should be rendered into the DOM.
+          type: string
+        data:
+          additionalProperties:
+            type: string
+          description: |-
+            Data is a map of key-value pairs that are passed to the division.
+
+            They may be used for `data-...` attributes.
+          type: object
+        id:
+          description: A unique identifier
+          type: string
+        node_type:
+          description: >-
+            NodeType represents this node's type. It is a mirror of `node.type`
+            and
+
+            is primarily used to allow compatibility with OpenAPI 3.0. In this
+            struct it technically always is "script".
+
+            text Text
+
+            input Input
+
+            img Image
+
+            a Anchor
+
+            script Script
+
+            div Division
+          enum:
+            - div
+          type: string
+      required:
+        - id
+        - node_type
+      title: DivisionAttributes represent a division section.
+      type: object
     uiNodeImageAttributes:
       properties:
         height:
@@ -5159,19 +5396,11 @@ components:
             a Anchor
 
             script Script
+
+            div Division
           enum:
-            - text
-            - input
             - img
-            - a
-            - script
           type: string
-          x-go-enum-desc: |-
-            text Text
-            input Input
-            img Image
-            a Anchor
-            script Script
         src:
           description: |-
             The image's source URL.
@@ -5202,6 +5431,7 @@ components:
             current-password InputAttributeAutocompleteCurrentPassword
             new-password InputAttributeAutocompleteNewPassword
             one-time-code InputAttributeAutocompleteOneTimeCode
+            username webauthn InputAttributeAutocompleteUsernameWebauthn
           enum:
             - email
             - tel
@@ -5209,14 +5439,8 @@ components:
             - current-password
             - new-password
             - one-time-code
+            - username webauthn
           type: string
-          x-go-enum-desc: |-
-            email InputAttributeAutocompleteEmail
-            tel InputAttributeAutocompleteTel
-            url InputAttributeAutocompleteUrl
-            current-password InputAttributeAutocompleteCurrentPassword
-            new-password InputAttributeAutocompleteNewPassword
-            one-time-code InputAttributeAutocompleteOneTimeCode
         disabled:
           description: Sets the input's disabled field to true or false.
           type: boolean
@@ -5246,19 +5470,11 @@ components:
             a Anchor
 
             script Script
+
+            div Division
           enum:
-            - text
             - input
-            - img
-            - a
-            - script
           type: string
-          x-go-enum-desc: |-
-            text Text
-            input Input
-            img Image
-            a Anchor
-            script Script
         onclick:
           description: >-
             OnClick may contain javascript which should be executed on click.
@@ -5300,20 +5516,6 @@ components:
             - oryPasskeyRegistration
             - oryPasskeySettingsRegistration
           type: string
-          x-go-enum-desc: >-
-            oryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration
-
-            oryWebAuthnLogin WebAuthnTriggersWebAuthnLogin
-
-            oryPasskeyLogin WebAuthnTriggersPasskeyLogin
-
-            oryPasskeyLoginAutocompleteInit
-            WebAuthnTriggersPasskeyLoginAutocompleteInit
-
-            oryPasskeyRegistration WebAuthnTriggersPasskeyRegistration
-
-            oryPasskeySettingsRegistration
-            WebAuthnTriggersPasskeySettingsRegistration
         onload:
           description: >-
             OnLoad may contain javascript which should be executed on load. This
@@ -5355,20 +5557,6 @@ components:
             - oryPasskeyRegistration
             - oryPasskeySettingsRegistration
           type: string
-          x-go-enum-desc: >-
-            oryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration
-
-            oryWebAuthnLogin WebAuthnTriggersWebAuthnLogin
-
-            oryPasskeyLogin WebAuthnTriggersPasskeyLogin
-
-            oryPasskeyLoginAutocompleteInit
-            WebAuthnTriggersPasskeyLoginAutocompleteInit
-
-            oryPasskeyRegistration WebAuthnTriggersPasskeyRegistration
-
-            oryPasskeySettingsRegistration
-            WebAuthnTriggersPasskeySettingsRegistration
         pattern:
           description: The input's pattern.
           type: string
@@ -5404,19 +5592,6 @@ components:
             - date
             - url
           type: string
-          x-go-enum-desc: |-
-            text InputAttributeTypeText
-            password InputAttributeTypePassword
-            number InputAttributeTypeNumber
-            checkbox InputAttributeTypeCheckbox
-            hidden InputAttributeTypeHidden
-            email InputAttributeTypeEmail
-            tel InputAttributeTypeTel
-            submit InputAttributeTypeSubmit
-            button InputAttributeTypeButton
-            datetime-local InputAttributeTypeDateTimeLocal
-            date InputAttributeTypeDate
-            url InputAttributeTypeURI
         value:
           description: The input's value.
           nullable: true
@@ -5466,19 +5641,11 @@ components:
             a Anchor
 
             script Script
+
+            div Division
           enum:
-            - text
-            - input
-            - img
-            - a
             - script
           type: string
-          x-go-enum-desc: |-
-            text Text
-            input Input
-            img Image
-            a Anchor
-            script Script
         nonce:
           description: >-
             Nonce for CSP
@@ -5535,19 +5702,11 @@ components:
             a Anchor
 
             script Script
+
+            div Division
           enum:
             - text
-            - input
-            - img
-            - a
-            - script
           type: string
-          x-go-enum-desc: |-
-            text Text
-            input Input
-            img Image
-            a Anchor
-            script Script
         text:
           $ref: "#/components/schemas/uiText"
       required:
@@ -5581,10 +5740,6 @@ components:
             - error
             - success
           type: string
-          x-go-enum-desc: |-
-            info Info
-            error Error
-            success Success
       required:
         - id
         - text
@@ -5603,12 +5758,14 @@ components:
           oidc: "#/components/schemas/updateLoginFlowWithOidcMethod"
           passkey: "#/components/schemas/updateLoginFlowWithPasskeyMethod"
           password: "#/components/schemas/updateLoginFlowWithPasswordMethod"
+          saml: "#/components/schemas/updateLoginFlowWithSamlMethod"
           totp: "#/components/schemas/updateLoginFlowWithTotpMethod"
           webauthn: "#/components/schemas/updateLoginFlowWithWebAuthnMethod"
         propertyName: method
       oneOf:
         - $ref: "#/components/schemas/updateLoginFlowWithPasswordMethod"
         - $ref: "#/components/schemas/updateLoginFlowWithOidcMethod"
+        - $ref: "#/components/schemas/updateLoginFlowWithSamlMethod"
         - $ref: "#/components/schemas/updateLoginFlowWithTotpMethod"
         - $ref: "#/components/schemas/updateLoginFlowWithWebAuthnMethod"
         - $ref: "#/components/schemas/updateLoginFlowWithLookupSecretMethod"
@@ -5772,6 +5929,9 @@ components:
             `prompt` (string): The `prompt` specifies whether the Authorization
             Server prompts the End-User for reauthentication and consent, e.g.
             `select_account`.
+
+            `acr_values` (string): The `acr_values` specifies the Authentication
+            Context Class Reference values for the authorization request.
           type: object
       required:
         - provider
@@ -5831,6 +5991,28 @@ components:
         - method
         - password
         - identifier
+      type: object
+    updateLoginFlowWithSamlMethod:
+      description: Update login flow using SAML
+      properties:
+        csrf_token:
+          description: The CSRF Token
+          type: string
+        method:
+          description: |-
+            Method to use
+
+            This field must be set to `saml` when using the saml method.
+          type: string
+        provider:
+          description: The provider to register with
+          type: string
+        transient_payload:
+          description: Transient data to pass along to any webhooks
+          type: object
+      required:
+        - provider
+        - method
       type: object
     updateLoginFlowWithTotpMethod:
       description: Update Login Flow with TOTP Method
@@ -5944,9 +6126,53 @@ components:
             - link
             - code
           type: string
-          x-go-enum-desc: |-
-            link RecoveryStrategyLink
-            code RecoveryStrategyCode
+        recovery_address:
+          description: >-
+            A recovery address that is registered for the user.
+
+            It can be an email, a phone number (to receive the code via SMS),
+            etc.
+
+            Used in RecoveryV2.
+          type: string
+        recovery_confirm_address:
+          description: >-
+            If there are multiple recovery addresses registered for the user,
+            and the initially provided address
+
+            is different from the address chosen when the choice (of masked
+            addresses) is presented, then we need to make sure
+
+            that the user actually knows the full address to avoid information
+            exfiltration, so we ask for the full address.
+
+            Used in RecoveryV2.
+          type: string
+        recovery_select_address:
+          description: >-
+            If there are multiple addresses registered for the user, a choice is
+            presented and this field
+
+            stores the result of this choice.
+
+            Addresses are 'masked' (never sent in full to the client and shown
+            partially in the UI) since at this point in the recovery flow,
+
+            the user has not yet proven that it knows the full address and we
+            want to avoid
+
+            information exfiltration.
+
+            So for all intents and purposes, the value of this field should be
+            treated as an opaque identifier.
+
+            Used in RecoveryV2.
+          type: string
+        screen:
+          description: |-
+            Set to "previous" to go back in the flow, meaningfully.
+            Used in RecoveryV2.
+          type: string
         transient_payload:
           description: Transient data to pass along to any webhooks
           type: object
@@ -5972,7 +6198,7 @@ components:
             recovery email, a recovery link will be sent. If the email is not
             known,
 
-            a email with details on what happened will be sent instead.
+            an email with details on what happened will be sent instead.
 
 
             format: email
@@ -5988,9 +6214,6 @@ components:
             - link
             - code
           type: string
-          x-go-enum-desc: |-
-            link RecoveryStrategyLink
-            code RecoveryStrategyCode
         transient_payload:
           description: Transient data to pass along to any webhooks
           type: object
@@ -6007,11 +6230,13 @@ components:
           passkey: "#/components/schemas/updateRegistrationFlowWithPasskeyMethod"
           password: "#/components/schemas/updateRegistrationFlowWithPasswordMethod"
           profile: "#/components/schemas/updateRegistrationFlowWithProfileMethod"
+          saml: "#/components/schemas/updateRegistrationFlowWithSamlMethod"
           webauthn: "#/components/schemas/updateRegistrationFlowWithWebAuthnMethod"
         propertyName: method
       oneOf:
         - $ref: "#/components/schemas/updateRegistrationFlowWithPasswordMethod"
         - $ref: "#/components/schemas/updateRegistrationFlowWithOidcMethod"
+        - $ref: "#/components/schemas/updateRegistrationFlowWithSamlMethod"
         - $ref: "#/components/schemas/updateRegistrationFlowWithWebAuthnMethod"
         - $ref: "#/components/schemas/updateRegistrationFlowWithCodeMethod"
         - $ref: "#/components/schemas/updateRegistrationFlowWithPasskeyMethod"
@@ -6116,6 +6341,9 @@ components:
             `prompt` (string): The `prompt` specifies whether the Authorization
             Server prompts the End-User for reauthentication and consent, e.g.
             `select_account`.
+
+            `acr_values` (string): The `acr_values` specifies the Authentication
+            Context Class Reference values for the authorization request.
           type: object
       required:
         - provider
@@ -6214,11 +6442,6 @@ components:
             - credential-selection
             - previous
           type: string
-          x-go-enum-desc: >-
-            credential-selection RegistrationScreenCredentialSelection
-            nolint:gosec // not a credential
-
-            previous RegistrationScreenPrevious
         traits:
           description: |-
             Traits
@@ -6230,6 +6453,31 @@ components:
           type: object
       required:
         - traits
+        - method
+      type: object
+    updateRegistrationFlowWithSamlMethod:
+      description: Update registration flow using SAML
+      properties:
+        csrf_token:
+          description: The CSRF Token
+          type: string
+        method:
+          description: |-
+            Method to use
+
+            This field must be set to `saml` when using the saml method.
+          type: string
+        provider:
+          description: The provider to register with
+          type: string
+        traits:
+          description: The identity traits
+          type: object
+        transient_payload:
+          description: Transient data to pass along to any webhooks
+          type: object
+      required:
+        - provider
         - method
       type: object
     updateRegistrationFlowWithWebAuthnMethod:
@@ -6281,6 +6529,7 @@ components:
           passkey: "#/components/schemas/updateSettingsFlowWithPasskeyMethod"
           password: "#/components/schemas/updateSettingsFlowWithPasswordMethod"
           profile: "#/components/schemas/updateSettingsFlowWithProfileMethod"
+          saml: "#/components/schemas/updateSettingsFlowWithSamlMethod"
           totp: "#/components/schemas/updateSettingsFlowWithTotpMethod"
           webauthn: "#/components/schemas/updateSettingsFlowWithWebAuthnMethod"
         propertyName: method
@@ -6288,6 +6537,7 @@ components:
         - $ref: "#/components/schemas/updateSettingsFlowWithPasswordMethod"
         - $ref: "#/components/schemas/updateSettingsFlowWithProfileMethod"
         - $ref: "#/components/schemas/updateSettingsFlowWithOidcMethod"
+        - $ref: "#/components/schemas/updateSettingsFlowWithSamlMethod"
         - $ref: "#/components/schemas/updateSettingsFlowWithTotpMethod"
         - $ref: "#/components/schemas/updateSettingsFlowWithWebAuthnMethod"
         - $ref: "#/components/schemas/updateSettingsFlowWithLookupMethod"
@@ -6387,6 +6637,9 @@ components:
             `prompt` (string): The `prompt` specifies whether the Authorization
             Server prompts the End-User for reauthentication and consent, e.g.
             `select_account`.
+
+            `acr_values` (string): The `acr_values` specifies the Authentication
+            Context Class Reference values for the authorization request.
           type: object
       required:
         - method
@@ -6472,6 +6725,54 @@ components:
           type: object
       required:
         - traits
+        - method
+      type: object
+    updateSettingsFlowWithSamlMethod:
+      description: Update settings flow using SAML
+      properties:
+        csrf_token:
+          description: The CSRF Token
+          type: string
+        flow:
+          description: |-
+            Flow ID is the flow's ID.
+
+            in: query
+          type: string
+        link:
+          description: |-
+            Link this provider
+
+            Either this or `unlink` must be set.
+
+            type: string
+            in: body
+          type: string
+        method:
+          description: |-
+            Method
+
+            Should be set to saml when trying to update a profile.
+          type: string
+        traits:
+          description: |-
+            The identity's traits
+
+            in: body
+          type: object
+        transient_payload:
+          description: Transient data to pass along to any webhooks
+          type: object
+        unlink:
+          description: |-
+            Unlink this provider
+
+            Either this or `link` must be set.
+
+            type: string
+            in: body
+          type: string
+      required:
         - method
       type: object
     updateSettingsFlowWithTotpMethod:
@@ -6603,9 +6904,6 @@ components:
             - link
             - code
           type: string
-          x-go-enum-desc: |-
-            link VerificationStrategyLink
-            code VerificationStrategyCode
         transient_payload:
           description: Transient data to pass along to any webhooks
           type: object
@@ -6647,9 +6945,6 @@ components:
             - link
             - code
           type: string
-          x-go-enum-desc: |-
-            link VerificationStrategyLink
-            code VerificationStrategyCode
         transient_payload:
           description: Transient data to pass along to any webhooks
           type: object

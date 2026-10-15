@@ -41,7 +41,7 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
       },
     );
 
-    if (response.status === 401)
+    if (response?.status === 401)
       redirect((await createLoginInitUrl(requestToken)).url);
     if (error) redirect(createErrorUrl().url);
 
