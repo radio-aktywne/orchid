@@ -18,7 +18,7 @@ export async function ErrorPageView({
         query: { id: id },
       });
 
-    if (response.status === 404) return { error: undefined };
+    if (response?.status === 404) return { error: undefined };
     if (error)
       throw new Error(`Failed to fetch error details: ${error.error.message}`);
 

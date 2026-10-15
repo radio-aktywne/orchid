@@ -4,1692 +4,7 @@ export type ClientOptions = {
   baseUrl: `${string}://${string}` | (string & {});
 };
 
-export type WebAuthnJavaScript = string;
-
-/**
- * A Verification Flow
- *
- * Used to verify an out-of-band communication
- * channel such as an email address or a phone number.
- *
- * For more information head over to: https://www.ory.sh/docs/kratos/self-service/flows/verify-email-account-activation
- */
-export type VerificationFlow = {
-  /**
-   * Active, if set, contains the registration method that is being used. It is initially
-   * not set.
-   */
-  active?: string;
-  /**
-   * ExpiresAt is the time (UTC) when the request expires. If the user still wishes to verify the address,
-   * a new request has to be initiated.
-   */
-  expires_at?: string;
-  /**
-   * ID represents the request's unique ID. When performing the verification flow, this
-   * represents the id in the verify ui's query parameter: http://<selfservice.flows.verification.ui_url>?request=<id>
-   *
-   * type: string
-   * format: uuid
-   */
-  id: string;
-  /**
-   * IssuedAt is the time (UTC) when the request occurred.
-   */
-  issued_at?: string;
-  /**
-   * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
-   * to forward information contained in the URL's path or query for example.
-   */
-  request_url?: string;
-  /**
-   * ReturnTo contains the requested return_to URL.
-   */
-  return_to?: string;
-  /**
-   * State represents the state of this request:
-   *
-   * choose_method: ask the user to choose a method (e.g. verify your email)
-   * sent_email: the email has been sent to the user
-   * passed_challenge: the request was successful and the verification challenge was passed.
-   */
-  state: unknown;
-  /**
-   * TransientPayload is used to pass data from the verification flow to hooks and email templates
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  type: SelfServiceFlowType;
-  ui: UiContainer;
-};
-
-/**
- * A Node's Meta Information
- *
- * This might include a label and other information that can optionally
- * be used to render UIs.
- */
-export type UiNodeMeta = {
-  label?: UiText;
-};
-
 export type Id = number;
-
-export type UiText = {
-  /**
-   * The message's context. Useful when customizing messages.
-   */
-  context?: {
-    [key: string]: unknown;
-  };
-  id: Id;
-  /**
-   * The message text. Written in american english.
-   */
-  text: string;
-  /**
-   * The message type.
-   * info Info
-   * error Error
-   * success Success
-   */
-  type: "info" | "error" | "success";
-};
-
-/**
- * ScriptAttributes represent script nodes which load javascript.
- */
-export type UiNodeScriptAttributes = {
-  /**
-   * The script async type
-   */
-  async: boolean;
-  /**
-   * The script cross origin policy
-   */
-  crossorigin: string;
-  /**
-   * A unique identifier
-   */
-  id: string;
-  /**
-   * The script's integrity hash
-   */
-  integrity: string;
-  /**
-   * NodeType represents this node's types. It is a mirror of `node.type` and
-   * is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is "script".
-   * text Text
-   * input Input
-   * img Image
-   * a Anchor
-   * script Script
-   */
-  node_type: "text" | "input" | "img" | "a" | "script";
-  /**
-   * Nonce for CSP
-   *
-   * A nonce you may want to use to improve your Content Security Policy.
-   * You do not have to use this value but if you want to improve your CSP
-   * policies you may use it. You can also choose to use your own nonce value!
-   */
-  nonce: string;
-  /**
-   * The script referrer policy
-   */
-  referrerpolicy: string;
-  /**
-   * The script source
-   */
-  src: string;
-  /**
-   * The script MIME type
-   */
-  type: string;
-};
-
-/**
- * AnchorAttributes represents the attributes of an anchor node.
- */
-export type UiNodeAnchorAttributes = {
-  /**
-   * The link's href (destination) URL.
-   *
-   * format: uri
-   */
-  href: string;
-  /**
-   * A unique identifier
-   */
-  id: string;
-  /**
-   * NodeType represents this node's types. It is a mirror of `node.type` and
-   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "a".
-   * text Text
-   * input Input
-   * img Image
-   * a Anchor
-   * script Script
-   */
-  node_type: "text" | "input" | "img" | "a" | "script";
-  title: UiText;
-};
-
-/**
- * ImageAttributes represents the attributes of an image node.
- */
-export type UiNodeImageAttributes = {
-  /**
-   * Height of the image
-   */
-  height: number;
-  /**
-   * A unique identifier
-   */
-  id: string;
-  /**
-   * NodeType represents this node's types. It is a mirror of `node.type` and
-   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "img".
-   * text Text
-   * input Input
-   * img Image
-   * a Anchor
-   * script Script
-   */
-  node_type: "text" | "input" | "img" | "a" | "script";
-  /**
-   * The image's source URL.
-   *
-   * format: uri
-   */
-  src: string;
-  /**
-   * Width of the image
-   */
-  width: number;
-};
-
-/**
- * TextAttributes represents the attributes of a text node.
- */
-export type UiNodeTextAttributes = {
-  /**
-   * A unique identifier
-   */
-  id: string;
-  /**
-   * NodeType represents this node's types. It is a mirror of `node.type` and
-   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "text".
-   * text Text
-   * input Input
-   * img Image
-   * a Anchor
-   * script Script
-   */
-  node_type: "text" | "input" | "img" | "a" | "script";
-  text: UiText;
-};
-
-/**
- * InputAttributes represents the attributes of an input node
- */
-export type UiNodeInputAttributes = {
-  /**
-   * The autocomplete attribute for the input.
-   * email InputAttributeAutocompleteEmail
-   * tel InputAttributeAutocompleteTel
-   * url InputAttributeAutocompleteUrl
-   * current-password InputAttributeAutocompleteCurrentPassword
-   * new-password InputAttributeAutocompleteNewPassword
-   * one-time-code InputAttributeAutocompleteOneTimeCode
-   */
-  autocomplete?:
-    | "email"
-    | "tel"
-    | "url"
-    | "current-password"
-    | "new-password"
-    | "one-time-code";
-  /**
-   * Sets the input's disabled field to true or false.
-   */
-  disabled: boolean;
-  label?: UiText;
-  /**
-   * MaxLength may contain the input's maximum length.
-   */
-  maxlength?: number;
-  /**
-   * The input's element name.
-   */
-  name: string;
-  /**
-   * NodeType represents this node's types. It is a mirror of `node.type` and
-   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "input".
-   * text Text
-   * input Input
-   * img Image
-   * a Anchor
-   * script Script
-   */
-  node_type: "text" | "input" | "img" | "a" | "script";
-  /**
-   * OnClick may contain javascript which should be executed on click. This is primarily
-   * used for WebAuthn.
-   *
-   * Deprecated: Using OnClick requires the use of eval() which is a security risk. Use OnClickTrigger instead.
-   */
-  onclick?: string;
-  /**
-   * OnClickTrigger may contain a WebAuthn trigger which should be executed on click.
-   *
-   * The trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.
-   * oryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration
-   * oryWebAuthnLogin WebAuthnTriggersWebAuthnLogin
-   * oryPasskeyLogin WebAuthnTriggersPasskeyLogin
-   * oryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit
-   * oryPasskeyRegistration WebAuthnTriggersPasskeyRegistration
-   * oryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration
-   */
-  onclickTrigger?:
-    | "oryWebAuthnRegistration"
-    | "oryWebAuthnLogin"
-    | "oryPasskeyLogin"
-    | "oryPasskeyLoginAutocompleteInit"
-    | "oryPasskeyRegistration"
-    | "oryPasskeySettingsRegistration";
-  /**
-   * OnLoad may contain javascript which should be executed on load. This is primarily
-   * used for WebAuthn.
-   *
-   * Deprecated: Using OnLoad requires the use of eval() which is a security risk. Use OnLoadTrigger instead.
-   */
-  onload?: string;
-  /**
-   * OnLoadTrigger may contain a WebAuthn trigger which should be executed on load.
-   *
-   * The trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.
-   * oryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration
-   * oryWebAuthnLogin WebAuthnTriggersWebAuthnLogin
-   * oryPasskeyLogin WebAuthnTriggersPasskeyLogin
-   * oryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit
-   * oryPasskeyRegistration WebAuthnTriggersPasskeyRegistration
-   * oryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration
-   */
-  onloadTrigger?:
-    | "oryWebAuthnRegistration"
-    | "oryWebAuthnLogin"
-    | "oryPasskeyLogin"
-    | "oryPasskeyLoginAutocompleteInit"
-    | "oryPasskeyRegistration"
-    | "oryPasskeySettingsRegistration";
-  /**
-   * The input's pattern.
-   */
-  pattern?: string;
-  /**
-   * Mark this input field as required.
-   */
-  required?: boolean;
-  /**
-   * The input's element type.
-   * text InputAttributeTypeText
-   * password InputAttributeTypePassword
-   * number InputAttributeTypeNumber
-   * checkbox InputAttributeTypeCheckbox
-   * hidden InputAttributeTypeHidden
-   * email InputAttributeTypeEmail
-   * tel InputAttributeTypeTel
-   * submit InputAttributeTypeSubmit
-   * button InputAttributeTypeButton
-   * datetime-local InputAttributeTypeDateTimeLocal
-   * date InputAttributeTypeDate
-   * url InputAttributeTypeURI
-   */
-  type:
-    | "text"
-    | "password"
-    | "number"
-    | "checkbox"
-    | "hidden"
-    | "email"
-    | "tel"
-    | "submit"
-    | "button"
-    | "datetime-local"
-    | "date"
-    | "url";
-  /**
-   * The input's value.
-   */
-  value?: unknown;
-};
-
-/**
- * Attributes represents a list of attributes (e.g. `href="foo"` for links).
- */
-export type UiNodeAttributes =
-  | ({
-      node_type: "input";
-    } & UiNodeInputAttributes)
-  | ({
-      node_type: "text";
-    } & UiNodeTextAttributes)
-  | ({
-      node_type: "img";
-    } & UiNodeImageAttributes)
-  | ({
-      node_type: "a";
-    } & UiNodeAnchorAttributes)
-  | ({
-      node_type: "script";
-    } & UiNodeScriptAttributes);
-
-/**
- * Node represents a flow's nodes
- *
- * Nodes are represented as HTML elements or their native UI equivalents. For example,
- * a node can be an `<img>` tag, or an `<input element>` but also `some plain text`.
- */
-export type UiNode = {
-  attributes: UiNodeAttributes;
-  /**
-   * Group specifies which group (e.g. password authenticator) this node belongs to.
-   * default DefaultGroup
-   * password PasswordGroup
-   * oidc OpenIDConnectGroup
-   * profile ProfileGroup
-   * link LinkGroup
-   * code CodeGroup
-   * totp TOTPGroup
-   * lookup_secret LookupGroup
-   * webauthn WebAuthnGroup
-   * passkey PasskeyGroup
-   * identifier_first IdentifierFirstGroup
-   */
-  group:
-    | "default"
-    | "password"
-    | "oidc"
-    | "profile"
-    | "link"
-    | "code"
-    | "totp"
-    | "lookup_secret"
-    | "webauthn"
-    | "passkey"
-    | "identifier_first";
-  messages: UiTexts;
-  meta: UiNodeMeta;
-  /**
-   * The node's type
-   * text Text
-   * input Input
-   * img Image
-   * a Anchor
-   * script Script
-   */
-  type: "text" | "input" | "img" | "a" | "script";
-};
-
-export type UiTexts = Array<UiText>;
-
-export type UiNodes = Array<UiNode>;
-
-/**
- * Container represents a HTML Form. The container can work with both HTTP Form and JSON requests
- */
-export type UiContainer = {
-  /**
-   * Action should be used as the form action URL `<form action="{{ .Action }}" method="post">`.
-   */
-  action: string;
-  messages?: UiTexts;
-  /**
-   * Method is the form method (e.g. POST)
-   */
-  method: string;
-  nodes: UiNodes;
-};
-
-/**
- * Type is the flow type.
- *
- * The flow type can either be `api` or `browser`.
- */
-export type SelfServiceFlowType = string;
-
-/**
- * VerifiableAddress is an identity's verifiable address
- */
-export type VerifiableIdentityAddress = {
-  /**
-   * When this entry was created
-   */
-  created_at?: string;
-  /**
-   * The ID
-   */
-  id?: string;
-  status: IdentityVerifiableAddressStatus;
-  /**
-   * When this entry was last updated
-   */
-  updated_at?: string;
-  /**
-   * The address value
-   *
-   * example foo@user.com
-   */
-  value: string;
-  /**
-   * Indicates if the address has already been verified
-   */
-  verified: boolean;
-  verified_at?: NullTime;
-  /**
-   * The delivery method
-   */
-  via: "email" | "sms";
-};
-
-/**
- * NullTime implements sql.NullTime functionality.
- */
-export type NullTime = string;
-
-/**
- * VerifiableAddressStatus must not exceed 16 characters as that is the limitation in the SQL Schema
- */
-export type IdentityVerifiableAddressStatus = string;
-
-/**
- * Update Verification Flow with Link Method
- */
-export type UpdateVerificationFlowWithLinkMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Email to Verify
-   *
-   * Needs to be set when initiating the flow. If the email is a registered
-   * verification email, a verification link will be sent. If the email is not known,
-   * a email with details on what happened will be sent instead.
-   *
-   * format: email
-   */
-  email: string;
-  /**
-   * Method is the method that should be used for this verification flow
-   *
-   * Allowed values are `link` and `code`
-   * link VerificationStrategyLink
-   * code VerificationStrategyCode
-   */
-  method: "link" | "code";
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-export type UpdateVerificationFlowWithCodeMethod = {
-  /**
-   * Code from the recovery email
-   *
-   * If you want to submit a code, use this field, but make sure to _not_ include the email field, as well.
-   */
-  code?: string;
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * The email address to verify
-   *
-   * If the email belongs to a valid account, a verifiation email will be sent.
-   *
-   * If you want to notify the email address if the account does not exist, see
-   * the [notify_unknown_recipients flag](https://www.ory.sh/docs/kratos/self-service/flows/verify-email-account-activation#attempted-verification-notifications)
-   *
-   * If a code was already sent, including this field in the payload will invalidate the sent code and re-send a new code.
-   *
-   * format: email
-   */
-  email?: string;
-  /**
-   * Method is the method that should be used for this verification flow
-   *
-   * Allowed values are `link` and `code`.
-   * link VerificationStrategyLink
-   * code VerificationStrategyCode
-   */
-  method: "link" | "code";
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Verification Flow Request Body
- */
-export type UpdateVerificationFlowBody =
-  | ({
-      method: "link";
-    } & UpdateVerificationFlowWithLinkMethod)
-  | ({
-      method: "code";
-    } & UpdateVerificationFlowWithCodeMethod);
-
-/**
- * Update Settings Flow with WebAuthn Method
- */
-export type UpdateSettingsFlowWithWebAuthnMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to "webauthn" when trying to add, update, or remove a webAuthn pairing.
-   */
-  method: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Register a WebAuthn Security Key
-   *
-   * It is expected that the JSON returned by the WebAuthn registration process
-   * is included here.
-   */
-  webauthn_register?: string;
-  /**
-   * Name of the WebAuthn Security Key to be Added
-   *
-   * A human-readable name for the security key which will be added.
-   */
-  webauthn_register_displayname?: string;
-  /**
-   * Remove a WebAuthn Security Key
-   *
-   * This must contain the ID of the WebAuthN connection.
-   */
-  webauthn_remove?: string;
-};
-
-/**
- * Update Settings Flow with TOTP Method
- */
-export type UpdateSettingsFlowWithTotpMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to "totp" when trying to add, update, or remove a totp pairing.
-   */
-  method: string;
-  /**
-   * ValidationTOTP must contain a valid TOTP based on the
-   */
-  totp_code?: string;
-  /**
-   * UnlinkTOTP if true will remove the TOTP pairing,
-   * effectively removing the credential. This can be used
-   * to set up a new TOTP device.
-   */
-  totp_unlink?: boolean;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Settings Flow with Profile Method
- */
-export type UpdateSettingsFlowWithProfileMethod = {
-  /**
-   * The Anti-CSRF Token
-   *
-   * This token is only required when performing browser flows.
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to profile when trying to update a profile.
-   */
-  method: string;
-  /**
-   * Traits
-   *
-   * The identity's traits.
-   */
-  traits: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Settings Flow with Password Method
- */
-export type UpdateSettingsFlowWithPasswordMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to password when trying to update a password.
-   */
-  method: string;
-  /**
-   * Password is the updated password
-   */
-  password: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Settings Flow with Passkey Method
- */
-export type UpdateSettingsFlowWithPasskeyMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to "passkey" when trying to add, update, or remove a webAuthn pairing.
-   */
-  method: string;
-  /**
-   * Remove a WebAuthn Security Key
-   *
-   * This must contain the ID of the WebAuthN connection.
-   */
-  passkey_remove?: string;
-  /**
-   * Register a WebAuthn Security Key
-   *
-   * It is expected that the JSON returned by the WebAuthn registration process
-   * is included here.
-   */
-  passkey_settings_register?: string;
-};
-
-/**
- * Update Settings Flow with OpenID Connect Method
- */
-export type UpdateSettingsFlowWithOidcMethod = {
-  /**
-   * Flow ID is the flow's ID.
-   *
-   * in: query
-   */
-  flow?: string;
-  /**
-   * Link this provider
-   *
-   * Either this or `unlink` must be set.
-   *
-   * type: string
-   * in: body
-   */
-  link?: string;
-  /**
-   * Method
-   *
-   * Should be set to profile when trying to update a profile.
-   */
-  method: string;
-  /**
-   * The identity's traits
-   *
-   * in: body
-   */
-  traits?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Unlink this provider
-   *
-   * Either this or `link` must be set.
-   *
-   * type: string
-   * in: body
-   */
-  unlink?: string;
-  /**
-   * UpstreamParameters are the parameters that are passed to the upstream identity provider.
-   *
-   * These parameters are optional and depend on what the upstream identity provider supports.
-   * Supported parameters are:
-   * `login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.
-   * `hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.
-   * `prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.
-   */
-  upstream_parameters?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Settings Flow with Lookup Method
- */
-export type UpdateSettingsFlowWithLookupMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * If set to true will save the regenerated lookup secrets
-   */
-  lookup_secret_confirm?: boolean;
-  /**
-   * Disables this method if true.
-   */
-  lookup_secret_disable?: boolean;
-  /**
-   * If set to true will regenerate the lookup secrets
-   */
-  lookup_secret_regenerate?: boolean;
-  /**
-   * If set to true will reveal the lookup secrets
-   */
-  lookup_secret_reveal?: boolean;
-  /**
-   * Method
-   *
-   * Should be set to "lookup" when trying to add, update, or remove a lookup pairing.
-   */
-  method: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Settings Flow Request Body
- */
-export type UpdateSettingsFlowBody =
-  | ({
-      method: "password";
-    } & UpdateSettingsFlowWithPasswordMethod)
-  | ({
-      method: "profile";
-    } & UpdateSettingsFlowWithProfileMethod)
-  | ({
-      method: "oidc";
-    } & UpdateSettingsFlowWithOidcMethod)
-  | ({
-      method: "totp";
-    } & UpdateSettingsFlowWithTotpMethod)
-  | ({
-      method: "webauthn";
-    } & UpdateSettingsFlowWithWebAuthnMethod)
-  | ({
-      method: "lookup_secret";
-    } & UpdateSettingsFlowWithLookupMethod)
-  | ({
-      method: "passkey";
-    } & UpdateSettingsFlowWithPasskeyMethod);
-
-/**
- * Update Registration Flow with WebAuthn Method
- */
-export type UpdateRegistrationFlowWithWebAuthnMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to "webauthn" when trying to add, update, or remove a webAuthn pairing.
-   */
-  method: string;
-  /**
-   * The identity's traits
-   */
-  traits: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Register a WebAuthn Security Key
-   *
-   * It is expected that the JSON returned by the WebAuthn registration process
-   * is included here.
-   */
-  webauthn_register?: string;
-  /**
-   * Name of the WebAuthn Security Key to be Added
-   *
-   * A human-readable name for the security key which will be added.
-   */
-  webauthn_register_displayname?: string;
-};
-
-/**
- * Update Registration Flow with Profile Method
- */
-export type UpdateRegistrationFlowWithProfileMethod = {
-  /**
-   * The Anti-CSRF Token
-   *
-   * This token is only required when performing browser flows.
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to profile when trying to update a profile.
-   */
-  method: string;
-  /**
-   * Screen requests navigation to a previous screen.
-   *
-   * This must be set to credential-selection to go back to the credential
-   * selection screen.
-   * credential-selection RegistrationScreenCredentialSelection nolint:gosec // not a credential
-   * previous RegistrationScreenPrevious
-   */
-  screen?: "credential-selection" | "previous";
-  /**
-   * Traits
-   *
-   * The identity's traits.
-   */
-  traits: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Registration Flow with Password Method
- */
-export type UpdateRegistrationFlowWithPasswordMethod = {
-  /**
-   * The CSRF Token
-   */
-  csrf_token?: string;
-  /**
-   * Method to use
-   *
-   * This field must be set to `password` when using the password method.
-   */
-  method: string;
-  /**
-   * Password to sign the user up with
-   */
-  password: string;
-  /**
-   * The identity's traits
-   */
-  traits: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Registration Flow with Passkey Method
- */
-export type UpdateRegistrationFlowWithPasskeyMethod = {
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token?: string;
-  /**
-   * Method
-   *
-   * Should be set to "passkey" when trying to add, update, or remove a Passkey.
-   */
-  method: string;
-  /**
-   * Register a WebAuthn Security Key
-   *
-   * It is expected that the JSON returned by the WebAuthn registration process
-   * is included here.
-   */
-  passkey_register?: string;
-  /**
-   * The identity's traits
-   */
-  traits: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Registration Flow with OpenID Connect Method
- */
-export type UpdateRegistrationFlowWithOidcMethod = {
-  /**
-   * The CSRF Token
-   */
-  csrf_token?: string;
-  /**
-   * IDToken is an optional id token provided by an OIDC provider
-   *
-   * If submitted, it is verified using the OIDC provider's public key set and the claims are used to populate
-   * the OIDC credentials of the identity.
-   * If the OIDC provider does not store additional claims (such as name, etc.) in the IDToken itself, you can use
-   * the `traits` field to populate the identity's traits. Note, that Apple only includes the users email in the IDToken.
-   *
-   * Supported providers are
-   * Apple
-   * Google
-   */
-  id_token?: string;
-  /**
-   * IDTokenNonce is the nonce, used when generating the IDToken.
-   * If the provider supports nonce validation, the nonce will be validated against this value and is required.
-   */
-  id_token_nonce?: string;
-  /**
-   * Method to use
-   *
-   * This field must be set to `oidc` when using the oidc method.
-   */
-  method: string;
-  /**
-   * The provider to register with
-   */
-  provider: string;
-  /**
-   * The identity traits
-   */
-  traits?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  /**
-   * UpstreamParameters are the parameters that are passed to the upstream identity provider.
-   *
-   * These parameters are optional and depend on what the upstream identity provider supports.
-   * Supported parameters are:
-   * `login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.
-   * `hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.
-   * `prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.
-   */
-  upstream_parameters?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Registration Flow with Code Method
- */
-export type UpdateRegistrationFlowWithCodeMethod = {
-  /**
-   * The OTP Code sent to the user
-   */
-  code?: string;
-  /**
-   * The CSRF Token
-   */
-  csrf_token?: string;
-  /**
-   * Method to use
-   *
-   * This field must be set to `code` when using the code method.
-   */
-  method: string;
-  /**
-   * Resend restarts the flow with a new code
-   */
-  resend?: string;
-  /**
-   * The identity's traits
-   */
-  traits: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Registration Request Body
- */
-export type UpdateRegistrationFlowBody =
-  | ({
-      method: "password";
-    } & UpdateRegistrationFlowWithPasswordMethod)
-  | ({
-      method: "oidc";
-    } & UpdateRegistrationFlowWithOidcMethod)
-  | ({
-      method: "webauthn";
-    } & UpdateRegistrationFlowWithWebAuthnMethod)
-  | ({
-      method: "code";
-    } & UpdateRegistrationFlowWithCodeMethod)
-  | ({
-      method: "passkey";
-    } & UpdateRegistrationFlowWithPasskeyMethod)
-  | ({
-      method: "profile";
-    } & UpdateRegistrationFlowWithProfileMethod);
-
-/**
- * Update Recovery Flow with Link Method
- */
-export type UpdateRecoveryFlowWithLinkMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Email to Recover
-   *
-   * Needs to be set when initiating the flow. If the email is a registered
-   * recovery email, a recovery link will be sent. If the email is not known,
-   * a email with details on what happened will be sent instead.
-   *
-   * format: email
-   */
-  email: string;
-  /**
-   * Method is the method that should be used for this recovery flow
-   *
-   * Allowed values are `link` and `code`
-   * link RecoveryStrategyLink
-   * code RecoveryStrategyCode
-   */
-  method: "link" | "code";
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Recovery Flow with Code Method
- */
-export type UpdateRecoveryFlowWithCodeMethod = {
-  /**
-   * Code from the recovery email
-   *
-   * If you want to submit a code, use this field, but make sure to _not_ include the email field, as well.
-   */
-  code?: string;
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * The email address of the account to recover
-   *
-   * If the email belongs to a valid account, a recovery email will be sent.
-   *
-   * If you want to notify the email address if the account does not exist, see
-   * the [notify_unknown_recipients flag](https://www.ory.sh/docs/kratos/self-service/flows/account-recovery-password-reset#attempted-recovery-notifications)
-   *
-   * If a code was already sent, including this field in the payload will invalidate the sent code and re-send a new code.
-   *
-   * format: email
-   */
-  email?: string;
-  /**
-   * Method is the method that should be used for this recovery flow
-   *
-   * Allowed values are `link` and `code`.
-   * link RecoveryStrategyLink
-   * code RecoveryStrategyCode
-   */
-  method: "link" | "code";
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Recovery Flow Request Body
- */
-export type UpdateRecoveryFlowBody =
-  | ({
-      method: "link";
-    } & UpdateRecoveryFlowWithLinkMethod)
-  | ({
-      method: "code";
-    } & UpdateRecoveryFlowWithCodeMethod);
-
-/**
- * Update Login Flow with WebAuthn Method
- */
-export type UpdateLoginFlowWithWebAuthnMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Identifier is the email or username of the user trying to log in.
-   */
-  identifier: string;
-  /**
-   * Method should be set to "webAuthn" when logging in using the WebAuthn strategy.
-   */
-  method: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Login a WebAuthn Security Key
-   *
-   * This must contain the ID of the WebAuthN connection.
-   */
-  webauthn_login?: string;
-};
-
-/**
- * Update Login Flow with TOTP Method
- */
-export type UpdateLoginFlowWithTotpMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Method should be set to "totp" when logging in using the TOTP strategy.
-   */
-  method: string;
-  /**
-   * The TOTP code.
-   */
-  totp_code: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Login Flow with Password Method
- */
-export type UpdateLoginFlowWithPasswordMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Identifier is the email or username of the user trying to log in.
-   */
-  identifier: string;
-  /**
-   * Method should be set to "password" when logging in using the identifier and password strategy.
-   */
-  method: string;
-  /**
-   * The user's password.
-   */
-  password: string;
-  /**
-   * Identifier is the email or username of the user trying to log in.
-   * This field is deprecated!
-   */
-  password_identifier?: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Login Flow with Passkey Method
- */
-export type UpdateLoginFlowWithPasskeyMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Method should be set to "passkey" when logging in using the Passkey strategy.
-   */
-  method: string;
-  /**
-   * Login a WebAuthn Security Key
-   *
-   * This must contain the ID of the WebAuthN connection.
-   */
-  passkey_login?: string;
-};
-
-/**
- * Update Login Flow with OpenID Connect Method
- */
-export type UpdateLoginFlowWithOidcMethod = {
-  /**
-   * The CSRF Token
-   */
-  csrf_token?: string;
-  /**
-   * IDToken is an optional id token provided by an OIDC provider
-   *
-   * If submitted, it is verified using the OIDC provider's public key set and the claims are used to populate
-   * the OIDC credentials of the identity.
-   * If the OIDC provider does not store additional claims (such as name, etc.) in the IDToken itself, you can use
-   * the `traits` field to populate the identity's traits. Note, that Apple only includes the users email in the IDToken.
-   *
-   * Supported providers are
-   * Apple
-   * Google
-   */
-  id_token?: string;
-  /**
-   * IDTokenNonce is the nonce, used when generating the IDToken.
-   * If the provider supports nonce validation, the nonce will be validated against this value and required.
-   */
-  id_token_nonce?: string;
-  /**
-   * Method to use
-   *
-   * This field must be set to `oidc` when using the oidc method.
-   */
-  method: string;
-  /**
-   * The provider to register with
-   */
-  provider: string;
-  /**
-   * The identity traits. This is a placeholder for the registration flow.
-   */
-  traits?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  /**
-   * UpstreamParameters are the parameters that are passed to the upstream identity provider.
-   *
-   * These parameters are optional and depend on what the upstream identity provider supports.
-   * Supported parameters are:
-   * `login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.
-   * `hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.
-   * `prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.
-   */
-  upstream_parameters?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Login Flow with Lookup Secret Method
- */
-export type UpdateLoginFlowWithLookupSecretMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * The lookup secret.
-   */
-  lookup_secret: string;
-  /**
-   * Method should be set to "lookup_secret" when logging in using the lookup_secret strategy.
-   */
-  method: string;
-};
-
-/**
- * Update Login Flow with Multi-Step Method
- */
-export type UpdateLoginFlowWithIdentifierFirstMethod = {
-  /**
-   * Sending the anti-csrf token is only required for browser login flows.
-   */
-  csrf_token?: string;
-  /**
-   * Identifier is the email or username of the user trying to log in.
-   */
-  identifier: string;
-  /**
-   * Method should be set to "password" when logging in using the identifier and password strategy.
-   */
-  method: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Update Login flow using the code method
- */
-export type UpdateLoginFlowWithCodeMethod = {
-  /**
-   * Address is the address to send the code to, in case that there are multiple addresses. This field
-   * is only used in two-factor flows and is ineffective for passwordless flows.
-   */
-  address?: string;
-  /**
-   * Code is the 6 digits code sent to the user
-   */
-  code?: string;
-  /**
-   * CSRFToken is the anti-CSRF token
-   */
-  csrf_token: string;
-  /**
-   * Identifier is the code identifier
-   * The identifier requires that the user has already completed the registration or settings with code flow.
-   */
-  identifier?: string;
-  /**
-   * Method should be set to "code" when logging in using the code strategy.
-   */
-  method: string;
-  /**
-   * Resend is set when the user wants to resend the code
-   */
-  resend?: string;
-  /**
-   * Transient data to pass along to any webhooks
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-};
-
-export type UpdateLoginFlowBody =
-  | ({
-      method: "password";
-    } & UpdateLoginFlowWithPasswordMethod)
-  | ({
-      method: "oidc";
-    } & UpdateLoginFlowWithOidcMethod)
-  | ({
-      method: "totp";
-    } & UpdateLoginFlowWithTotpMethod)
-  | ({
-      method: "webauthn";
-    } & UpdateLoginFlowWithWebAuthnMethod)
-  | ({
-      method: "lookup_secret";
-    } & UpdateLoginFlowWithLookupSecretMethod)
-  | ({
-      method: "code";
-    } & UpdateLoginFlowWithCodeMethod)
-  | ({
-      method: "passkey";
-    } & UpdateLoginFlowWithPasskeyMethod)
-  | ({
-      method: "identifier_first";
-    } & UpdateLoginFlowWithIdentifierFirstMethod);
-
-/**
- * The Response for Registration Flows via API
- */
-export type SuccessfulNativeRegistration = {
-  /**
-   * Contains a list of actions, that could follow this flow
-   *
-   * It can, for example, this will contain a reference to the verification flow, created as part of the user's
-   * registration or the token of the session.
-   */
-  continue_with?: Array<ContinueWith>;
-  identity: Identity;
-  session?: Session;
-  /**
-   * The Session Token
-   *
-   * This field is only set when the session hook is configured as a post-registration hook.
-   *
-   * A session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization
-   * Header:
-   *
-   * Authorization: bearer ${session-token}
-   *
-   * The session token is only issued for API flows, not for Browser flows!
-   */
-  session_token?: string;
-};
-
-/**
- * Device corresponding to a Session
- */
-export type SessionDevice = {
-  /**
-   * Device record ID
-   */
-  id: string;
-  /**
-   * IPAddress of the client
-   */
-  ip_address?: string;
-  /**
-   * Geo Location corresponding to the IP Address
-   */
-  location?: string;
-  /**
-   * UserAgent of the client
-   */
-  user_agent?: string;
-};
-
-/**
- * Authenticator Assurance Level (AAL)
- *
- * The authenticator assurance level can be one of "aal1", "aal2", or "aal3". A higher number means that it is harder
- * for an attacker to compromise the account.
- *
- * Generally, "aal1" implies that one authentication factor was used while AAL2 implies that two factors (e.g.
- * password + TOTP) have been used.
- *
- * To learn more about these levels please head over to: https://www.ory.sh/kratos/docs/concepts/credentials
- */
-export type AuthenticatorAssuranceLevel = "aal0" | "aal1" | "aal2" | "aal3";
-
-/**
- * AuthenticationMethod identifies an authentication method
- *
- * A singular authenticator used during authentication / login.
- */
-export type SessionAuthenticationMethod = {
-  aal?: AuthenticatorAssuranceLevel;
-  /**
-   * When the authentication challenge was completed.
-   */
-  completed_at?: string;
-  /**
-   * The method used
-   */
-  method?:
-    | "link_recovery"
-    | "code_recovery"
-    | "password"
-    | "code"
-    | "totp"
-    | "oidc"
-    | "webauthn"
-    | "lookup_secret"
-    | "v0.6_legacy_session";
-  /**
-   * The Organization id used for authentication
-   */
-  organization?: string;
-  /**
-   * OIDC or SAML provider id used for authentication
-   */
-  provider?: string;
-};
-
-/**
- * List of (Used) AuthenticationMethods
- *
- * A list of authenticators which were used to authenticate the session.
- */
-export type SessionAuthenticationMethods = Array<SessionAuthenticationMethod>;
-
-/**
- * A Session
- */
-export type Session = {
-  /**
-   * Active state. If false the session is no longer active.
-   */
-  active?: boolean;
-  /**
-   * The Session Authentication Timestamp
-   *
-   * When this session was authenticated at. If multi-factor authentication was used this
-   * is the time when the last factor was authenticated (e.g. the TOTP code challenge was completed).
-   */
-  authenticated_at?: string;
-  authentication_methods?: SessionAuthenticationMethods;
-  authenticator_assurance_level?: AuthenticatorAssuranceLevel;
-  /**
-   * Devices has history of all endpoints where the session was used
-   */
-  devices?: Array<SessionDevice>;
-  /**
-   * The Session Expiry
-   *
-   * When this session expires at.
-   */
-  expires_at?: string;
-  /**
-   * Session ID
-   */
-  id: string;
-  identity?: Identity;
-  /**
-   * The Session Issuance Timestamp
-   *
-   * When this session was issued at. Usually equal or close to `authenticated_at`.
-   */
-  issued_at?: string;
-  /**
-   * Tokenized is the tokenized (e.g. JWT) version of the session.
-   *
-   * It is only set when the `tokenize` query parameter was set to a valid tokenize template during calls to `/session/whoami`.
-   */
-  tokenized?: string;
-};
-
-/**
- * Traits represent an identity's traits. The identity is able to create, modify, and delete traits
- * in a self-service manner. The input will always be validated against the JSON Schema defined
- * in `schema_url`.
- */
-export type IdentityTraits = unknown;
-
-/**
- * RecoveryAddressType must not exceed 16 characters as that is the limitation in the SQL Schema.
- */
-export type RecoveryAddressType = string;
-
-export type RecoveryIdentityAddress = {
-  /**
-   * CreatedAt is a helper struct field for gobuffalo.pop.
-   */
-  created_at?: string;
-  id: string;
-  /**
-   * UpdatedAt is a helper struct field for gobuffalo.pop.
-   */
-  updated_at?: string;
-  value: string;
-  via: RecoveryAddressType;
-};
-
-export type NullUuid = string | null;
-
-/**
- * NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable-
- */
-export type NullJsonRawMessage = unknown;
 
 /**
  * JSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger.
@@ -1698,448 +13,12 @@ export type JsonRawMessage = {
   [key: string]: unknown;
 };
 
-/**
- * Credentials represents a specific credential type
- */
-export type IdentityCredentials = {
-  config?: JsonRawMessage;
-  /**
-   * CreatedAt is a helper struct field for gobuffalo.pop.
-   */
-  created_at?: string;
-  /**
-   * Identifiers represents a list of unique identifiers this credential type matches.
-   */
-  identifiers?: Array<string>;
-  /**
-   * Type discriminates between different types of credentials.
-   * password CredentialsTypePassword
-   * oidc CredentialsTypeOIDC
-   * totp CredentialsTypeTOTP
-   * lookup_secret CredentialsTypeLookup
-   * webauthn CredentialsTypeWebAuthn
-   * code CredentialsTypeCodeAuth
-   * passkey CredentialsTypePasskey
-   * profile CredentialsTypeProfile
-   * link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.
-   * code_recovery CredentialsTypeRecoveryCode
-   */
-  type?:
-    | "password"
-    | "oidc"
-    | "totp"
-    | "lookup_secret"
-    | "webauthn"
-    | "code"
-    | "passkey"
-    | "profile"
-    | "link_recovery"
-    | "code_recovery";
-  /**
-   * UpdatedAt is a helper struct field for gobuffalo.pop.
-   */
-  updated_at?: string;
-  /**
-   * Version refers to the version of the credential. Useful when changing the config schema.
-   */
-  version?: number;
-};
-
-/**
- * Identity represents an Ory Kratos identity
- *
- * An [identity](https://www.ory.sh/docs/kratos/concepts/identity-user-model) represents a (human) user in Ory.
- */
-export type Identity = {
-  /**
-   * CreatedAt is a helper struct field for gobuffalo.pop.
-   */
-  created_at?: string;
-  /**
-   * Credentials represents all credentials that can be used for authenticating this identity.
-   */
-  credentials?: {
-    [key: string]: IdentityCredentials;
-  };
-  /**
-   * ID is the identity's unique identifier.
-   *
-   * The Identity ID can not be changed and can not be chosen. This ensures future
-   * compatibility and optimization for distributed stores such as CockroachDB.
-   */
-  id: string;
-  metadata_admin?: NullJsonRawMessage;
-  metadata_public?: NullJsonRawMessage;
-  organization_id?: NullUuid;
-  /**
-   * RecoveryAddresses contains all the addresses that can be used to recover an identity.
-   */
-  recovery_addresses?: Array<RecoveryIdentityAddress>;
-  /**
-   * SchemaID is the ID of the JSON Schema to be used for validating the identity's traits.
-   */
-  schema_id: string;
-  /**
-   * SchemaURL is the URL of the endpoint where the identity's traits schema can be fetched from.
-   *
-   * format: url
-   */
-  schema_url: string;
-  /**
-   * State is the identity's state.
-   *
-   * This value has currently no effect.
-   * active StateActive
-   * inactive StateInactive
-   */
-  state?: "active" | "inactive";
-  state_changed_at?: NullTime;
-  traits: IdentityTraits;
-  /**
-   * UpdatedAt is a helper struct field for gobuffalo.pop.
-   */
-  updated_at?: string;
-  /**
-   * VerifiableAddresses contains all the addresses that can be verified by the user.
-   */
-  verifiable_addresses?: Array<VerifiableIdentityAddress>;
-};
-
-/**
- * Indicates, that the UI flow could be continued by showing a recovery ui
- */
-export type ContinueWithRedirectBrowserTo = {
-  /**
-   * Action will always be `redirect_browser_to`
-   * redirect_browser_to ContinueWithActionRedirectBrowserToString
-   */
-  action: "redirect_browser_to";
-  /**
-   * The URL to redirect the browser to
-   */
-  redirect_browser_to: string;
-};
-
-export type ContinueWithRecoveryUiFlow = {
-  /**
-   * The ID of the recovery flow
-   */
-  id: string;
-  /**
-   * The URL of the recovery flow
-   *
-   * If this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.
-   */
-  url?: string;
-};
-
-/**
- * Indicates, that the UI flow could be continued by showing a recovery ui
- */
-export type ContinueWithRecoveryUi = {
-  /**
-   * Action will always be `show_recovery_ui`
-   * show_recovery_ui ContinueWithActionShowRecoveryUIString
-   */
-  action: "show_recovery_ui";
-  flow: ContinueWithRecoveryUiFlow;
-};
-
-export type ContinueWithSettingsUiFlow = {
-  /**
-   * The ID of the settings flow
-   */
-  id: string;
-  /**
-   * The URL of the settings flow
-   *
-   * If this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.
-   */
-  url?: string;
-};
-
-/**
- * Indicates, that the UI flow could be continued by showing a settings ui
- */
-export type ContinueWithSettingsUi = {
-  /**
-   * Action will always be `show_settings_ui`
-   * show_settings_ui ContinueWithActionShowSettingsUIString
-   */
-  action: "show_settings_ui";
-  flow: ContinueWithSettingsUiFlow;
-};
-
-/**
- * Indicates that a session was issued, and the application should use this token for authenticated requests
- */
-export type ContinueWithSetOrySessionToken = {
-  /**
-   * Action will always be `set_ory_session_token`
-   * set_ory_session_token ContinueWithActionSetOrySessionTokenString
-   */
-  action: "set_ory_session_token";
-  /**
-   * Token is the token of the session
-   */
-  ory_session_token: string;
-};
-
-export type ContinueWithVerificationUiFlow = {
-  /**
-   * The ID of the verification flow
-   */
-  id: string;
-  /**
-   * The URL of the verification flow
-   *
-   * If this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.
-   */
-  url?: string;
-  /**
-   * The address that should be verified in this flow
-   */
-  verifiable_address: string;
-};
-
-/**
- * Indicates, that the UI flow could be continued by showing a verification ui
- */
-export type ContinueWithVerificationUi = {
-  /**
-   * Action will always be `show_verification_ui`
-   * show_verification_ui ContinueWithActionShowVerificationUIString
-   */
-  action: "show_verification_ui";
-  flow: ContinueWithVerificationUiFlow;
-};
-
-export type ContinueWith =
-  | ({
-      action: "show_verification_ui";
-    } & ContinueWithVerificationUi)
-  | ({
-      action: "set_ory_session_token";
-    } & ContinueWithSetOrySessionToken)
-  | ({
-      action: "show_settings_ui";
-    } & ContinueWithSettingsUi)
-  | ({
-      action: "show_recovery_ui";
-    } & ContinueWithRecoveryUi)
-  | ({
-      action: "redirect_browser_to";
-    } & ContinueWithRedirectBrowserTo);
-
-/**
- * The Response for Login Flows via API
- */
-export type SuccessfulNativeLogin = {
-  /**
-   * Contains a list of actions, that could follow this flow
-   *
-   * It can, for example, this will contain a reference to the verification flow, created as part of the user's
-   * registration or the token of the session.
-   */
-  continue_with?: Array<ContinueWith>;
-  session: Session;
-  /**
-   * The Session Token
-   *
-   * A session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization
-   * Header:
-   *
-   * Authorization: bearer ${session-token}
-   *
-   * The session token is only issued for API flows, not for Browser flows!
-   */
-  session_token?: string;
-};
-
-/**
- * Flow represents a Settings Flow
- *
- * This flow is used when an identity wants to update settings
- * (e.g. profile data, passwords, ...) in a selfservice manner.
- *
- * We recommend reading the [User Settings Documentation](../self-service/flows/user-settings)
- */
-export type SettingsFlow = {
-  /**
-   * Active, if set, contains the registration method that is being used. It is initially
-   * not set.
-   */
-  active?: string;
-  /**
-   * Contains a list of actions, that could follow this flow
-   *
-   * It can, for example, contain a reference to the verification flow, created as part of the user's
-   * registration.
-   */
-  continue_with?: Array<ContinueWith>;
-  /**
-   * ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to update the setting,
-   * a new flow has to be initiated.
-   */
-  expires_at: string;
-  /**
-   * ID represents the flow's unique ID. When performing the settings flow, this
-   * represents the id in the settings ui's query parameter: http://<selfservice.flows.settings.ui_url>?flow=<id>
-   */
-  id: string;
-  identity: Identity;
-  /**
-   * IssuedAt is the time (UTC) when the flow occurred.
-   */
-  issued_at: string;
-  /**
-   * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
-   * to forward information contained in the URL's path or query for example.
-   */
-  request_url: string;
-  /**
-   * ReturnTo contains the requested return_to URL.
-   */
-  return_to?: string;
-  /**
-   * State represents the state of this flow. It knows two states:
-   *
-   * show_form: No user data has been collected, or it is invalid, and thus the form should be shown.
-   * success: Indicates that the settings flow has been updated successfully with the provided data.
-   * Done will stay true when repeatedly checking. If set to true, done will revert back to false only
-   * when a flow with invalid (e.g. "please use a valid phone number") data was sent.
-   */
-  state: unknown;
-  /**
-   * TransientPayload is used to pass data from the settings flow to hooks and email templates
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  type: SelfServiceFlowType;
-  ui: UiContainer;
-};
-
-export type RegistrationFlow = {
-  /**
-   * Active, if set, contains the registration method that is being used. It is initially
-   * not set.
-   * password CredentialsTypePassword
-   * oidc CredentialsTypeOIDC
-   * totp CredentialsTypeTOTP
-   * lookup_secret CredentialsTypeLookup
-   * webauthn CredentialsTypeWebAuthn
-   * code CredentialsTypeCodeAuth
-   * passkey CredentialsTypePasskey
-   * profile CredentialsTypeProfile
-   * link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.
-   * code_recovery CredentialsTypeRecoveryCode
-   */
-  active?:
-    | "password"
-    | "oidc"
-    | "totp"
-    | "lookup_secret"
-    | "webauthn"
-    | "code"
-    | "passkey"
-    | "profile"
-    | "link_recovery"
-    | "code_recovery";
-  /**
-   * ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to log in,
-   * a new flow has to be initiated.
-   */
-  expires_at: string;
-  /**
-   * ID represents the flow's unique ID. When performing the registration flow, this
-   * represents the id in the registration ui's query parameter: http://<selfservice.flows.registration.ui_url>/?flow=<id>
-   */
-  id: string;
-  /**
-   * IssuedAt is the time (UTC) when the flow occurred.
-   */
-  issued_at: string;
-  /**
-   * Ory OAuth 2.0 Login Challenge.
-   *
-   * This value is set using the `login_challenge` query parameter of the registration and login endpoints.
-   * If set will cooperate with Ory OAuth2 and OpenID to act as an OAuth2 server / OpenID Provider.
-   */
-  oauth2_login_challenge?: string;
-  oauth2_login_request?: OAuth2LoginRequest;
-  organization_id?: NullUuid;
-  /**
-   * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
-   * to forward information contained in the URL's path or query for example.
-   */
-  request_url: string;
-  /**
-   * ReturnTo contains the requested return_to URL.
-   */
-  return_to?: string;
-  /**
-   * SessionTokenExchangeCode holds the secret code that the client can use to retrieve a session token after the flow has been completed.
-   * This is only set if the client has requested a session token exchange code, and if the flow is of type "api",
-   * and only on creating the flow.
-   */
-  session_token_exchange_code?: string;
-  /**
-   * State represents the state of this request:
-   *
-   * choose_method: ask the user to choose a method (e.g. registration with email)
-   * sent_email: the email has been sent to the user
-   * passed_challenge: the request was successful and the registration challenge was passed.
-   */
-  state: unknown;
-  /**
-   * TransientPayload is used to pass data from the registration to a webhook
-   */
-  transient_payload?: {
-    [key: string]: unknown;
-  };
-  type: SelfServiceFlowType;
-  ui: UiContainer;
-};
-
-/**
- * OAuth2ConsentRequestOpenIDConnectContext struct for OAuth2ConsentRequestOpenIDConnectContext
- */
-export type OAuth2ConsentRequestOpenIdConnectContext = {
-  AdditionalProperties?: {
-    [key: string]: unknown;
-  };
-  /**
-   * ACRValues is the Authentication AuthorizationContext Class Reference requested in the OAuth 2.0 Authorization request. It is a parameter defined by OpenID Connect and expresses which level of authentication (e.g. 2FA) is required.  OpenID Connect defines it as follows: > Requested Authentication AuthorizationContext Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication AuthorizationContext Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.
-   */
-  acr_values?: Array<string>;
-  /**
-   * Display is a string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User. The defined values are: page: The Authorization Server SHOULD display the authentication and consent UI consistent with a full User Agent page view. If the display parameter is not specified, this is the default display mode. popup: The Authorization Server SHOULD display the authentication and consent UI consistent with a popup User Agent window. The popup User Agent window should be of an appropriate size for a login-focused dialog and should not obscure the entire window that it is popping up over. touch: The Authorization Server SHOULD display the authentication and consent UI consistent with a device that leverages a touch interface. wap: The Authorization Server SHOULD display the authentication and consent UI consistent with a \"feature phone\" type display.  The Authorization Server MAY also attempt to detect the capabilities of the User Agent and present an appropriate display.
-   */
-  display?: string;
-  /**
-   * IDTokenHintClaims are the claims of the ID Token previously issued by the Authorization Server being passed as a hint about the End-User's current or past authenticated session with the Client.
-   */
-  id_token_hint_claims?: {
-    [key: string]: unknown;
-  };
-  /**
-   * LoginHint hints about the login identifier the End-User might use to log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address (or other identifier) and then wants to pass that value as a hint to the discovered authorization service. This value MAY also be a phone number in the format specified for the phone_number Claim. The use of this parameter is optional.
-   */
-  login_hint?: string;
-  /**
-   * UILocales is the End-User'id preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value \"fr-CA fr en\" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
-   */
-  ui_locales?: Array<string>;
-};
+export type NullUuid = string | null;
 
 /**
  * OAuth2Client OAuth 2.0 Clients are used to perform OAuth 2.0 and OpenID Connect flows. Usually, OAuth 2.0 clients are generated for applications which want to consume your OAuth 2.0 or OpenID Connect capabilities.
  */
 export type OAuth2Client = {
-  AdditionalProperties?: {
-    [key: string]: unknown;
-  };
   /**
    * OAuth 2.0 Access Token Strategy  AccessTokenStrategy is the strategy used to generate access tokens. Valid options are `jwt` and `opaque`. `jwt` is a bad idea, see https://www.ory.sh/docs/hydra/advanced#json-web-tokens Setting the stragegy here overrides the global setting in `strategies.access_token`.
    */
@@ -2308,12 +187,37 @@ export type OAuth2Client = {
 };
 
 /**
+ * OAuth2ConsentRequestOpenIDConnectContext struct for OAuth2ConsentRequestOpenIDConnectContext
+ */
+export type OAuth2ConsentRequestOpenIdConnectContext = {
+  /**
+   * ACRValues is the Authentication AuthorizationContext Class Reference requested in the OAuth 2.0 Authorization request. It is a parameter defined by OpenID Connect and expresses which level of authentication (e.g. 2FA) is required.  OpenID Connect defines it as follows: > Requested Authentication AuthorizationContext Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication AuthorizationContext Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.
+   */
+  acr_values?: Array<string>;
+  /**
+   * Display is a string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User. The defined values are: page: The Authorization Server SHOULD display the authentication and consent UI consistent with a full User Agent page view. If the display parameter is not specified, this is the default display mode. popup: The Authorization Server SHOULD display the authentication and consent UI consistent with a popup User Agent window. The popup User Agent window should be of an appropriate size for a login-focused dialog and should not obscure the entire window that it is popping up over. touch: The Authorization Server SHOULD display the authentication and consent UI consistent with a device that leverages a touch interface. wap: The Authorization Server SHOULD display the authentication and consent UI consistent with a \"feature phone\" type display.  The Authorization Server MAY also attempt to detect the capabilities of the User Agent and present an appropriate display.
+   */
+  display?: string;
+  /**
+   * IDTokenHintClaims are the claims of the ID Token previously issued by the Authorization Server being passed as a hint about the End-User's current or past authenticated session with the Client.
+   */
+  id_token_hint_claims?: {
+    [key: string]: unknown;
+  };
+  /**
+   * LoginHint hints about the login identifier the End-User might use to log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address (or other identifier) and then wants to pass that value as a hint to the discovered authorization service. This value MAY also be a phone number in the format specified for the phone_number Claim. The use of this parameter is optional.
+   */
+  login_hint?: string;
+  /**
+   * UILocales is the End-User'id preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value \"fr-CA fr en\" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
+   */
+  ui_locales?: Array<string>;
+};
+
+/**
  * OAuth2LoginRequest struct for OAuth2LoginRequest
  */
 export type OAuth2LoginRequest = {
-  AdditionalProperties?: {
-    [key: string]: unknown;
-  };
   /**
    * ID is the identifier (\"login challenge\") of the login request. It is used to identify the session.
    */
@@ -2338,6 +242,624 @@ export type OAuth2LoginRequest = {
    * Subject is the user ID of the end-user that authenticated. Now, that end user needs to grant or deny the scope requested by the OAuth 2.0 client. If this value is set and `skip` is true, you MUST include this subject type when accepting the login request, or the request will fail.
    */
   subject?: string;
+};
+
+export type Provider = {
+  /**
+   * The RP's client identifier, issued by the IdP.
+   */
+  client_id?: string;
+  /**
+   * A full path of the IdP config file.
+   */
+  config_url?: string;
+  /**
+   * By specifying one of domain_hints values provided by the accounts endpoints,
+   * the FedCM dialog selectively shows the specified account.
+   */
+  domain_hint?: string;
+  /**
+   * Array of strings that specifies the user information ("name", " email",
+   * "picture") that RP needs IdP to share with them.
+   *
+   * Note: Field API is supported by Chrome 132 and later.
+   */
+  fields?: Array<string>;
+  /**
+   * By specifying one of login_hints values provided by the accounts endpoints,
+   * the FedCM dialog selectively shows the specified account.
+   */
+  login_hint?: string;
+  /**
+   * A random string to ensure the response is issued for this specific request.
+   * Prevents replay attacks.
+   */
+  nonce?: string;
+  /**
+   * Custom object that allows to specify additional key-value parameters:
+   * scope: A string value containing additional permissions that RP needs to
+   * request, for example " drive.readonly calendar.readonly"
+   * nonce: A random string to ensure the response is issued for this specific
+   * request. Prevents replay attacks.
+   *
+   * Other custom key-value parameters.
+   *
+   * Note: parameters is supported from Chrome 132.
+   */
+  parameters?: {
+    [key: string]: string;
+  };
+};
+
+export type UpdateFedcmFlowBody = {
+  /**
+   * CSRFToken is the anti-CSRF token.
+   */
+  csrf_token: string;
+  /**
+   * Nonce is the nonce that was used in the `navigator.credentials.get` call. If
+   * specified, it must match the `nonce` claim in the token.
+   */
+  nonce?: string;
+  /**
+   * Token contains the result of `navigator.credentials.get`.
+   */
+  token: string;
+  /**
+   * Transient data to pass along to any webhooks.
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Authenticator Assurance Level (AAL)
+ *
+ * The authenticator assurance level can be one of "aal1", "aal2", or "aal3". A higher number means that it is harder
+ * for an attacker to compromise the account.
+ *
+ * Generally, "aal1" implies that one authentication factor was used while AAL2 implies that two factors (e.g.
+ * password + TOTP) have been used.
+ *
+ * To learn more about these levels please head over to: https://www.ory.sh/kratos/docs/concepts/credentials
+ */
+export type AuthenticatorAssuranceLevel = "aal0" | "aal1" | "aal2" | "aal3";
+
+export type ContinueWith =
+  | ({
+      action: "show_verification_ui";
+    } & ContinueWithVerificationUi)
+  | ({
+      action: "set_ory_session_token";
+    } & ContinueWithSetOrySessionToken)
+  | ({
+      action: "show_settings_ui";
+    } & ContinueWithSettingsUi)
+  | ({
+      action: "show_recovery_ui";
+    } & ContinueWithRecoveryUi)
+  | ({
+      action: "redirect_browser_to";
+    } & ContinueWithRedirectBrowserTo);
+
+/**
+ * Indicates, that the UI flow could be continued by showing a recovery ui
+ */
+export type ContinueWithRecoveryUi = {
+  /**
+   * Action will always be `show_recovery_ui`
+   * show_recovery_ui ContinueWithActionShowRecoveryUIString
+   */
+  action: "show_recovery_ui";
+  flow: ContinueWithRecoveryUiFlow;
+};
+
+export type ContinueWithRecoveryUiFlow = {
+  /**
+   * The ID of the recovery flow
+   */
+  id: string;
+  /**
+   * The URL of the recovery flow
+   *
+   * If this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.
+   */
+  url?: string;
+};
+
+/**
+ * Indicates, that the UI flow could be continued by showing a recovery ui
+ */
+export type ContinueWithRedirectBrowserTo = {
+  /**
+   * Action will always be `redirect_browser_to`
+   * redirect_browser_to ContinueWithActionRedirectBrowserToString
+   */
+  action: "redirect_browser_to";
+  /**
+   * The URL to redirect the browser to
+   */
+  redirect_browser_to: string;
+};
+
+/**
+ * Indicates that a session was issued, and the application should use this token for authenticated requests
+ */
+export type ContinueWithSetOrySessionToken = {
+  /**
+   * Action will always be `set_ory_session_token`
+   * set_ory_session_token ContinueWithActionSetOrySessionTokenString
+   */
+  action: "set_ory_session_token";
+  /**
+   * Token is the token of the session
+   */
+  ory_session_token: string;
+};
+
+/**
+ * Indicates, that the UI flow could be continued by showing a settings ui
+ */
+export type ContinueWithSettingsUi = {
+  /**
+   * Action will always be `show_settings_ui`
+   * show_settings_ui ContinueWithActionShowSettingsUIString
+   */
+  action: "show_settings_ui";
+  flow: ContinueWithSettingsUiFlow;
+};
+
+export type ContinueWithSettingsUiFlow = {
+  /**
+   * The ID of the settings flow
+   */
+  id: string;
+  /**
+   * The URL of the settings flow
+   *
+   * If this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.
+   */
+  url?: string;
+};
+
+/**
+ * Indicates, that the UI flow could be continued by showing a verification ui
+ */
+export type ContinueWithVerificationUi = {
+  /**
+   * Action will always be `show_verification_ui`
+   * show_verification_ui ContinueWithActionShowVerificationUIString
+   */
+  action: "show_verification_ui";
+  flow: ContinueWithVerificationUiFlow;
+};
+
+export type ContinueWithVerificationUiFlow = {
+  /**
+   * The ID of the verification flow
+   */
+  id: string;
+  /**
+   * The URL of the verification flow
+   *
+   * If this value is set, redirect the user's browser to this URL. This value is typically unset for native clients / API flows.
+   */
+  url?: string;
+  /**
+   * The address that should be verified in this flow
+   */
+  verifiable_address: string;
+};
+
+/**
+ * CreateFedcmFlowResponse
+ *
+ * Contains a list of all available FedCM providers.
+ */
+export type CreateFedcmFlowResponse = {
+  csrf_token?: string;
+  providers?: Array<Provider>;
+};
+
+/**
+ * Deleted Session Count
+ */
+export type DeleteMySessionsCount = {
+  /**
+   * The number of sessions that were revoked.
+   */
+  count?: number;
+};
+
+/**
+ * Is sent when a flow requires a browser to change its location.
+ */
+export type ErrorBrowserLocationChangeRequired = {
+  error?: ErrorGeneric;
+  /**
+   * Points to where to redirect the user to next.
+   */
+  redirect_browser_to?: string;
+};
+
+/**
+ * JSON API Error Response
+ *
+ * The standard Ory JSON API error format.
+ */
+export type ErrorGeneric = {
+  error: GenericError;
+};
+
+export type FlowError = {
+  /**
+   * CreatedAt is a helper struct field for gobuffalo.pop.
+   */
+  created_at?: string;
+  error?: {
+    [key: string]: unknown;
+  };
+  /**
+   * ID of the error container.
+   */
+  id: string;
+  /**
+   * UpdatedAt is a helper struct field for gobuffalo.pop.
+   */
+  updated_at?: string;
+};
+
+export type GenericError = {
+  /**
+   * The status code
+   */
+  code?: number;
+  /**
+   * Debug information
+   *
+   * This field is often not exposed to protect against leaking
+   * sensitive information.
+   */
+  debug?: string;
+  /**
+   * Further error details
+   */
+  details?: {
+    [key: string]: never;
+  };
+  /**
+   * The error ID
+   *
+   * Useful when trying to identify various errors in application logic.
+   */
+  id?: string;
+  /**
+   * Error message
+   *
+   * The error's message.
+   */
+  message: string;
+  /**
+   * A human-readable reason for the error
+   */
+  reason?: string;
+  /**
+   * The request ID
+   *
+   * The request ID is often exposed internally in order to trace
+   * errors across service architectures. This is often a UUID.
+   */
+  request?: string;
+  /**
+   * The status description
+   */
+  status?: string;
+};
+
+/**
+ * Identity represents an Ory Kratos identity
+ *
+ * An [identity](https://www.ory.sh/docs/kratos/concepts/identity-user-model) represents a (human) user in Ory.
+ */
+export type Identity = {
+  /**
+   * CreatedAt is a helper struct field for gobuffalo.pop.
+   */
+  created_at?: string;
+  /**
+   * Credentials represents all credentials that can be used for authenticating this identity.
+   */
+  credentials?: {
+    [key: string]: IdentityCredentials;
+  };
+  /**
+   * ExternalID is an optional external ID of the identity. This is used to link
+   * the identity to an external system. If set, the external ID must be unique
+   * across all identities.
+   */
+  external_id?: string;
+  /**
+   * ID is the identity's unique identifier.
+   *
+   * The Identity ID can not be changed and can not be chosen. This ensures future
+   * compatibility and optimization for distributed stores such as CockroachDB.
+   */
+  id: string;
+  metadata_admin?: NullJsonRawMessage;
+  metadata_public?: NullJsonRawMessage;
+  organization_id?: NullUuid;
+  /**
+   * RecoveryAddresses contains all the addresses that can be used to recover an identity.
+   */
+  recovery_addresses?: Array<RecoveryIdentityAddress>;
+  /**
+   * SchemaID is the ID of the JSON Schema to be used for validating the identity's traits.
+   */
+  schema_id: string;
+  /**
+   * SchemaURL is the URL of the endpoint where the identity's traits schema can be fetched from.
+   *
+   * format: url
+   */
+  schema_url: string;
+  /**
+   * State is the identity's state.
+   *
+   * This value has currently no effect.
+   * active StateActive
+   * inactive StateInactive
+   */
+  state?: "active" | "inactive";
+  state_changed_at?: NullTime;
+  traits: IdentityTraits;
+  /**
+   * UpdatedAt is a helper struct field for gobuffalo.pop.
+   */
+  updated_at?: string;
+  /**
+   * VerifiableAddresses contains all the addresses that can be verified by the user.
+   */
+  verifiable_addresses?: Array<VerifiableIdentityAddress>;
+};
+
+/**
+ * Credentials represents a specific credential type
+ */
+export type IdentityCredentials = {
+  config?: JsonRawMessage;
+  /**
+   * CreatedAt is a helper struct field for gobuffalo.pop.
+   */
+  created_at?: string;
+  /**
+   * Identifiers represent a list of unique identifiers this credential type matches.
+   */
+  identifiers?: Array<string>;
+  /**
+   * Type discriminates between different types of credentials.
+   * password CredentialsTypePassword
+   * oidc CredentialsTypeOIDC
+   * totp CredentialsTypeTOTP
+   * lookup_secret CredentialsTypeLookup
+   * webauthn CredentialsTypeWebAuthn
+   * code CredentialsTypeCodeAuth
+   * passkey CredentialsTypePasskey
+   * profile CredentialsTypeProfile
+   * saml CredentialsTypeSAML
+   * link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.
+   * code_recovery CredentialsTypeRecoveryCode
+   */
+  type?:
+    | "password"
+    | "oidc"
+    | "totp"
+    | "lookup_secret"
+    | "webauthn"
+    | "code"
+    | "passkey"
+    | "profile"
+    | "saml"
+    | "link_recovery"
+    | "code_recovery";
+  /**
+   * UpdatedAt is a helper struct field for gobuffalo.pop.
+   */
+  updated_at?: string;
+  /**
+   * Version refers to the version of the credential. Useful when changing the config schema.
+   */
+  version?: number;
+};
+
+/**
+ * Raw JSON Schema
+ */
+export type IdentitySchema = {
+  [key: string]: unknown;
+};
+
+/**
+ * An Identity JSON Schema Container
+ */
+export type IdentitySchemaContainer = {
+  /**
+   * The ID of the Identity JSON Schema
+   */
+  id: string;
+  /**
+   * The actual Identity JSON Schema
+   */
+  schema: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * List of Identity JSON Schemas
+ */
+export type IdentitySchemas = Array<IdentitySchemaContainer>;
+
+/**
+ * Traits represent an identity's traits. The identity is able to create, modify, and delete traits
+ * in a self-service manner. The input will always be validated against the JSON Schema defined
+ * in `schema_url`.
+ */
+export type IdentityTraits = unknown;
+
+/**
+ * VerifiableAddressStatus must not exceed 16 characters as that is the limitation in the SQL Schema
+ */
+export type IdentityVerifiableAddressStatus = string;
+
+/**
+ * Login Flow
+ *
+ * This object represents a login flow. A login flow is initiated at the "Initiate Login API / Browser Flow"
+ * endpoint by a client.
+ *
+ * Once a login flow is completed successfully, a session cookie or session token will be issued.
+ */
+export type LoginFlow = {
+  /**
+   * The active login method
+   *
+   * If set contains the login method used. If the flow is new, it is unset.
+   * password CredentialsTypePassword
+   * oidc CredentialsTypeOIDC
+   * totp CredentialsTypeTOTP
+   * lookup_secret CredentialsTypeLookup
+   * webauthn CredentialsTypeWebAuthn
+   * code CredentialsTypeCodeAuth
+   * passkey CredentialsTypePasskey
+   * profile CredentialsTypeProfile
+   * saml CredentialsTypeSAML
+   * link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.
+   * code_recovery CredentialsTypeRecoveryCode
+   */
+  active?:
+    | "password"
+    | "oidc"
+    | "totp"
+    | "lookup_secret"
+    | "webauthn"
+    | "code"
+    | "passkey"
+    | "profile"
+    | "saml"
+    | "link_recovery"
+    | "code_recovery";
+  /**
+   * CreatedAt is a helper struct field for gobuffalo.pop.
+   */
+  created_at?: string;
+  /**
+   * ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to log in,
+   * a new flow has to be initiated.
+   */
+  expires_at: string;
+  /**
+   * ID represents the flow's unique ID. When performing the login flow, this
+   * represents the id in the login UI's query parameter: http://<selfservice.flows.login.ui_url>/?flow=<flow_id>
+   */
+  id: string;
+  /**
+   * IdentitySchema optionally holds the ID of the identity schema that is used
+   * for this flow. This value can be set by the user when creating the flow and
+   * should be retained when the flow is saved or converted to another flow.
+   */
+  identity_schema?: string;
+  /**
+   * IssuedAt is the time (UTC) when the flow started.
+   */
+  issued_at: string;
+  /**
+   * Ory OAuth 2.0 Login Challenge.
+   *
+   * This value is set using the `login_challenge` query parameter of the registration and login endpoints.
+   * If set will cooperate with Ory OAuth2 and OpenID to act as an OAuth2 server / OpenID Provider.
+   */
+  oauth2_login_challenge?: string;
+  oauth2_login_request?: OAuth2LoginRequest;
+  organization_id?: NullUuid;
+  /**
+   * Refresh stores whether this login flow should enforce re-authentication.
+   */
+  refresh?: boolean;
+  /**
+   * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
+   * to forward information contained in the URL's path or query for example.
+   */
+  request_url: string;
+  requested_aal?: AuthenticatorAssuranceLevel;
+  /**
+   * ReturnTo contains the requested return_to URL.
+   */
+  return_to?: string;
+  /**
+   * SessionTokenExchangeCode holds the secret code that the client can use to retrieve a session token after the login flow has been completed.
+   * This is only set if the client has requested a session token exchange code, and if the flow is of type "api",
+   * and only on creating the login flow.
+   */
+  session_token_exchange_code?: string;
+  /**
+   * State represents the state of this request:
+   *
+   * choose_method: ask the user to choose a method to sign in with
+   * sent_email: the email has been sent to the user
+   * passed_challenge: the request was successful and the login challenge was passed.
+   */
+  state: unknown;
+  /**
+   * TransientPayload is used to pass data from the login to hooks and email templates
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  type: SelfServiceFlowType;
+  ui: UiContainer;
+  /**
+   * UpdatedAt is a helper struct field for gobuffalo.pop.
+   */
+  updated_at?: string;
+};
+
+/**
+ * Logout Flow
+ */
+export type LogoutFlow = {
+  /**
+   * LogoutToken can be used to perform logout using AJAX.
+   */
+  logout_token: string;
+  /**
+   * LogoutURL can be opened in a browser to sign the user out.
+   *
+   * format: uri
+   */
+  logout_url: string;
+};
+
+/**
+ * NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable-
+ */
+export type NullJsonRawMessage = unknown;
+
+/**
+ * NullTime implements sql.NullTime functionality.
+ */
+export type NullTime = string;
+
+/**
+ * Perform Native Logout Request Body
+ */
+export type PerformNativeLogoutBody = {
+  /**
+   * The Session Token
+   *
+   * Invalidate this session token.
+   */
+  session_token: string;
 };
 
 /**
@@ -2398,47 +920,24 @@ export type RecoveryFlow = {
   ui: UiContainer;
 };
 
-/**
- * Perform Native Logout Request Body
- */
-export type PerformNativeLogoutBody = {
+export type RecoveryIdentityAddress = {
   /**
-   * The Session Token
-   *
-   * Invalidate this session token.
+   * CreatedAt is a helper struct field for gobuffalo.pop.
    */
-  session_token: string;
+  created_at?: string;
+  id?: string;
+  /**
+   * UpdatedAt is a helper struct field for gobuffalo.pop.
+   */
+  updated_at?: string;
+  value: string;
+  via: string;
 };
 
-/**
- * Logout Flow
- */
-export type LogoutFlow = {
+export type RegistrationFlow = {
   /**
-   * LogoutToken can be used to perform logout using AJAX.
-   */
-  logout_token: string;
-  /**
-   * LogoutURL can be opened in a browser to sign the user out.
-   *
-   * format: uri
-   */
-  logout_url: string;
-};
-
-/**
- * Login Flow
- *
- * This object represents a login flow. A login flow is initiated at the "Initiate Login API / Browser Flow"
- * endpoint by a client.
- *
- * Once a login flow is completed successfully, a session cookie or session token will be issued.
- */
-export type LoginFlow = {
-  /**
-   * The active login method
-   *
-   * If set contains the login method used. If the flow is new, it is unset.
+   * Active, if set, contains the registration method that is being used. It is initially
+   * not set.
    * password CredentialsTypePassword
    * oidc CredentialsTypeOIDC
    * totp CredentialsTypeTOTP
@@ -2447,6 +946,7 @@ export type LoginFlow = {
    * code CredentialsTypeCodeAuth
    * passkey CredentialsTypePasskey
    * profile CredentialsTypeProfile
+   * saml CredentialsTypeSAML
    * link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.
    * code_recovery CredentialsTypeRecoveryCode
    */
@@ -2459,24 +959,27 @@ export type LoginFlow = {
     | "code"
     | "passkey"
     | "profile"
+    | "saml"
     | "link_recovery"
     | "code_recovery";
-  /**
-   * CreatedAt is a helper struct field for gobuffalo.pop.
-   */
-  created_at?: string;
   /**
    * ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to log in,
    * a new flow has to be initiated.
    */
   expires_at: string;
   /**
-   * ID represents the flow's unique ID. When performing the login flow, this
-   * represents the id in the login UI's query parameter: http://<selfservice.flows.login.ui_url>/?flow=<flow_id>
+   * ID represents the flow's unique ID. When performing the registration flow, this
+   * represents the id in the registration ui's query parameter: http://<selfservice.flows.registration.ui_url>/?flow=<id>
    */
   id: string;
   /**
-   * IssuedAt is the time (UTC) when the flow started.
+   * IdentitySchema optionally holds the ID of the identity schema that is used
+   * for this flow. This value can be set by the user when creating the flow and
+   * should be retained when the flow is saved or converted to another flow.
+   */
+  identity_schema?: string;
+  /**
+   * IssuedAt is the time (UTC) when the flow occurred.
    */
   issued_at: string;
   /**
@@ -2489,169 +992,1970 @@ export type LoginFlow = {
   oauth2_login_request?: OAuth2LoginRequest;
   organization_id?: NullUuid;
   /**
-   * Refresh stores whether this login flow should enforce re-authentication.
-   */
-  refresh?: boolean;
-  /**
    * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
    * to forward information contained in the URL's path or query for example.
    */
   request_url: string;
-  requested_aal?: AuthenticatorAssuranceLevel;
   /**
    * ReturnTo contains the requested return_to URL.
    */
   return_to?: string;
   /**
-   * SessionTokenExchangeCode holds the secret code that the client can use to retrieve a session token after the login flow has been completed.
+   * SessionTokenExchangeCode holds the secret code that the client can use to retrieve a session token after the flow has been completed.
    * This is only set if the client has requested a session token exchange code, and if the flow is of type "api",
-   * and only on creating the login flow.
+   * and only on creating the flow.
    */
   session_token_exchange_code?: string;
   /**
    * State represents the state of this request:
    *
-   * choose_method: ask the user to choose a method to sign in with
+   * choose_method: ask the user to choose a method (e.g. registration with email)
    * sent_email: the email has been sent to the user
-   * passed_challenge: the request was successful and the login challenge was passed.
+   * passed_challenge: the request was successful and the registration challenge was passed.
    */
   state: unknown;
   /**
-   * TransientPayload is used to pass data from the login to hooks and email templates
+   * TransientPayload is used to pass data from the registration to a webhook
    */
   transient_payload?: {
     [key: string]: unknown;
   };
   type: SelfServiceFlowType;
   ui: UiContainer;
-  /**
-   * UpdatedAt is a helper struct field for gobuffalo.pop.
-   */
-  updated_at?: string;
 };
 
 /**
- * List of Identity JSON Schemas
+ * Type is the flow type.
+ *
+ * The flow type can either be `api` or `browser`.
  */
-export type IdentitySchemas = Array<IdentitySchemaContainer>;
+export type SelfServiceFlowType = string;
 
 /**
- * An Identity JSON Schema Container
+ * A Session
  */
-export type IdentitySchemaContainer = {
+export type Session = {
   /**
-   * The ID of the Identity JSON Schema
+   * Active state. If false the session is no longer active.
    */
-  id?: string;
+  active?: boolean;
   /**
-   * The actual Identity JSON Schema
+   * The Session Authentication Timestamp
+   *
+   * When this session was authenticated at. If multi-factor authentication was used this
+   * is the time when the last factor was authenticated (e.g. the TOTP code challenge was completed).
    */
-  schema?: {
-    [key: string]: unknown;
-  };
+  authenticated_at?: string;
+  authentication_methods?: SessionAuthenticationMethods;
+  authenticator_assurance_level?: AuthenticatorAssuranceLevel;
+  /**
+   * Devices has history of all endpoints where the session was used
+   */
+  devices?: Array<SessionDevice>;
+  /**
+   * The Session Expiry
+   *
+   * When this session expires at.
+   */
+  expires_at?: string;
+  /**
+   * Session ID
+   */
+  id: string;
+  identity?: Identity;
+  /**
+   * The Session Issuance Timestamp
+   *
+   * When this session was issued at. Usually equal or close to `authenticated_at`.
+   */
+  issued_at?: string;
+  /**
+   * Tokenized is the tokenized (e.g. JWT) version of the session.
+   *
+   * It is only set when the `tokenize_as` query parameter was set to a valid tokenize template during calls to `/session/whoami`.
+   */
+  tokenized?: string;
 };
 
 /**
- * Raw JSON Schema
+ * AuthenticationMethod identifies an authentication method
+ *
+ * A singular authenticator used during authentication / login.
  */
-export type IdentitySchema = {
-  [key: string]: unknown;
+export type SessionAuthenticationMethod = {
+  aal?: AuthenticatorAssuranceLevel;
+  /**
+   * When the authentication challenge was completed.
+   */
+  completed_at?: string;
+  /**
+   * The method used in this authenticator.
+   * password CredentialsTypePassword
+   * oidc CredentialsTypeOIDC
+   * totp CredentialsTypeTOTP
+   * lookup_secret CredentialsTypeLookup
+   * webauthn CredentialsTypeWebAuthn
+   * code CredentialsTypeCodeAuth
+   * passkey CredentialsTypePasskey
+   * profile CredentialsTypeProfile
+   * saml CredentialsTypeSAML
+   * link_recovery CredentialsTypeRecoveryLink CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself.
+   * code_recovery CredentialsTypeRecoveryCode
+   */
+  method?:
+    | "password"
+    | "oidc"
+    | "totp"
+    | "lookup_secret"
+    | "webauthn"
+    | "code"
+    | "passkey"
+    | "profile"
+    | "saml"
+    | "link_recovery"
+    | "code_recovery";
+  /**
+   * The Organization id used for authentication
+   */
+  organization?: string;
+  /**
+   * OIDC or SAML provider id used for authentication
+   */
+  provider?: string;
 };
 
-export type GenericError = {
-  /**
-   * The status code
-   */
-  code?: number;
-  /**
-   * Debug information
-   *
-   * This field is often not exposed to protect against leaking
-   * sensitive information.
-   */
-  debug?: string;
-  /**
-   * Further error details
-   */
-  details?: {
-    [key: string]: never;
-  };
-  /**
-   * The error ID
-   *
-   * Useful when trying to identify various errors in application logic.
-   */
-  id?: string;
-  /**
-   * Error message
-   *
-   * The error's message.
-   */
-  message: string;
-  /**
-   * A human-readable reason for the error
-   */
-  reason?: string;
-  /**
-   * The request ID
-   *
-   * The request ID is often exposed internally in order to trace
-   * errors across service architectures. This is often a UUID.
-   */
-  request?: string;
-  /**
-   * The status description
-   */
-  status?: string;
-};
+/**
+ * List of (Used) AuthenticationMethods
+ *
+ * A list of authenticators which were used to authenticate the session.
+ */
+export type SessionAuthenticationMethods = Array<SessionAuthenticationMethod>;
 
-export type FlowError = {
+/**
+ * Device corresponding to a Session
+ */
+export type SessionDevice = {
   /**
-   * CreatedAt is a helper struct field for gobuffalo.pop.
-   */
-  created_at?: string;
-  error?: {
-    [key: string]: unknown;
-  };
-  /**
-   * ID of the error container.
+   * Device record ID
    */
   id: string;
   /**
-   * UpdatedAt is a helper struct field for gobuffalo.pop.
+   * IPAddress of the client
+   */
+  ip_address?: string;
+  /**
+   * Geo Location corresponding to the IP Address
+   */
+  location?: string;
+  /**
+   * UserAgent of the client
+   */
+  user_agent?: string;
+};
+
+/**
+ * Flow represents a Settings Flow
+ *
+ * This flow is used when an identity wants to update settings
+ * (e.g. profile data, passwords, ...) in a selfservice manner.
+ *
+ * We recommend reading the [User Settings Documentation](../self-service/flows/user-settings)
+ */
+export type SettingsFlow = {
+  /**
+   * Active, if set, contains the registration method that is being used. It is initially
+   * not set.
+   */
+  active?: string;
+  /**
+   * Contains a list of actions, that could follow this flow
+   *
+   * It can, for example, contain a reference to the verification flow, created as part of the user's
+   * registration.
+   */
+  continue_with?: Array<ContinueWith>;
+  /**
+   * ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to update the setting,
+   * a new flow has to be initiated.
+   */
+  expires_at: string;
+  /**
+   * ID represents the flow's unique ID. When performing the settings flow, this
+   * represents the id in the settings ui's query parameter: http://<selfservice.flows.settings.ui_url>?flow=<id>
+   */
+  id: string;
+  identity: Identity;
+  /**
+   * IssuedAt is the time (UTC) when the flow occurred.
+   */
+  issued_at: string;
+  /**
+   * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
+   * to forward information contained in the URL's path or query for example.
+   */
+  request_url: string;
+  /**
+   * ReturnTo contains the requested return_to URL.
+   */
+  return_to?: string;
+  /**
+   * State represents the state of this flow. It knows two states:
+   *
+   * show_form: No user data has been collected, or it is invalid, and thus the form should be shown.
+   * success: Indicates that the settings flow has been updated successfully with the provided data.
+   * Done will stay true when repeatedly checking. If set to true, done will revert back to false only
+   * when a flow with invalid (e.g. "please use a valid phone number") data was sent.
+   */
+  state: unknown;
+  /**
+   * TransientPayload is used to pass data from the settings flow to hooks and email templates
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  type: SelfServiceFlowType;
+  ui: UiContainer;
+};
+
+/**
+ * The Response for Login Flows via API
+ */
+export type SuccessfulNativeLogin = {
+  /**
+   * Contains a list of actions, that could follow this flow
+   *
+   * It can, for example, this will contain a reference to the verification flow, created as part of the user's
+   * registration or the token of the session.
+   */
+  continue_with?: Array<ContinueWith>;
+  session: Session;
+  /**
+   * The Session Token
+   *
+   * A session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization
+   * Header:
+   *
+   * Authorization: bearer ${session-token}
+   *
+   * The session token is only issued for API flows, not for Browser flows!
+   */
+  session_token?: string;
+};
+
+/**
+ * The Response for Registration Flows via API
+ */
+export type SuccessfulNativeRegistration = {
+  /**
+   * Contains a list of actions, that could follow this flow
+   *
+   * It can, for example, this will contain a reference to the verification flow, created as part of the user's
+   * registration or the token of the session.
+   */
+  continue_with?: Array<ContinueWith>;
+  identity: Identity;
+  session?: Session;
+  /**
+   * The Session Token
+   *
+   * This field is only set when the session hook is configured as a post-registration hook.
+   *
+   * A session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization
+   * Header:
+   *
+   * Authorization: bearer ${session-token}
+   *
+   * The session token is only issued for API flows, not for Browser flows!
+   */
+  session_token?: string;
+};
+
+/**
+ * Container represents a HTML Form. The container can work with both HTTP Form and JSON requests
+ */
+export type UiContainer = {
+  /**
+   * Action should be used as the form action URL `<form action="{{ .Action }}" method="post">`.
+   */
+  action: string;
+  messages?: UiTexts;
+  /**
+   * Method is the form method (e.g. POST)
+   */
+  method: string;
+  nodes: UiNodes;
+};
+
+/**
+ * Node represents a flow's nodes
+ *
+ * Nodes are represented as HTML elements or their native UI equivalents. For example,
+ * a node can be an `<img>` tag, or an `<input element>` but also `some plain text`.
+ */
+export type UiNode = {
+  attributes: UiNodeAttributes;
+  /**
+   * Group specifies which group (e.g. password authenticator) this node belongs to.
+   * default DefaultGroup
+   * password PasswordGroup
+   * oidc OpenIDConnectGroup
+   * profile ProfileGroup
+   * link LinkGroup
+   * code CodeGroup
+   * totp TOTPGroup
+   * lookup_secret LookupGroup
+   * webauthn WebAuthnGroup
+   * passkey PasskeyGroup
+   * identifier_first IdentifierFirstGroup
+   * captcha CaptchaGroup
+   * saml SAMLGroup
+   */
+  group:
+    | "default"
+    | "password"
+    | "oidc"
+    | "profile"
+    | "link"
+    | "code"
+    | "totp"
+    | "lookup_secret"
+    | "webauthn"
+    | "passkey"
+    | "identifier_first"
+    | "captcha"
+    | "saml";
+  messages: UiTexts;
+  meta: UiNodeMeta;
+  /**
+   * The node's type
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  type: "text" | "input" | "img" | "a" | "script" | "div";
+};
+
+/**
+ * AnchorAttributes represents the attributes of an anchor node.
+ */
+export type UiNodeAnchorAttributes = {
+  /**
+   * The link's href (destination) URL.
+   *
+   * format: uri
+   */
+  href: string;
+  /**
+   * A unique identifier
+   */
+  id: string;
+  /**
+   * NodeType represents this node's types. It is a mirror of `node.type` and
+   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "a".
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  node_type: "a";
+  title: UiText;
+};
+
+/**
+ * Attributes represents a list of attributes (e.g. `href="foo"` for links).
+ */
+export type UiNodeAttributes =
+  | ({
+      node_type: "input";
+    } & UiNodeInputAttributes)
+  | ({
+      node_type: "text";
+    } & UiNodeTextAttributes)
+  | ({
+      node_type: "img";
+    } & UiNodeImageAttributes)
+  | ({
+      node_type: "a";
+    } & UiNodeAnchorAttributes)
+  | ({
+      node_type: "script";
+    } & UiNodeScriptAttributes)
+  | ({
+      node_type: "div";
+    } & UiNodeDivisionAttributes);
+
+/**
+ * DivisionAttributes represent a division section.
+ *
+ * Division sections are used for interactive widgets that require a hook in the DOM / view.
+ */
+export type UiNodeDivisionAttributes = {
+  /**
+   * A classname that should be rendered into the DOM.
+   */
+  class?: string;
+  /**
+   * Data is a map of key-value pairs that are passed to the division.
+   *
+   * They may be used for `data-...` attributes.
+   */
+  data?: {
+    [key: string]: string;
+  };
+  /**
+   * A unique identifier
+   */
+  id: string;
+  /**
+   * NodeType represents this node's type. It is a mirror of `node.type` and
+   * is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is "script".
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  node_type: "div";
+};
+
+/**
+ * ImageAttributes represents the attributes of an image node.
+ */
+export type UiNodeImageAttributes = {
+  /**
+   * Height of the image
+   */
+  height: number;
+  /**
+   * A unique identifier
+   */
+  id: string;
+  /**
+   * NodeType represents this node's types. It is a mirror of `node.type` and
+   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "img".
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  node_type: "img";
+  /**
+   * The image's source URL.
+   *
+   * format: uri
+   */
+  src: string;
+  /**
+   * Width of the image
+   */
+  width: number;
+};
+
+/**
+ * InputAttributes represents the attributes of an input node
+ */
+export type UiNodeInputAttributes = {
+  /**
+   * The autocomplete attribute for the input.
+   * email InputAttributeAutocompleteEmail
+   * tel InputAttributeAutocompleteTel
+   * url InputAttributeAutocompleteUrl
+   * current-password InputAttributeAutocompleteCurrentPassword
+   * new-password InputAttributeAutocompleteNewPassword
+   * one-time-code InputAttributeAutocompleteOneTimeCode
+   * username webauthn InputAttributeAutocompleteUsernameWebauthn
+   */
+  autocomplete?:
+    | "email"
+    | "tel"
+    | "url"
+    | "current-password"
+    | "new-password"
+    | "one-time-code"
+    | "username webauthn";
+  /**
+   * Sets the input's disabled field to true or false.
+   */
+  disabled: boolean;
+  label?: UiText;
+  /**
+   * MaxLength may contain the input's maximum length.
+   */
+  maxlength?: number;
+  /**
+   * The input's element name.
+   */
+  name: string;
+  /**
+   * NodeType represents this node's types. It is a mirror of `node.type` and
+   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "input".
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  node_type: "input";
+  /**
+   * OnClick may contain javascript which should be executed on click. This is primarily
+   * used for WebAuthn.
+   *
+   * Deprecated: Using OnClick requires the use of eval() which is a security risk. Use OnClickTrigger instead.
+   */
+  onclick?: string;
+  /**
+   * OnClickTrigger may contain a WebAuthn trigger which should be executed on click.
+   *
+   * The trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.
+   * oryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration
+   * oryWebAuthnLogin WebAuthnTriggersWebAuthnLogin
+   * oryPasskeyLogin WebAuthnTriggersPasskeyLogin
+   * oryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit
+   * oryPasskeyRegistration WebAuthnTriggersPasskeyRegistration
+   * oryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration
+   */
+  onclickTrigger?:
+    | "oryWebAuthnRegistration"
+    | "oryWebAuthnLogin"
+    | "oryPasskeyLogin"
+    | "oryPasskeyLoginAutocompleteInit"
+    | "oryPasskeyRegistration"
+    | "oryPasskeySettingsRegistration";
+  /**
+   * OnLoad may contain javascript which should be executed on load. This is primarily
+   * used for WebAuthn.
+   *
+   * Deprecated: Using OnLoad requires the use of eval() which is a security risk. Use OnLoadTrigger instead.
+   */
+  onload?: string;
+  /**
+   * OnLoadTrigger may contain a WebAuthn trigger which should be executed on load.
+   *
+   * The trigger maps to a JavaScript function provided by Ory, which triggers actions such as PassKey registration or login.
+   * oryWebAuthnRegistration WebAuthnTriggersWebAuthnRegistration
+   * oryWebAuthnLogin WebAuthnTriggersWebAuthnLogin
+   * oryPasskeyLogin WebAuthnTriggersPasskeyLogin
+   * oryPasskeyLoginAutocompleteInit WebAuthnTriggersPasskeyLoginAutocompleteInit
+   * oryPasskeyRegistration WebAuthnTriggersPasskeyRegistration
+   * oryPasskeySettingsRegistration WebAuthnTriggersPasskeySettingsRegistration
+   */
+  onloadTrigger?:
+    | "oryWebAuthnRegistration"
+    | "oryWebAuthnLogin"
+    | "oryPasskeyLogin"
+    | "oryPasskeyLoginAutocompleteInit"
+    | "oryPasskeyRegistration"
+    | "oryPasskeySettingsRegistration";
+  /**
+   * The input's pattern.
+   */
+  pattern?: string;
+  /**
+   * Mark this input field as required.
+   */
+  required?: boolean;
+  /**
+   * The input's element type.
+   * text InputAttributeTypeText
+   * password InputAttributeTypePassword
+   * number InputAttributeTypeNumber
+   * checkbox InputAttributeTypeCheckbox
+   * hidden InputAttributeTypeHidden
+   * email InputAttributeTypeEmail
+   * tel InputAttributeTypeTel
+   * submit InputAttributeTypeSubmit
+   * button InputAttributeTypeButton
+   * datetime-local InputAttributeTypeDateTimeLocal
+   * date InputAttributeTypeDate
+   * url InputAttributeTypeURI
+   */
+  type:
+    | "text"
+    | "password"
+    | "number"
+    | "checkbox"
+    | "hidden"
+    | "email"
+    | "tel"
+    | "submit"
+    | "button"
+    | "datetime-local"
+    | "date"
+    | "url";
+  /**
+   * The input's value.
+   */
+  value?: unknown;
+};
+
+/**
+ * A Node's Meta Information
+ *
+ * This might include a label and other information that can optionally
+ * be used to render UIs.
+ */
+export type UiNodeMeta = {
+  label?: UiText;
+};
+
+/**
+ * ScriptAttributes represent script nodes which load javascript.
+ */
+export type UiNodeScriptAttributes = {
+  /**
+   * The script async type
+   */
+  async: boolean;
+  /**
+   * The script cross origin policy
+   */
+  crossorigin: string;
+  /**
+   * A unique identifier
+   */
+  id: string;
+  /**
+   * The script's integrity hash
+   */
+  integrity: string;
+  /**
+   * NodeType represents this node's types. It is a mirror of `node.type` and
+   * is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is "script".
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  node_type: "script";
+  /**
+   * Nonce for CSP
+   *
+   * A nonce you may want to use to improve your Content Security Policy.
+   * You do not have to use this value but if you want to improve your CSP
+   * policies you may use it. You can also choose to use your own nonce value!
+   */
+  nonce: string;
+  /**
+   * The script referrer policy
+   */
+  referrerpolicy: string;
+  /**
+   * The script source
+   */
+  src: string;
+  /**
+   * The script MIME type
+   */
+  type: string;
+};
+
+/**
+ * TextAttributes represents the attributes of a text node.
+ */
+export type UiNodeTextAttributes = {
+  /**
+   * A unique identifier
+   */
+  id: string;
+  /**
+   * NodeType represents this node's types. It is a mirror of `node.type` and
+   * is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is "text".
+   * text Text
+   * input Input
+   * img Image
+   * a Anchor
+   * script Script
+   * div Division
+   */
+  node_type: "text";
+  text: UiText;
+};
+
+export type UiNodes = Array<UiNode>;
+
+export type UiText = {
+  /**
+   * The message's context. Useful when customizing messages.
+   */
+  context?: {
+    [key: string]: unknown;
+  };
+  id: Id;
+  /**
+   * The message text. Written in american english.
+   */
+  text: string;
+  /**
+   * The message type.
+   * info Info
+   * error Error
+   * success Success
+   */
+  type: "info" | "error" | "success";
+};
+
+export type UiTexts = Array<UiText>;
+
+export type UpdateLoginFlowBody =
+  | ({
+      method: "password";
+    } & UpdateLoginFlowWithPasswordMethod)
+  | ({
+      method: "oidc";
+    } & UpdateLoginFlowWithOidcMethod)
+  | ({
+      method: "saml";
+    } & UpdateLoginFlowWithSamlMethod)
+  | ({
+      method: "totp";
+    } & UpdateLoginFlowWithTotpMethod)
+  | ({
+      method: "webauthn";
+    } & UpdateLoginFlowWithWebAuthnMethod)
+  | ({
+      method: "lookup_secret";
+    } & UpdateLoginFlowWithLookupSecretMethod)
+  | ({
+      method: "code";
+    } & UpdateLoginFlowWithCodeMethod)
+  | ({
+      method: "passkey";
+    } & UpdateLoginFlowWithPasskeyMethod)
+  | ({
+      method: "identifier_first";
+    } & UpdateLoginFlowWithIdentifierFirstMethod);
+
+/**
+ * Update Login flow using the code method
+ */
+export type UpdateLoginFlowWithCodeMethod = {
+  /**
+   * Address is the address to send the code to, in case that there are multiple addresses. This field
+   * is only used in two-factor flows and is ineffective for passwordless flows.
+   */
+  address?: string;
+  /**
+   * Code is the 6 digits code sent to the user
+   */
+  code?: string;
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token: string;
+  /**
+   * Identifier is the code identifier
+   * The identifier requires that the user has already completed the registration or settings with code flow.
+   */
+  identifier?: string;
+  /**
+   * Method should be set to "code" when logging in using the code strategy.
+   */
+  method: string;
+  /**
+   * Resend is set when the user wants to resend the code
+   */
+  resend?: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Login Flow with Multi-Step Method
+ */
+export type UpdateLoginFlowWithIdentifierFirstMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Identifier is the email or username of the user trying to log in.
+   */
+  identifier: string;
+  /**
+   * Method should be set to "password" when logging in using the identifier and password strategy.
+   */
+  method: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Login Flow with Lookup Secret Method
+ */
+export type UpdateLoginFlowWithLookupSecretMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * The lookup secret.
+   */
+  lookup_secret: string;
+  /**
+   * Method should be set to "lookup_secret" when logging in using the lookup_secret strategy.
+   */
+  method: string;
+};
+
+/**
+ * Update Login Flow with OpenID Connect Method
+ */
+export type UpdateLoginFlowWithOidcMethod = {
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * IDToken is an optional id token provided by an OIDC provider
+   *
+   * If submitted, it is verified using the OIDC provider's public key set and the claims are used to populate
+   * the OIDC credentials of the identity.
+   * If the OIDC provider does not store additional claims (such as name, etc.) in the IDToken itself, you can use
+   * the `traits` field to populate the identity's traits. Note, that Apple only includes the users email in the IDToken.
+   *
+   * Supported providers are
+   * Apple
+   * Google
+   */
+  id_token?: string;
+  /**
+   * IDTokenNonce is the nonce, used when generating the IDToken.
+   * If the provider supports nonce validation, the nonce will be validated against this value and required.
+   */
+  id_token_nonce?: string;
+  /**
+   * Method to use
+   *
+   * This field must be set to `oidc` when using the oidc method.
+   */
+  method: string;
+  /**
+   * The provider to register with
+   */
+  provider: string;
+  /**
+   * The identity traits. This is a placeholder for the registration flow.
+   */
+  traits?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * UpstreamParameters are the parameters that are passed to the upstream identity provider.
+   *
+   * These parameters are optional and depend on what the upstream identity provider supports.
+   * Supported parameters are:
+   * `login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.
+   * `hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.
+   * `prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.
+   * `acr_values` (string): The `acr_values` specifies the Authentication Context Class Reference values for the authorization request.
+   */
+  upstream_parameters?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Login Flow with Passkey Method
+ */
+export type UpdateLoginFlowWithPasskeyMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Method should be set to "passkey" when logging in using the Passkey strategy.
+   */
+  method: string;
+  /**
+   * Login a WebAuthn Security Key
+   *
+   * This must contain the ID of the WebAuthN connection.
+   */
+  passkey_login?: string;
+};
+
+/**
+ * Update Login Flow with Password Method
+ */
+export type UpdateLoginFlowWithPasswordMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Identifier is the email or username of the user trying to log in.
+   */
+  identifier: string;
+  /**
+   * Method should be set to "password" when logging in using the identifier and password strategy.
+   */
+  method: string;
+  /**
+   * The user's password.
+   */
+  password: string;
+  /**
+   * Identifier is the email or username of the user trying to log in.
+   * This field is deprecated!
+   */
+  password_identifier?: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update login flow using SAML
+ */
+export type UpdateLoginFlowWithSamlMethod = {
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * Method to use
+   *
+   * This field must be set to `saml` when using the saml method.
+   */
+  method: string;
+  /**
+   * The provider to register with
+   */
+  provider: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Login Flow with TOTP Method
+ */
+export type UpdateLoginFlowWithTotpMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Method should be set to "totp" when logging in using the TOTP strategy.
+   */
+  method: string;
+  /**
+   * The TOTP code.
+   */
+  totp_code: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Login Flow with WebAuthn Method
+ */
+export type UpdateLoginFlowWithWebAuthnMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Identifier is the email or username of the user trying to log in.
+   */
+  identifier: string;
+  /**
+   * Method should be set to "webAuthn" when logging in using the WebAuthn strategy.
+   */
+  method: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Login a WebAuthn Security Key
+   *
+   * This must contain the ID of the WebAuthN connection.
+   */
+  webauthn_login?: string;
+};
+
+/**
+ * Update Recovery Flow Request Body
+ */
+export type UpdateRecoveryFlowBody =
+  | ({
+      method: "link";
+    } & UpdateRecoveryFlowWithLinkMethod)
+  | ({
+      method: "code";
+    } & UpdateRecoveryFlowWithCodeMethod);
+
+/**
+ * Update Recovery Flow with Code Method
+ */
+export type UpdateRecoveryFlowWithCodeMethod = {
+  /**
+   * Code from the recovery email
+   *
+   * If you want to submit a code, use this field, but make sure to _not_ include the email field, as well.
+   */
+  code?: string;
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * The email address of the account to recover
+   *
+   * If the email belongs to a valid account, a recovery email will be sent.
+   *
+   * If you want to notify the email address if the account does not exist, see
+   * the [notify_unknown_recipients flag](https://www.ory.sh/docs/kratos/self-service/flows/account-recovery-password-reset#attempted-recovery-notifications)
+   *
+   * If a code was already sent, including this field in the payload will invalidate the sent code and re-send a new code.
+   *
+   * format: email
+   */
+  email?: string;
+  /**
+   * Method is the method that should be used for this recovery flow
+   *
+   * Allowed values are `link` and `code`.
+   * link RecoveryStrategyLink
+   * code RecoveryStrategyCode
+   */
+  method: "link" | "code";
+  /**
+   * A recovery address that is registered for the user.
+   * It can be an email, a phone number (to receive the code via SMS), etc.
+   * Used in RecoveryV2.
+   */
+  recovery_address?: string;
+  /**
+   * If there are multiple recovery addresses registered for the user, and the initially provided address
+   * is different from the address chosen when the choice (of masked addresses) is presented, then we need to make sure
+   * that the user actually knows the full address to avoid information exfiltration, so we ask for the full address.
+   * Used in RecoveryV2.
+   */
+  recovery_confirm_address?: string;
+  /**
+   * If there are multiple addresses registered for the user, a choice is presented and this field
+   * stores the result of this choice.
+   * Addresses are 'masked' (never sent in full to the client and shown partially in the UI) since at this point in the recovery flow,
+   * the user has not yet proven that it knows the full address and we want to avoid
+   * information exfiltration.
+   * So for all intents and purposes, the value of this field should be treated as an opaque identifier.
+   * Used in RecoveryV2.
+   */
+  recovery_select_address?: string;
+  /**
+   * Set to "previous" to go back in the flow, meaningfully.
+   * Used in RecoveryV2.
+   */
+  screen?: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Recovery Flow with Link Method
+ */
+export type UpdateRecoveryFlowWithLinkMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Email to Recover
+   *
+   * Needs to be set when initiating the flow. If the email is a registered
+   * recovery email, a recovery link will be sent. If the email is not known,
+   * an email with details on what happened will be sent instead.
+   *
+   * format: email
+   */
+  email: string;
+  /**
+   * Method is the method that should be used for this recovery flow
+   *
+   * Allowed values are `link` and `code`
+   * link RecoveryStrategyLink
+   * code RecoveryStrategyCode
+   */
+  method: "link" | "code";
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Registration Request Body
+ */
+export type UpdateRegistrationFlowBody =
+  | ({
+      method: "password";
+    } & UpdateRegistrationFlowWithPasswordMethod)
+  | ({
+      method: "oidc";
+    } & UpdateRegistrationFlowWithOidcMethod)
+  | ({
+      method: "saml";
+    } & UpdateRegistrationFlowWithSamlMethod)
+  | ({
+      method: "webauthn";
+    } & UpdateRegistrationFlowWithWebAuthnMethod)
+  | ({
+      method: "code";
+    } & UpdateRegistrationFlowWithCodeMethod)
+  | ({
+      method: "passkey";
+    } & UpdateRegistrationFlowWithPasskeyMethod)
+  | ({
+      method: "profile";
+    } & UpdateRegistrationFlowWithProfileMethod);
+
+/**
+ * Update Registration Flow with Code Method
+ */
+export type UpdateRegistrationFlowWithCodeMethod = {
+  /**
+   * The OTP Code sent to the user
+   */
+  code?: string;
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * Method to use
+   *
+   * This field must be set to `code` when using the code method.
+   */
+  method: string;
+  /**
+   * Resend restarts the flow with a new code
+   */
+  resend?: string;
+  /**
+   * The identity's traits
+   */
+  traits: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Registration Flow with OpenID Connect Method
+ */
+export type UpdateRegistrationFlowWithOidcMethod = {
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * IDToken is an optional id token provided by an OIDC provider
+   *
+   * If submitted, it is verified using the OIDC provider's public key set and the claims are used to populate
+   * the OIDC credentials of the identity.
+   * If the OIDC provider does not store additional claims (such as name, etc.) in the IDToken itself, you can use
+   * the `traits` field to populate the identity's traits. Note, that Apple only includes the users email in the IDToken.
+   *
+   * Supported providers are
+   * Apple
+   * Google
+   */
+  id_token?: string;
+  /**
+   * IDTokenNonce is the nonce, used when generating the IDToken.
+   * If the provider supports nonce validation, the nonce will be validated against this value and is required.
+   */
+  id_token_nonce?: string;
+  /**
+   * Method to use
+   *
+   * This field must be set to `oidc` when using the oidc method.
+   */
+  method: string;
+  /**
+   * The provider to register with
+   */
+  provider: string;
+  /**
+   * The identity traits
+   */
+  traits?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * UpstreamParameters are the parameters that are passed to the upstream identity provider.
+   *
+   * These parameters are optional and depend on what the upstream identity provider supports.
+   * Supported parameters are:
+   * `login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.
+   * `hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.
+   * `prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.
+   * `acr_values` (string): The `acr_values` specifies the Authentication Context Class Reference values for the authorization request.
+   */
+  upstream_parameters?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Registration Flow with Passkey Method
+ */
+export type UpdateRegistrationFlowWithPasskeyMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to "passkey" when trying to add, update, or remove a Passkey.
+   */
+  method: string;
+  /**
+   * Register a WebAuthn Security Key
+   *
+   * It is expected that the JSON returned by the WebAuthn registration process
+   * is included here.
+   */
+  passkey_register?: string;
+  /**
+   * The identity's traits
+   */
+  traits: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Registration Flow with Password Method
+ */
+export type UpdateRegistrationFlowWithPasswordMethod = {
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * Method to use
+   *
+   * This field must be set to `password` when using the password method.
+   */
+  method: string;
+  /**
+   * Password to sign the user up with
+   */
+  password: string;
+  /**
+   * The identity's traits
+   */
+  traits: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Registration Flow with Profile Method
+ */
+export type UpdateRegistrationFlowWithProfileMethod = {
+  /**
+   * The Anti-CSRF Token
+   *
+   * This token is only required when performing browser flows.
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to profile when trying to update a profile.
+   */
+  method: string;
+  /**
+   * Screen requests navigation to a previous screen.
+   *
+   * This must be set to credential-selection to go back to the credential
+   * selection screen.
+   * credential-selection RegistrationScreenCredentialSelection nolint:gosec // not a credential
+   * previous RegistrationScreenPrevious
+   */
+  screen?: "credential-selection" | "previous";
+  /**
+   * Traits
+   *
+   * The identity's traits.
+   */
+  traits: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update registration flow using SAML
+ */
+export type UpdateRegistrationFlowWithSamlMethod = {
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * Method to use
+   *
+   * This field must be set to `saml` when using the saml method.
+   */
+  method: string;
+  /**
+   * The provider to register with
+   */
+  provider: string;
+  /**
+   * The identity traits
+   */
+  traits?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Registration Flow with WebAuthn Method
+ */
+export type UpdateRegistrationFlowWithWebAuthnMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to "webauthn" when trying to add, update, or remove a webAuthn pairing.
+   */
+  method: string;
+  /**
+   * The identity's traits
+   */
+  traits: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Register a WebAuthn Security Key
+   *
+   * It is expected that the JSON returned by the WebAuthn registration process
+   * is included here.
+   */
+  webauthn_register?: string;
+  /**
+   * Name of the WebAuthn Security Key to be Added
+   *
+   * A human-readable name for the security key which will be added.
+   */
+  webauthn_register_displayname?: string;
+};
+
+/**
+ * Update Settings Flow Request Body
+ */
+export type UpdateSettingsFlowBody =
+  | ({
+      method: "password";
+    } & UpdateSettingsFlowWithPasswordMethod)
+  | ({
+      method: "profile";
+    } & UpdateSettingsFlowWithProfileMethod)
+  | ({
+      method: "oidc";
+    } & UpdateSettingsFlowWithOidcMethod)
+  | ({
+      method: "saml";
+    } & UpdateSettingsFlowWithSamlMethod)
+  | ({
+      method: "totp";
+    } & UpdateSettingsFlowWithTotpMethod)
+  | ({
+      method: "webauthn";
+    } & UpdateSettingsFlowWithWebAuthnMethod)
+  | ({
+      method: "lookup_secret";
+    } & UpdateSettingsFlowWithLookupMethod)
+  | ({
+      method: "passkey";
+    } & UpdateSettingsFlowWithPasskeyMethod);
+
+/**
+ * Update Settings Flow with Lookup Method
+ */
+export type UpdateSettingsFlowWithLookupMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * If set to true will save the regenerated lookup secrets
+   */
+  lookup_secret_confirm?: boolean;
+  /**
+   * Disables this method if true.
+   */
+  lookup_secret_disable?: boolean;
+  /**
+   * If set to true will regenerate the lookup secrets
+   */
+  lookup_secret_regenerate?: boolean;
+  /**
+   * If set to true will reveal the lookup secrets
+   */
+  lookup_secret_reveal?: boolean;
+  /**
+   * Method
+   *
+   * Should be set to "lookup" when trying to add, update, or remove a lookup pairing.
+   */
+  method: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Settings Flow with OpenID Connect Method
+ */
+export type UpdateSettingsFlowWithOidcMethod = {
+  /**
+   * Flow ID is the flow's ID.
+   *
+   * in: query
+   */
+  flow?: string;
+  /**
+   * Link this provider
+   *
+   * Either this or `unlink` must be set.
+   *
+   * type: string
+   * in: body
+   */
+  link?: string;
+  /**
+   * Method
+   *
+   * Should be set to profile when trying to update a profile.
+   */
+  method: string;
+  /**
+   * The identity's traits
+   *
+   * in: body
+   */
+  traits?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Unlink this provider
+   *
+   * Either this or `link` must be set.
+   *
+   * type: string
+   * in: body
+   */
+  unlink?: string;
+  /**
+   * UpstreamParameters are the parameters that are passed to the upstream identity provider.
+   *
+   * These parameters are optional and depend on what the upstream identity provider supports.
+   * Supported parameters are:
+   * `login_hint` (string): The `login_hint` parameter suppresses the account chooser and either pre-fills the email box on the sign-in form, or selects the proper session.
+   * `hd` (string): The `hd` parameter limits the login/registration process to a Google Organization, e.g. `mycollege.edu`.
+   * `prompt` (string): The `prompt` specifies whether the Authorization Server prompts the End-User for reauthentication and consent, e.g. `select_account`.
+   * `acr_values` (string): The `acr_values` specifies the Authentication Context Class Reference values for the authorization request.
+   */
+  upstream_parameters?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Settings Flow with Passkey Method
+ */
+export type UpdateSettingsFlowWithPasskeyMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to "passkey" when trying to add, update, or remove a webAuthn pairing.
+   */
+  method: string;
+  /**
+   * Remove a WebAuthn Security Key
+   *
+   * This must contain the ID of the WebAuthN connection.
+   */
+  passkey_remove?: string;
+  /**
+   * Register a WebAuthn Security Key
+   *
+   * It is expected that the JSON returned by the WebAuthn registration process
+   * is included here.
+   */
+  passkey_settings_register?: string;
+};
+
+/**
+ * Update Settings Flow with Password Method
+ */
+export type UpdateSettingsFlowWithPasswordMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to password when trying to update a password.
+   */
+  method: string;
+  /**
+   * Password is the updated password
+   */
+  password: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Settings Flow with Profile Method
+ */
+export type UpdateSettingsFlowWithProfileMethod = {
+  /**
+   * The Anti-CSRF Token
+   *
+   * This token is only required when performing browser flows.
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to profile when trying to update a profile.
+   */
+  method: string;
+  /**
+   * Traits
+   *
+   * The identity's traits.
+   */
+  traits: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update settings flow using SAML
+ */
+export type UpdateSettingsFlowWithSamlMethod = {
+  /**
+   * The CSRF Token
+   */
+  csrf_token?: string;
+  /**
+   * Flow ID is the flow's ID.
+   *
+   * in: query
+   */
+  flow?: string;
+  /**
+   * Link this provider
+   *
+   * Either this or `unlink` must be set.
+   *
+   * type: string
+   * in: body
+   */
+  link?: string;
+  /**
+   * Method
+   *
+   * Should be set to saml when trying to update a profile.
+   */
+  method: string;
+  /**
+   * The identity's traits
+   *
+   * in: body
+   */
+  traits?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Unlink this provider
+   *
+   * Either this or `link` must be set.
+   *
+   * type: string
+   * in: body
+   */
+  unlink?: string;
+};
+
+/**
+ * Update Settings Flow with TOTP Method
+ */
+export type UpdateSettingsFlowWithTotpMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to "totp" when trying to add, update, or remove a totp pairing.
+   */
+  method: string;
+  /**
+   * ValidationTOTP must contain a valid TOTP based on the
+   */
+  totp_code?: string;
+  /**
+   * UnlinkTOTP if true will remove the TOTP pairing,
+   * effectively removing the credential. This can be used
+   * to set up a new TOTP device.
+   */
+  totp_unlink?: boolean;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Settings Flow with WebAuthn Method
+ */
+export type UpdateSettingsFlowWithWebAuthnMethod = {
+  /**
+   * CSRFToken is the anti-CSRF token
+   */
+  csrf_token?: string;
+  /**
+   * Method
+   *
+   * Should be set to "webauthn" when trying to add, update, or remove a webAuthn pairing.
+   */
+  method: string;
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Register a WebAuthn Security Key
+   *
+   * It is expected that the JSON returned by the WebAuthn registration process
+   * is included here.
+   */
+  webauthn_register?: string;
+  /**
+   * Name of the WebAuthn Security Key to be Added
+   *
+   * A human-readable name for the security key which will be added.
+   */
+  webauthn_register_displayname?: string;
+  /**
+   * Remove a WebAuthn Security Key
+   *
+   * This must contain the ID of the WebAuthN connection.
+   */
+  webauthn_remove?: string;
+};
+
+/**
+ * Update Verification Flow Request Body
+ */
+export type UpdateVerificationFlowBody =
+  | ({
+      method: "link";
+    } & UpdateVerificationFlowWithLinkMethod)
+  | ({
+      method: "code";
+    } & UpdateVerificationFlowWithCodeMethod);
+
+export type UpdateVerificationFlowWithCodeMethod = {
+  /**
+   * Code from the recovery email
+   *
+   * If you want to submit a code, use this field, but make sure to _not_ include the email field, as well.
+   */
+  code?: string;
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * The email address to verify
+   *
+   * If the email belongs to a valid account, a verifiation email will be sent.
+   *
+   * If you want to notify the email address if the account does not exist, see
+   * the [notify_unknown_recipients flag](https://www.ory.sh/docs/kratos/self-service/flows/verify-email-account-activation#attempted-verification-notifications)
+   *
+   * If a code was already sent, including this field in the payload will invalidate the sent code and re-send a new code.
+   *
+   * format: email
+   */
+  email?: string;
+  /**
+   * Method is the method that should be used for this verification flow
+   *
+   * Allowed values are `link` and `code`.
+   * link VerificationStrategyLink
+   * code VerificationStrategyCode
+   */
+  method: "link" | "code";
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Update Verification Flow with Link Method
+ */
+export type UpdateVerificationFlowWithLinkMethod = {
+  /**
+   * Sending the anti-csrf token is only required for browser login flows.
+   */
+  csrf_token?: string;
+  /**
+   * Email to Verify
+   *
+   * Needs to be set when initiating the flow. If the email is a registered
+   * verification email, a verification link will be sent. If the email is not known,
+   * a email with details on what happened will be sent instead.
+   *
+   * format: email
+   */
+  email: string;
+  /**
+   * Method is the method that should be used for this verification flow
+   *
+   * Allowed values are `link` and `code`
+   * link VerificationStrategyLink
+   * code VerificationStrategyCode
+   */
+  method: "link" | "code";
+  /**
+   * Transient data to pass along to any webhooks
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * VerifiableAddress is an identity's verifiable address
+ */
+export type VerifiableIdentityAddress = {
+  /**
+   * When this entry was created
+   */
+  created_at?: string;
+  /**
+   * The ID
+   */
+  id?: string;
+  status: IdentityVerifiableAddressStatus;
+  /**
+   * When this entry was last updated
    */
   updated_at?: string;
+  /**
+   * The address value
+   *
+   * example foo@user.com
+   */
+  value: string;
+  /**
+   * Indicates if the address has already been verified
+   */
+  verified: boolean;
+  verified_at?: NullTime;
+  /**
+   * The delivery method
+   */
+  via: "email" | "sms";
 };
 
 /**
- * JSON API Error Response
+ * A Verification Flow
  *
- * The standard Ory JSON API error format.
+ * Used to verify an out-of-band communication
+ * channel such as an email address or a phone number.
+ *
+ * For more information head over to: https://www.ory.sh/docs/kratos/self-service/flows/verify-email-account-activation
  */
-export type ErrorGeneric = {
-  error: GenericError;
+export type VerificationFlow = {
+  /**
+   * Active, if set, contains the registration method that is being used. It is initially
+   * not set.
+   */
+  active?: string;
+  /**
+   * ExpiresAt is the time (UTC) when the request expires. If the user still wishes to verify the address,
+   * a new request has to be initiated.
+   */
+  expires_at?: string;
+  /**
+   * ID represents the request's unique ID. When performing the verification flow, this
+   * represents the id in the verify ui's query parameter: http://<selfservice.flows.verification.ui_url>?request=<id>
+   *
+   * type: string
+   * format: uuid
+   */
+  id: string;
+  /**
+   * IssuedAt is the time (UTC) when the request occurred.
+   */
+  issued_at?: string;
+  /**
+   * RequestURL is the initial URL that was requested from Ory Kratos. It can be used
+   * to forward information contained in the URL's path or query for example.
+   */
+  request_url?: string;
+  /**
+   * ReturnTo contains the requested return_to URL.
+   */
+  return_to?: string;
+  /**
+   * State represents the state of this request:
+   *
+   * choose_method: ask the user to choose a method (e.g. verify your email)
+   * sent_email: the email has been sent to the user
+   * passed_challenge: the request was successful and the verification challenge was passed.
+   */
+  state: unknown;
+  /**
+   * TransientPayload is used to pass data from the verification flow to hooks and email templates
+   */
+  transient_payload?: {
+    [key: string]: unknown;
+  };
+  type: SelfServiceFlowType;
+  ui: UiContainer;
 };
 
-/**
- * Is sent when a flow requires a browser to change its location.
- */
-export type ErrorBrowserLocationChangeRequired = {
-  error?: ErrorGeneric;
-  /**
-   * Points to where to redirect the user to next.
-   */
-  redirect_browser_to?: string;
-};
-
-/**
- * Deleted Session Count
- */
-export type DeleteMySessionsCount = {
-  /**
-   * The number of sessions that were revoked.
-   */
-  count?: number;
-};
+export type WebAuthnJavaScript = string;
 
 export type GetWebAuthnJavaScriptRequest = {
   body?: never;
@@ -2879,6 +3183,76 @@ export type GetFlowErrorResponses = {
 export type GetFlowErrorResponse =
   GetFlowErrorResponses[keyof GetFlowErrorResponses];
 
+export type CreateFedcmFlowRequest = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/self-service/fed-cm/parameters";
+};
+
+export type CreateFedcmFlowErrors = {
+  /**
+   * errorGeneric
+   */
+  400: ErrorGeneric;
+  /**
+   * errorGeneric
+   */
+  default: ErrorGeneric;
+};
+
+export type CreateFedcmFlowError =
+  CreateFedcmFlowErrors[keyof CreateFedcmFlowErrors];
+
+export type CreateFedcmFlowResponses = {
+  /**
+   * createFedcmFlowResponse
+   */
+  200: CreateFedcmFlowResponse;
+};
+
+export type CreateFedcmFlowResponse2 =
+  CreateFedcmFlowResponses[keyof CreateFedcmFlowResponses];
+
+export type UpdateFedcmFlowRequest = {
+  body: UpdateFedcmFlowBody;
+  path?: never;
+  query?: never;
+  url: "/self-service/fed-cm/token";
+};
+
+export type UpdateFedcmFlowErrors = {
+  /**
+   * loginFlow
+   */
+  400: LoginFlow;
+  /**
+   * errorGeneric
+   */
+  410: ErrorGeneric;
+  /**
+   * errorBrowserLocationChangeRequired
+   */
+  422: ErrorBrowserLocationChangeRequired;
+  /**
+   * errorGeneric
+   */
+  default: ErrorGeneric;
+};
+
+export type UpdateFedcmFlowError =
+  UpdateFedcmFlowErrors[keyof UpdateFedcmFlowErrors];
+
+export type UpdateFedcmFlowResponses = {
+  /**
+   * successfulNativeLogin
+   */
+  200: SuccessfulNativeLogin;
+};
+
+export type UpdateFedcmFlowResponse =
+  UpdateFedcmFlowResponses[keyof UpdateFedcmFlowResponses];
+
 export type UpdateLoginFlowRequest = {
   body: UpdateLoginFlowBody;
   headers?: {
@@ -2976,12 +3350,21 @@ export type CreateNativeLoginFlowRequest = {
      */
     return_to?: string;
     /**
+     * An optional organization ID that should be used for logging this user in.
+     * This parameter is only effective in the Ory Network.
+     */
+    organization?: string;
+    /**
      * Via should contain the identity's credential the code should be sent to. Only relevant in aal2 flows.
      *
      * DEPRECATED: This field is deprecated. Please remove it from your requests. The user will now see a choice
      * of MFA credentials to choose from to perform the second factor instead.
      */
     via?: string;
+    /**
+     * An optional identity schema to use for the login flow.
+     */
+    identity_schema?: string;
   };
   url: "/self-service/login/api";
 };
@@ -3064,6 +3447,10 @@ export type CreateBrowserLoginFlowRequest = {
      * of MFA credentials to choose from to perform the second factor instead.
      */
     via?: string;
+    /**
+     * An optional identity schema to use for the login flow.
+     */
+    identity_schema?: string;
   };
   url: "/self-service/login/browser";
 };
@@ -3531,6 +3918,15 @@ export type CreateNativeRegistrationFlowRequest = {
      * The URL to return the browser to after the flow was completed.
      */
     return_to?: string;
+    /**
+     * An optional organization ID that should be used to register this user.
+     * This parameter is only effective in the Ory Network.
+     */
+    organization?: string;
+    /**
+     * An optional identity schema to use for the registration flow.
+     */
+    identity_schema?: string;
   };
   url: "/self-service/registration/api";
 };
@@ -3586,7 +3982,15 @@ export type CreateBrowserRegistrationFlowRequest = {
      * `selfservice.flows.verification.after.default_redirect_to` value.
      */
     after_verification_return_to?: string;
+    /**
+     * An optional organization ID that should be used to register this user.
+     * This parameter is only effective in the Ory Network.
+     */
     organization?: string;
+    /**
+     * An optional identity schema to use for the registration flow.
+     */
+    identity_schema?: string;
   };
   url: "/self-service/registration/browser";
 };
@@ -3956,7 +4360,13 @@ export type UpdateVerificationFlowResponse =
 export type CreateNativeVerificationFlowRequest = {
   body?: never;
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * A URL contained in the return_to key of the verification flow.
+     * This piece of data has no effect on the actual logic of the flow and is purely informational.
+     */
+    return_to?: string;
+  };
   url: "/self-service/verification/api";
 };
 
