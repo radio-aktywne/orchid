@@ -70,3 +70,15 @@ You can configure the app at runtime using various environment variables:
 - `ORCHID__URLS__FALCON__SCHEME` -
   scheme of the public URL of the falcon service
   (default: `http`)
+- `ORCHID__URLS__SUNFLOWER__HOST` -
+  host of the public URL of the sunflower app
+  (default: `localhost`)
+- `ORCHID__URLS__SUNFLOWER__PATH` -
+  path of the public URL of the sunflower app
+  (default: ``)
+- `ORCHID__URLS__SUNFLOWER__PORT` -
+  port of the public URL of the sunflower app
+  (default: `30000`)
+- `ORCHID__URLS__SUNFLOWER__SCHEME` -
+  scheme of the public URL of the sunflower app
+  (default: `http`)

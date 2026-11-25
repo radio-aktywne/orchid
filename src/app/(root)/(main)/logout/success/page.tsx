@@ -5,19 +5,19 @@ import type {
   PageInput,
   PageMetadataInput,
   PageMetadataUtilityInput,
-} from "../../../types";
+} from "../../../../types";
 import type { Schemas } from "./schemas";
 import type { Keys } from "./types";
 
-import { Metadata } from "../../../../isomorphic/metadata/components/metadata";
-import { createMetadata } from "../../../../server/metadata/lib/create-metadata";
-import { DefaultPageView } from "./page.view";
+import { Metadata } from "../../../../../isomorphic/metadata/components/metadata";
+import { createMetadata } from "../../../../../server/metadata/lib/create-metadata";
+import { LogoutSuccessPageView } from "./page.view";
 
 async function getTitle({}: PageMetadataUtilityInput<
   typeof Schemas.Path,
   typeof Schemas.Query
 >) {
-  return msg({ message: "orchid" });
+  return msg({ message: "Logout • orchid" });
 }
 
 export async function generateMetadata({}: PageMetadataInput<
@@ -29,7 +29,7 @@ export async function generateMetadata({}: PageMetadataInput<
   });
 }
 
-export default async function DefaultPage({}: PageInput<
+export default async function LogoutSuccessPage({}: PageInput<
   Keys.Path,
   Keys.Query
 >) {
@@ -38,7 +38,7 @@ export default async function DefaultPage({}: PageInput<
   return (
     <>
       <Metadata title={await getTitle({})} />
-      <DefaultPageView />
+      <LogoutSuccessPageView />
     </>
   );
 }

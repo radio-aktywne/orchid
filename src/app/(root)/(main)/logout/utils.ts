@@ -1,4 +1,4 @@
-import { createDefaultUrl } from "../../../../common/core/lib/flow/create-default-url";
+import { createUrl } from "../../../../common/generic/lib/create-url";
 import { getOriginalBaseUrl } from "../../../../server/generic/lib/get-original-base-url";
 
 export async function createReturnUrl(returnTo: string | undefined) {
@@ -15,5 +15,5 @@ export async function createReturnUrl(returnTo: string | undefined) {
   return returnToUrl?.origin === orchidBaseUrl.origin &&
     returnToUrl?.pathname.startsWith(orchidBaseUrl.pathname)
     ? { url: returnToUrl.toString() }
-    : createDefaultUrl();
+    : createUrl({ path: "/logout/callback" });
 }
