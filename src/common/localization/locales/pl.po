@@ -17,6 +17,10 @@ msgstr ""
 msgid "An unexpected error occurred"
 msgstr "Wystąpił nieoczekiwany błąd"
 
+#: src/isomorphic/identity/components/identity-widget/main.tsx:31
+msgid "Apps"
+msgstr "Aplikacje"
+
 #: src/isomorphic/core/components/flow/registration-widget/components/complete-registration-form/main.tsx:65
 msgid "Continue"
 msgstr "Kontynuuj"
@@ -68,7 +72,7 @@ msgstr "Wylogowano"
 msgid "Login • orchid"
 msgstr "Logowanie • orchid"
 
-#: src/isomorphic/identity/components/identity-widget/main.tsx:24
+#: src/isomorphic/identity/components/identity-widget/main.tsx:37
 msgid "Logout"
 msgstr "Wyloguj się"
 
