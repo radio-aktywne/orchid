@@ -47,10 +47,6 @@ msgstr "Błąd w procesie uwierzytelniania"
 msgid "Error not found"
 msgstr "Błąd nie znaleziony"
 
-#: src/isomorphic/core/components/flow/logout-success-widget/main.tsx:20
-msgid "Go to apps"
-msgstr "Przejdź do aplikacji"
-
 #: src/isomorphic/notifications/hooks/use-notifications/main.ts:51
 msgid "Info"
 msgstr "Informacja"
@@ -59,6 +55,10 @@ msgstr "Informacja"
 #: src/client/test/components/test-widget/main.tsx:60
 msgid "Invalid input"
 msgstr "Nieprawidłowe dane wejściowe"
+
+#: src/isomorphic/core/components/flow/logout-success-widget/main.tsx:20
+msgid "Log in again"
+msgstr "Zaloguj się ponownie"
 
 #: src/isomorphic/core/components/flow/logout-success-widget/main.tsx:17
 msgid "Logged out"
