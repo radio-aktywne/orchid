@@ -1,15 +1,24 @@
 import type { NextRequest } from "next/server";
 
+import { trimEnd } from "es-toolkit/string";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 
 import type { RouteInput } from "../../../../types";
 import type { Keys } from "./types";
 
-import { createDefaultUrl } from "../../../../../common/core/lib/flow/create-default-url";
+import { createUrl } from "../../../../../common/generic/lib/create-url";
+import { state } from "../../../../../server/state/vars/state";
 
 export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
   await connection();
 
-  redirect(createDefaultUrl().url);
+  redirect(
+    createUrl({
+      host: state.current.config.urls.crocus.host,
+      path: `${trimEnd(state.current.config.urls.crocus.path ?? "", "/")}/logout/init`,
+      port: state.current.config.urls.crocus.port,
+      scheme: state.current.config.urls.crocus.scheme,
+    }).url,
+  );
 }

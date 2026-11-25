@@ -56,6 +56,14 @@ msgstr "Info"
 msgid "Invalid input"
 msgstr "Invalid input"
 
+#: src/isomorphic/core/components/flow/logout-success-widget/main.tsx:20
+msgid "Log in again"
+msgstr "Log in again"
+
+#: src/isomorphic/core/components/flow/logout-success-widget/main.tsx:17
+msgid "Logged out"
+msgstr "Logged out"
+
 #: src/app/(root)/(main)/login/page.tsx:20
 msgid "Login • orchid"
 msgstr "Login • orchid"
@@ -64,11 +72,14 @@ msgstr "Login • orchid"
 msgid "Logout"
 msgstr "Logout"
 
+#: src/app/(root)/(main)/logout/success/page.tsx:20
+msgid "Logout • orchid"
+msgstr "Logout • orchid"
+
 #: src/app/(root)/not-found.tsx:15
 msgid "Not Found • orchid"
 msgstr "Not Found • orchid"
 
-#: src/app/(root)/(main)/default/page.tsx:20
 #: src/app/(root)/layout.tsx:43
 msgid "orchid"
 msgstr "orchid"
