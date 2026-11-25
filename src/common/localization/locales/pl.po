@@ -60,7 +60,7 @@ msgstr "Nieprawidłowe dane wejściowe"
 msgid "Login • orchid"
 msgstr "Logowanie • orchid"
 
-#: src/isomorphic/identity/components/identity-widget/main.tsx:21
+#: src/isomorphic/identity/components/identity-widget/main.tsx:24
 msgid "Logout"
 msgstr "Wyloguj się"
 
