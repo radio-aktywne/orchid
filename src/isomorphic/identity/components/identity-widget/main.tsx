@@ -7,12 +7,15 @@ import { MdApps, MdLogout } from "react-icons/md";
 import type { IdentityWidgetInput } from "./types";
 
 import { createUrl } from "../../../../common/generic/lib/create-url";
+import { localizeHref } from "../../../../common/routing/lib/localize-href";
 import { useLocalization } from "../../../localization/hooks/use-localization";
+import { useLocaleRoutes } from "../../../routing/hooks/use-locale-routes";
 import { useIdentity } from "../../hooks/use-identity";
 
 export function IdentityWidget({ urls }: IdentityWidgetInput) {
   const { identity } = useIdentity();
   const { localization } = useLocalization();
+  const { localeRoutes } = useLocaleRoutes();
 
   if (identity.user === null) return null;
 
@@ -21,6 +24,11 @@ export function IdentityWidget({ urls }: IdentityWidgetInput) {
     path: urls.sunflower.path,
     port: urls.sunflower.port,
     scheme: urls.sunflower.scheme,
+  });
+
+  const { href: logoutUrl } = localizeHref({
+    href: "/logout/init",
+    localeRoutes: localeRoutes,
   });
 
   return (
@@ -35,7 +43,7 @@ export function IdentityWidget({ urls }: IdentityWidgetInput) {
           color: "red",
           icon: MdLogout,
           label: localization.localize(msg({ message: "Logout" })),
-          url: "/logout/init",
+          url: logoutUrl,
         },
       ]}
       user={{ name: identity.user.traits.names.display }}

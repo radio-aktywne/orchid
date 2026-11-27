@@ -7,6 +7,7 @@ import type { RouteInput } from "../../../types";
 import type { Keys } from "./types";
 
 import { createErrorUrl } from "../../../../common/core/lib/flow/create-error-url";
+import { localizedRedirect } from "../../../../server/routing/lib/localized-redirect";
 import { state } from "../../../../server/state/vars/state";
 import { Schemas } from "./schemas";
 import { createReturnUrl } from "./utils";
@@ -33,8 +34,10 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
       });
 
     if (response?.status === 401)
-      redirect((await createReturnUrl(returnTo)).url);
-    if (error) redirect(createErrorUrl().url);
+      return await localizedRedirect({
+        href: (await createReturnUrl(returnTo)).url,
+      });
+    if (error) return await localizedRedirect({ href: createErrorUrl().url });
 
     return { flow: data };
   })();
