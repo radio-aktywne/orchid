@@ -10,6 +10,7 @@ import { createErrorUrl } from "../../../../../common/core/lib/flow/create-error
 import { AuthError } from "../../../../../server/auth/errors";
 import { decryptLoginRequest } from "../../../../../server/auth/lib/decrypt-login-request";
 import { encryptLoginAcceptResponse } from "../../../../../server/auth/lib/encrypt-login-accept-response";
+import { localizedRedirect } from "../../../../../server/routing/lib/localized-redirect";
 import { state } from "../../../../../server/state/vars/state";
 import { Schemas } from "./schemas";
 import { createLoginAcceptUrl, createLoginInitUrl } from "./utils";
@@ -23,13 +24,15 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
 
   const { token: requestToken } = queryParameters;
 
-  if (!requestToken) redirect(createErrorUrl().url);
+  if (!requestToken)
+    return await localizedRedirect({ href: createErrorUrl().url });
 
   const { challenge } = await (async () => {
     try {
       return await decryptLoginRequest({ data: requestToken });
     } catch (error) {
-      if (error instanceof AuthError) redirect(createErrorUrl().url);
+      if (error instanceof AuthError)
+        return await localizedRedirect({ href: createErrorUrl().url });
       throw error;
     }
   })();
@@ -42,8 +45,10 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
     );
 
     if (response?.status === 401)
-      redirect((await createLoginInitUrl(requestToken)).url);
-    if (error) redirect(createErrorUrl().url);
+      return await localizedRedirect({
+        href: (await createLoginInitUrl(requestToken)).url,
+      });
+    if (error) return await localizedRedirect({ href: createErrorUrl().url });
 
     return { session: data };
   })();

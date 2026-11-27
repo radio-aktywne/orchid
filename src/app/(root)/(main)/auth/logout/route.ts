@@ -10,6 +10,7 @@ import { createErrorUrl } from "../../../../../common/core/lib/flow/create-error
 import { AuthError } from "../../../../../server/auth/errors";
 import { decryptLogoutRequest } from "../../../../../server/auth/lib/decrypt-logout-request";
 import { encryptLogoutAcceptResponse } from "../../../../../server/auth/lib/encrypt-logout-accept-response";
+import { localizedRedirect } from "../../../../../server/routing/lib/localized-redirect";
 import { state } from "../../../../../server/state/vars/state";
 import { Schemas } from "./schemas";
 import { createLogoutAcceptUrl, createLogoutInitUrl } from "./utils";
@@ -23,13 +24,15 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
 
   const { token: requestToken } = queryParameters;
 
-  if (!requestToken) redirect(createErrorUrl().url);
+  if (!requestToken)
+    return await localizedRedirect({ href: createErrorUrl().url });
 
   const { challenge } = await (async () => {
     try {
       return await decryptLogoutRequest({ data: requestToken });
     } catch (error) {
-      if (error instanceof AuthError) redirect(createErrorUrl().url);
+      if (error instanceof AuthError)
+        return await localizedRedirect({ href: createErrorUrl().url });
       throw error;
     }
   })();
@@ -40,9 +43,11 @@ export async function GET(request: NextRequest, {}: RouteInput<Keys.Path>) {
     });
 
     if (response?.status === 401) return;
-    if (error) redirect(createErrorUrl().url);
+    if (error) return await localizedRedirect({ href: createErrorUrl().url });
 
-    redirect((await createLogoutInitUrl(requestToken)).url);
+    return await localizedRedirect({
+      href: (await createLogoutInitUrl(requestToken)).url,
+    });
   })();
 
   const { data: responseToken } = await encryptLogoutAcceptResponse({

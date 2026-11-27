@@ -13,11 +13,75 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/client/test/components/test-widget/main.tsx:50
+#: src/common/routing/constants.ts:5
+msgid "/"
+msgstr "/"
+
+#: src/common/routing/constants.ts:6
+msgid "/default"
+msgstr "/default"
+
+#: src/common/routing/constants.ts:7
+msgid "/error"
+msgstr "/error"
+
+#: src/common/routing/constants.ts:8
+msgid "/login"
+msgstr "/login"
+
+#: src/common/routing/constants.ts:9
+msgid "/login/callback"
+msgstr "/login/callback"
+
+#: src/common/routing/constants.ts:10
+msgid "/login/init"
+msgstr "/login/init"
+
+#: src/common/routing/constants.ts:11
+msgid "/logout"
+msgstr "/logout"
+
+#: src/common/routing/constants.ts:12
+msgid "/logout/callback"
+msgstr "/logout/callback"
+
+#: src/common/routing/constants.ts:13
+msgid "/logout/init"
+msgstr "/logout/init"
+
+#: src/common/routing/constants.ts:14
+msgid "/logout/success"
+msgstr "/logout/success"
+
+#: src/common/routing/constants.ts:15
+msgid "/registration"
+msgstr "/registration"
+
+#: src/common/routing/constants.ts:16
+msgid "/registration/callback"
+msgstr "/registration/callback"
+
+#: src/common/routing/constants.ts:17
+msgid "/registration/init"
+msgstr "/registration/init"
+
+#: src/common/routing/constants.ts:18
+msgid "/settings"
+msgstr "/settings"
+
+#: src/common/routing/constants.ts:19
+msgid "/settings/callback"
+msgstr "/settings/callback"
+
+#: src/common/routing/constants.ts:20
+msgid "/settings/init"
+msgstr "/settings/init"
+
+#: src/client/example/components/example-widget/main.tsx:50
 msgid "An unexpected error occurred"
 msgstr "An unexpected error occurred"
 
-#: src/isomorphic/identity/components/identity-widget/main.tsx:31
+#: src/isomorphic/identity/components/identity-widget/main.tsx:39
 msgid "Apps"
 msgstr "Apps"
 
@@ -30,7 +94,7 @@ msgstr "Continue"
 msgid "Display Name"
 msgstr "Display Name"
 
-#: src/client/test/components/test-widget/components/test-form/main.tsx:30
+#: src/client/example/components/example-widget/components/example-form/main.tsx:34
 msgid "Enter some value"
 msgstr "Enter some value"
 
@@ -55,8 +119,8 @@ msgstr "Error not found"
 msgid "Info"
 msgstr "Info"
 
-#: src/client/test/components/test-widget/main.tsx:39
-#: src/client/test/components/test-widget/main.tsx:60
+#: src/client/example/components/example-widget/main.tsx:39
+#: src/client/example/components/example-widget/main.tsx:60
 msgid "Invalid input"
 msgstr "Invalid input"
 
@@ -72,7 +136,7 @@ msgstr "Logged out"
 msgid "Login • orchid"
 msgstr "Login • orchid"
 
-#: src/isomorphic/identity/components/identity-widget/main.tsx:37
+#: src/isomorphic/identity/components/identity-widget/main.tsx:45
 msgid "Logout"
 msgstr "Logout"
 
@@ -84,7 +148,7 @@ msgstr "Logout • orchid"
 msgid "Not Found • orchid"
 msgstr "Not Found • orchid"
 
-#: src/app/(root)/layout.tsx:43
+#: src/app/(root)/layout.tsx:45
 msgid "orchid"
 msgstr "orchid"
 
@@ -122,7 +186,7 @@ msgstr "Settings • orchid"
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
-#: src/client/test/components/test-widget/components/test-form/main.tsx:36
+#: src/client/example/components/example-widget/components/example-form/main.tsx:40
 msgid "Submit"
 msgstr "Submit"
 
@@ -130,7 +194,7 @@ msgstr "Submit"
 msgid "Success"
 msgstr "Success"
 
-#: src/app/(root)/layout.tsx:37
+#: src/app/(root)/layout.tsx:39
 msgid "Users identity app 👤"
 msgstr "Users identity app 👤"
 
@@ -138,6 +202,6 @@ msgstr "Users identity app 👤"
 msgid "Warning"
 msgstr "Warning"
 
-#: src/server/orpc/vars/procedures/vars/test/vars/validate/main.ts:27
+#: src/server/orpc/vars/procedures/vars/example/vars/validate/main.ts:27
 msgid "Why did the chicken cross the road? To get to the other side."
 msgstr "Why did the chicken cross the road? To get to the other side."
